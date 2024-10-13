@@ -38,18 +38,36 @@ pip install -r requeriments.txt
 docker-compose up
 ```
 
+Criando arquivo .env e definindo configurações:
+``` bash
+touch .env
+cat <<EOF > .env
+DB_DIALECT="postgresql"
+DB_USER="postgres"
+DB_PASSWORD="P455W0rD!#"
+DB_IP="localhost"
+DB_PORT="5432"
+DB_NAME="postgres"
+
+DEBUG_MODE=1
+EOF
+```
+
 Inicie o projeto:
 ```bash
 # Poetry
 poetry run fastapi dev
-(Opcional) Configure variáveis de ambiente, se necessário.
 📱 Screenshots (Em breve)
 Acompanhe as primeiras telas e exemplos visuais de uso em nossa próxima atualização.
+```
 
-📋 Roadmap
- Implementação de cálculo de lucro líquido
- Integração com Google Maps para rotas e trajetos
- Exportação de relatórios em PDF/Excel
- Modo offline para registrar dados sem internet
-🎯 Contribuições
+### 📋 Roadmap
+- Implementação de calculo para ganho/KM
+- Implementação de calculo para consumo de combustível / R$ ganho
+- Implementação de cálculo de lucro líquido
+- Exportação de relatórios em PDF/Excel
+- Modo offline para registrar dados sem internet
+- Integração com Google Maps para rotas e trajetos
+
+### 🎯 Contribuições
 Sinta-se à vontade para abrir issues e enviar pull requests. Toda ajuda é bem-vinda!
