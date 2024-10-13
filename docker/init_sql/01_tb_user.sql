@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS "tb_user"
 (
     "id_user" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     "name" VARCHAR(100) NOT NULL,
-    "email" VARCHAR(255) NOT NULL,
+    "email" VARCHAR(255) NOT NULL UNIQUE,
     "birthdate" DATE NOT NULL,
     "is_active" BOOLEAN DEFAULT TRUE NOT NULL,
     "last_update" TIMESTAMP,

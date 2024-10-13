@@ -19,6 +19,24 @@ services:
     networks:
       - db_network
     shm_size: 128mb
+  
+  keycloak:
+    container_name: motorizen_keycloak
+    image: quay.io/keycloak/keycloak:25.0.6
+    env_file:
+      - ../.env
+    command: ["start-dev"]
+    ports:
+      - "8080:8080"
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - db_network
+    shm_size: 128mb
+    
 
 
 volumes:

@@ -44,12 +44,12 @@ $$ LANGUAGE plpgsql;
 
 CREATE TABLE IF NOT EXISTS "tb_resultado_do_dia"
 (
-    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "id_resultado_do_dia" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     "cd_user" VARCHAR(100) NOT NULL,
     "distance" FLOAT NOT NULL,
     "duration" TIME NOT NULL,
     "total_value" FLOAT NOT NULL,
-    "date" DATE NOT NULL DEFAULT CURRENT_DATE,
+    "data_de_entrada" DATE NOT NULL DEFAULT CURRENT_DATE,
     "last_update" TIMESTAMP,
     "creation" TIMESTAMP
 );
