@@ -1,0 +1,29 @@
+services:
+  postgres:
+    image: postgres:16
+    env_file:
+      - ../.env
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - PGUSER=${DB_USER}
+      - PGPASSWORD=${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./init_sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - db_network
+    shm_size: 128mb
+
+
+
+volumes:
+  db_data:
+
+networks:
+  db_network:
+    driver: bridge

@@ -1,0 +1,53 @@
+# [tool.poetry.dependencies]
+# python = "^3.10"
+# SQLAlchemy = "^2.0.35"
+# types-SQLAlchemy = "^1.4.53"
+# python-dotenv = "^1.0.1"
+# psycopg2-binary = "^2.9.9"
+
+# [tool.poetry.dev-dependencies]
+# black = "^24.8.0"
+# isort = "^5.13.2"
+# mypy = "^1.11.2"
+# Faker = "^29.0.0"
+# pytest = "^8.3.3"
+# pytest-cov = "^5.0.0"
+# pytest-mock = "^3.14.0"
+
+[tool.black]
+line-length = 120
+
+[tool.isort]
+profile = "black"
+line_length = 120
+
+[tool.mypy]
+# Tornar a checagem mais rigorosa
+strict = true
+
+# Exigir tipagem explícita de funções e métodos
+disallow_untyped_defs = true
+
+# Exigir tipagem de argumentos em funções lambdas
+disallow_incomplete_defs = true
+
+# Proibir o uso de Any explícito
+disallow_any_explicit = true
+
+# Exigir declarações de tipo em todas as variáveis locais
+warn_unused_ignores = true
+warn_return_any = true
+warn_no_return = true
+ignore_missing_imports = true
+
+# Mostrar erros em funções de terceiros que não estão tipadas
+follow_imports = "normal"
+
+# Ativar checagem de atributos não inicializados
+check_untyped_defs = true
+
+# Alertar sobre possíveis tipos None onde não esperado
+strict_optional = true
+
+# Define o diretório base como 'src'
+mypy_path = "src"
