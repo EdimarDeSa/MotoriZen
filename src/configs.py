@@ -10,12 +10,14 @@ from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
 ### PROJECT INFO ###
-TITLE: str = "Novo Projeto"
+TITLE: str = "MotoriZen – Controle de Ganhos, KM e Consumo para Motoristas"
 
 CONTACT: dict[str, str] = {
     "name": "Edimar de Sá",
     "email": "edimar.sa@efscode.com",
     "url": "https://efscode.com",
+    "github": "https://github.com/EdimarDeSa",
+    "linkedin": "https://www.linkedin.com/in/edimar-freitas-de-sá/",
 }
 
 
