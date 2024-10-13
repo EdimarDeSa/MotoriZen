@@ -1,18 +1,28 @@
-# [tool.poetry.dependencies]
-# python = "^3.10"
-# SQLAlchemy = "^2.0.35"
-# types-SQLAlchemy = "^1.4.53"
-# python-dotenv = "^1.0.1"
-# psycopg2-binary = "^2.9.9"
+[tool.poetry]
+name = "motorizen"
+version = "0.1.0"
+description = ""
+authors = ["Edimar de Sa <edimar.sa@efscode.com.br>"]
+license = "MIT"
 
-# [tool.poetry.dev-dependencies]
-# black = "^24.8.0"
-# isort = "^5.13.2"
-# mypy = "^1.11.2"
-# Faker = "^29.0.0"
-# pytest = "^8.3.3"
-# pytest-cov = "^5.0.0"
-# pytest-mock = "^3.14.0"
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+SQLAlchemy = "^2.0.35"
+python-dotenv = "^1.0.1"
+psycopg2-binary = "^2.9.9"
+
+[tool.poetry.dev-dependencies]
+black = "^24.8.0"
+isort = "^5.13.2"
+mypy = "^1.11.2"
+Faker = "^29.0.0"
+pytest = "^8.3.3"
+pytest-cov = "^5.0.0"
+pytest-mock = "^3.14.0"
 
 [tool.black]
 line-length = 120
@@ -51,3 +61,4 @@ strict_optional = true
 
 # Define o diretório base como 'src'
 mypy_path = "src"
+
