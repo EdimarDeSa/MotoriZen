@@ -1,5 +1,6 @@
 services:
   postgres:
+    container_name: motorizen_db
     image: postgres:16
     env_file:
       - ../.env
@@ -14,15 +15,15 @@ services:
     restart: always
     volumes:
       - db_data:/var/lib/postgresql/data
-      - ./init_sql:/docker-entrypoint-initdb.d/init.sql
+      - ./init_sql:/docker-entrypoint-initdb.d/
     networks:
       - db_network
     shm_size: 128mb
 
 
-
 volumes:
   db_data:
+
 
 networks:
   db_network:
