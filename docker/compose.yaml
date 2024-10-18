@@ -12,7 +12,6 @@ services:
       - PGPASSWORD=${DB_PASSWORD}
     ports:
       - "5432:5432"
-    restart: always
     volumes:
       - db_data:/var/lib/postgresql/data
       - ./init_sql:/docker-entrypoint-initdb.d/
@@ -25,9 +24,14 @@ services:
     image: quay.io/keycloak/keycloak:25.0.6
     env_file:
       - ../.env
+    volumes:
+      - keycloak_data:/opt/keycloak/data
     command: ["start-dev"]
     ports:
       - "8080:8080"
+    networks:
+      - db_network
+    shm_size: 512mb
 
   redis:
     image: redis:alpine
@@ -38,9 +42,9 @@ services:
     shm_size: 128mb
     
 
-
 volumes:
   db_data:
+  keycloak_data:
 
 
 networks:
