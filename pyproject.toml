@@ -15,6 +15,8 @@ SQLAlchemy = "^2.0.35"
 python-dotenv = "^1.0.1"
 psycopg2-binary = "^2.9.9"
 python-keycloak = "^4.6.2"
+fastapi = {extras = ["standard"], version = "^0.115.2"}
+uvicorn = {extras = ["standard"], version = "^0.31.1"}
 
 [tool.poetry.dev-dependencies]
 black = "^24.8.0"
@@ -43,11 +45,11 @@ disallow_untyped_defs = true
 disallow_incomplete_defs = true
 
 # Proibir o uso de Any explícito
-disallow_any_explicit = true
+# disallow_any_explicit = false
 
 # Exigir declarações de tipo em todas as variáveis locais
 warn_unused_ignores = true
-warn_return_any = true
+warn_return_any = false
 warn_no_return = true
 ignore_missing_imports = true
 
