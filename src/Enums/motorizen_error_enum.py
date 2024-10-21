@@ -1,7 +1,7 @@
 from enum import IntEnum
 
 
-class MotorizenErrorEnum(IntEnum):
+class MotoriZenErrorEnum(IntEnum):
     USER_NOT_FOUND = -100
     USER_ALREADY_EXISTS = -101
 

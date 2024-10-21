@@ -1,5 +1,5 @@
-from .motorizen_error_enum import MotorizenErrorEnum
+from .motorizen_error_enum import MotoriZenErrorEnum
 
 __all__ = [
-    "MotorizenErrorEnum",
+    "MotoriZenErrorEnum",
 ]
