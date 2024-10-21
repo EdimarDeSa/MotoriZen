@@ -2,8 +2,8 @@ import logging
 from abc import ABC
 
 from db.querys import Querys
-from Enums import MotorizenErrorEnum
-from ErrorHandler import MotorizenError
+from Enums import MotoriZenErrorEnum
+from ErrorHandler import MotoriZenError
 
 
 class BaseRepository(ABC):

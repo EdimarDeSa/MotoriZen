@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Request
 
 from db.Models import TokenModel
-from Enums.motorizen_error_enum import MotorizenErrorEnum
-from ErrorHandler import MotorizenError
+from Enums.motorizen_error_enum import MotoriZenErrorEnum
+from ErrorHandler import MotoriZenError
 from Services.auth_service import AuthService
 from Utils.custom_types import PasswordRequestForm
 
@@ -47,6 +47,8 @@ class AuthRouter(BaseRouter):
         user_email = form_data.username
         password = form_data.password
 
+        print(user_email, password)
+
         try:
             self.logger.debug(f"Try login with <Email: {user_email}>")
             token_: TokenModel = self.auth_service.authenticate_user(user_email, password)
@@ -56,6 +58,6 @@ class AuthRouter(BaseRouter):
 
         except Exception as e:
             self.logger.error(e)
-            raise MotorizenError(
-                err=MotorizenErrorEnum.LOGIN_ERROR, detail=repr(e), headers={"WWW-Authenticate": "Bearer"}
+            raise MotoriZenError(
+                err=MotoriZenErrorEnum.LOGIN_ERROR, detail=repr(e), headers={"WWW-Authenticate": "Bearer"}
             ).as_http_response()

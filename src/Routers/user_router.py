@@ -1,12 +1,11 @@
-import uuid
-from datetime import date, datetime
+from typing import Any, Literal
 
 from fastapi import APIRouter, Request
 
 from Contents.user_contents import UserMeContent, UserUpdatedContent
 from db.Models import NewUserModel, UpdateUserModel, UserModel
-from Enums import MotorizenErrorEnum
-from ErrorHandler import MotorizenError
+from Enums import MotoriZenErrorEnum
+from ErrorHandler import MotoriZenError
 from Responses import Created, NoContent, Ok
 from Services.user_service import UserService
 from Utils.custom_types import CurrentActiveUser
@@ -24,7 +23,7 @@ class UserRouter(BaseRouter):
 
     def _register_routes(self) -> None:
         self.router.add_api_route("/me", self.me, response_model=UserMeContent, methods=["GET"])
-        self.router.add_api_route("/new-user", self.new_user, response_model=UserMeContent, methods=["POST"])
+        self.router.add_api_route("/new-user", self.new_user, methods=["POST"])
         self.router.add_api_route("/update-user", self.update_user, response_model=UserUpdatedContent, methods=["PUT"])
         self.router.add_api_route("/delete-user", self.delete_user, methods=["DELETE"])
 
@@ -46,8 +45,6 @@ class UserRouter(BaseRouter):
 
     def new_user(self, request: Request, new_user: NewUserModel) -> Created:
         """
-        Create a new user
-
         Creates a new user.
 
         Args:
@@ -70,16 +67,15 @@ class UserRouter(BaseRouter):
         self.logger.debug("Starting new_user")
 
         try:
-            user_data = self.user_service.create_user(new_user)
-            content = UserMeContent(data=user_data)
+            self.user_service.create_user(new_user)
 
-            return Created(content=content, headers=request.headers)
+            return Created()
 
         except Exception as e:
             self.logger.exception(e)
 
-            if not isinstance(e, MotorizenError):
-                e = MotorizenError(err=MotorizenErrorEnum.UNKNOWN_ERROR, detail=repr(e), headers=None)
+            if not isinstance(e, MotoriZenError):
+                e = MotoriZenError(err=MotoriZenErrorEnum.UNKNOWN_ERROR, detail="")
 
             raise e.as_http_response()
 
@@ -131,7 +127,7 @@ class UserRouter(BaseRouter):
         except Exception as e:
             self.logger.exception(e)
 
-            if not isinstance(e, MotorizenError):
-                e = MotorizenError(err=MotorizenErrorEnum.UNKNOWN_ERROR, detail=repr(e), headers=None)
+            if not isinstance(e, MotoriZenError):
+                e = MotoriZenError(err=MotoriZenErrorEnum.UNKNOWN_ERROR, detail="")
 
             raise e.as_http_response()

@@ -5,8 +5,8 @@ from keycloak import KeycloakAdmin, KeycloakError
 
 from db.Models.user_model import NewDbUserModel, NewUserModel, UpdateUserModel, UserModel
 from db.Schemas.user_schema import UserSchema
-from Enums import MotorizenErrorEnum
-from ErrorHandler import MotorizenError
+from Enums import MotoriZenErrorEnum
+from ErrorHandler import MotoriZenError
 from Repositories.user_repository import UserRepository
 from Services.base_service import BaseService
 from Utils.random_password import generate_random_password
@@ -39,44 +39,41 @@ class UserService(BaseService):
         except Exception as e:
             self.logger.exception(e)
 
-            if not isinstance(e, MotorizenError):
-                e = MotorizenError(err=MotorizenErrorEnum.UNKNOWN_ERROR, detail=repr(e), headers=None)
+            if not isinstance(e, MotoriZenError):
+                e = MotoriZenError(err=MotoriZenErrorEnum.UNKNOWN_ERROR, detail=repr(e), headers=None)
 
-            raise e.as_http_response()
+            raise e
 
-    def create_user(self, new_user: NewUserModel) -> UserModel:
+    def create_user(self, new_user: NewUserModel) -> None:
         self.logger.debug("Starting insert_user")
         db_session = self.create_session(write=True)
         cd_auth = None
 
         try:
+            self.logger.debug(new_user)
             cd_auth = self._create_user_auth(new_user.email, new_user.first_name, new_user.last_name, new_user.password)
+
             self.logger.debug("Creating user data")
+            new_user_data = NewDbUserModel(cd_auth=cd_auth, **new_user.model_dump(exclude_none=True))
 
-            new_user_data = NewDbUserModel(cd_auth=cd_auth, **new_user.model_dump(by_alias=True))
-
-            id_user: uuid.UUID = self._user_repository.insert_user(db_session, new_user_data)
+            self.logger.debug("Inserting user data")
+            self._user_repository.insert_user(db_session, new_user_data)
 
             db_session.commit()
             self.logger.debug("Session committed")
 
-            self.logger.debug("Getting user data")
-            user_data: UserSchema = self._user_repository.select_user_by_id(db_session, str(id_user))
-
-            self.logger.debug("User data retrieved")
-            return UserModel.model_validate(user_data, from_attributes=True)
-
         except Exception as e:
+            self.logger.exception(e)
             if cd_auth is not None:
                 self._delete_user_auth(cd_auth)
 
             db_session.rollback()
             self.logger.debug("Rollbacked")
 
-            if not isinstance(e, MotorizenError):
-                e = MotorizenError(err=MotorizenErrorEnum.UNKNOWN_ERROR, detail=repr(e), headers=None)
+            if not isinstance(e, MotoriZenError):
+                e = MotoriZenError(err=MotoriZenErrorEnum.UNKNOWN_ERROR, detail=repr(e), headers=None)
 
-            raise e.as_http_response()
+            raise e
 
     def update_user(self, id_user: uuid.UUID, update_user: UpdateUserModel) -> UserModel:
         self.logger.debug("Starting update_user")
@@ -96,10 +93,10 @@ class UserService(BaseService):
             db_session.rollback()
             self.logger.debug("Rollbacked")
 
-            if not isinstance(e, MotorizenError):
-                e = MotorizenError(err=MotorizenErrorEnum.UNKNOWN_ERROR, detail=repr(e), headers=None)
+            if not isinstance(e, MotoriZenError):
+                e = MotoriZenError(err=MotoriZenErrorEnum.UNKNOWN_ERROR, detail=repr(e), headers=None)
 
-            raise e.as_http_response()
+            raise e
 
     def remove_user(self, email: str, cd_auth: str) -> None:
         self.logger.debug("Starting delete_user")
@@ -113,10 +110,10 @@ class UserService(BaseService):
         except Exception as e:
             self.logger.exception(e)
 
-            if not isinstance(e, MotorizenError):
-                e = MotorizenError(err=MotorizenErrorEnum.UNKNOWN_ERROR, detail=repr(e), headers=None)
+            if not isinstance(e, MotoriZenError):
+                e = MotoriZenError(err=MotoriZenErrorEnum.UNKNOWN_ERROR, detail=repr(e), headers=None)
 
-            raise e.as_http_response()
+            raise e
 
     def _create_user_auth(self, email: str, first_name: str, last_name: str, password: str) -> str:
         self.logger.debug("Creating user in Keycloak")
@@ -145,14 +142,14 @@ class UserService(BaseService):
         except KeycloakError as e:
             match e.response_code:
                 case 409:
-                    raise MotorizenError(
-                        err=MotorizenErrorEnum.USER_ALREADY_EXISTS,
+                    raise MotoriZenError(
+                        err=MotoriZenErrorEnum.USER_ALREADY_EXISTS,
                         detail=e.error_message,
                         headers={"WWW-Authenticate": "Bearer"},
                     )
                 case _:
-                    raise MotorizenError(
-                        err=MotorizenErrorEnum.UNKNOWN_ERROR,
+                    raise MotoriZenError(
+                        err=MotoriZenErrorEnum.UNKNOWN_ERROR,
                         detail=repr(e),
                     )
 
@@ -167,13 +164,13 @@ class UserService(BaseService):
         except KeycloakError as e:
             match e.response_code:
                 case 400:
-                    raise MotorizenError(
-                        err=MotorizenErrorEnum.USER_NOT_FOUND,
+                    raise MotoriZenError(
+                        err=MotoriZenErrorEnum.USER_NOT_FOUND,
                         detail=e.error_message,
                     )
                 case _:
-                    raise MotorizenError(
-                        err=MotorizenErrorEnum.UNKNOWN_ERROR,
+                    raise MotoriZenError(
+                        err=MotoriZenErrorEnum.UNKNOWN_ERROR,
                         detail=repr(e),
                     )
 
@@ -199,13 +196,13 @@ class UserService(BaseService):
         except KeycloakError as e:
             match e.response_code:
                 case 400:
-                    raise MotorizenError(
-                        err=MotorizenErrorEnum.USER_NOT_FOUND,
+                    raise MotoriZenError(
+                        err=MotoriZenErrorEnum.USER_NOT_FOUND,
                         detail=e.error_message,
                     )
                 case _:
-                    raise MotorizenError(
-                        err=MotorizenErrorEnum.UNKNOWN_ERROR,
+                    raise MotoriZenError(
+                        err=MotoriZenErrorEnum.UNKNOWN_ERROR,
                         detail=repr(e),
                     )
 

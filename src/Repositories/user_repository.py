@@ -6,7 +6,8 @@ from sqlalchemy.orm import Session, scoped_session
 
 from db.Models.user_model import NewDbUserModel, UpdateUserModel
 from db.Schemas.user_schema import UserSchema
-from Enums import MotorizenErrorEnum
+from Enums import MotoriZenErrorEnum
+from ErrorHandler.motorizen_error import MotoriZenError
 from Repositories.base_repository import BaseRepository
 
 
@@ -24,7 +25,7 @@ class UserRepository(BaseRepository):
             user_data: UserSchema | None = db_session.execute(query).scalar()
 
             if user_data is None:
-                raise MotorizenErrorEnum.USER_NOT_FOUND(f"User not found with id: {id_user}")
+                raise MotoriZenError(err=MotoriZenErrorEnum.USER_NOT_FOUND, detail=f"User not found with id: {id_user}")
 
             return user_data
 
@@ -41,14 +42,16 @@ class UserRepository(BaseRepository):
             user_data: UserSchema | None = db_session.execute(query).scalar()
 
             if user_data is None:
-                raise MotorizenErrorEnum.USER_NOT_FOUND(f"User not found with cd_auth: {cd_auth}")
+                raise MotoriZenError(
+                    err=MotoriZenErrorEnum.USER_NOT_FOUND, detail=f"User not found with cd_auth: {cd_auth}"
+                )
 
             return user_data
 
         except Exception as e:
             raise e
 
-    def insert_user(self, db_session: scoped_session[Session], new_user_data: NewDbUserModel) -> uuid.UUID:
+    def insert_user(self, db_session: scoped_session[Session], new_user_data: NewDbUserModel) -> None:
         self.logger.debug("Starting insert_user")
 
         try:
@@ -59,8 +62,6 @@ class UserRepository(BaseRepository):
             self.logger.debug("Inserting new user")
             result = db_session.execute(query)
             self.logger.debug(f"User inserted: {result.inserted_primary_key[0]}")
-
-            return result.inserted_primary_key[0]
 
         except Exception as e:
             raise e

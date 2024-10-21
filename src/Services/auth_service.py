@@ -6,8 +6,8 @@ from keycloak import KeycloakOpenID
 
 from db.Models.token_model import TokenModel
 from db.Models.user_model import UserModel
-from Enums.motorizen_error_enum import MotorizenErrorEnum
-from ErrorHandler.motorizen_error import MotorizenError
+from Enums.motorizen_error_enum import MotoriZenErrorEnum
+from ErrorHandler.motorizen_error import MotoriZenError
 from Services.base_service import BaseService
 from Services.user_service import UserService
 from Utils.oauth_service import oauth2_scheme
@@ -55,7 +55,7 @@ class AuthService(BaseService):
 
         except Exception as e:
             self.logger.error(e)
-            raise MotorizenError(
-                err=MotorizenErrorEnum.LOGIN_ERROR,
+            raise MotoriZenError(
+                err=MotoriZenErrorEnum.LOGIN_ERROR,
                 detail=repr(e),
             )

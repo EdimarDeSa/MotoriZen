@@ -5,8 +5,8 @@ from typing import Any
 
 from fastapi import APIRouter
 
-from Enums import MotorizenErrorEnum
-from ErrorHandler import MotorizenError
+from Enums import MotoriZenErrorEnum
+from ErrorHandler import MotoriZenError
 
 
 class BaseRouter(ABC):
