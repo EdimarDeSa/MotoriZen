@@ -1,11 +1,10 @@
 from dotenv import load_dotenv
 from fastapi import FastAPI
 
-from Enums import MotorizenErrorEnum
-from ErrorHandler import MotorizenError
-from Routers.auth_router import AuthRouter
+from Enums import MotoriZenErrorEnum
+from ErrorHandler import MotoriZenError
+from Routers import AuthRouter, UserRouter
 from Routers.base_router import BaseRouter
-from Routers.user_router import UserRouter
 
 load_dotenv()
 
@@ -35,9 +34,9 @@ def register_routers(app: FastAPI) -> None:
         r = router()
 
         if not isinstance(r, BaseRouter):
-            raise MotorizenError(
+            raise MotoriZenError(
                 detail="Invalid router, must be an instance of Routers.base_router.BaseRouter",
-                err=MotorizenErrorEnum.INVALID_ROUTER,
+                err=MotoriZenErrorEnum.INVALID_ROUTER,
             )
 
         logger.debug(f"Starting - {r.__class__.__name__}")
