@@ -15,11 +15,5 @@ class UserNewContent(BaseContent):
     data: NewUserModel
 
 
-class UserUpdatedContent(UserMeContent):
+class UserUpdatedContent(BaseContent):
     data: UserModel
-
-
-class UserDeleteContent(BaseContent):
-    rc: Optional[int] = None
-    data: None = None
-    errors: None = None
