@@ -39,7 +39,7 @@ class UserRouter(BaseRouter):
         """
         self.logger.debug("Starting me")
 
-        self.logger.debug(f"User data: {user_data}")
+        self.logger.debug(f"User: {user_data.email}")
 
         return Ok(content=UserMeContent(data=user_data), headers=request.headers)
 
@@ -101,6 +101,7 @@ class UserRouter(BaseRouter):
             http://localhost:8000/users/update-user
         """
 
+        # TODO: Adicionar retorno de erros
         user_updated = self.user_service.update_user(user_data.id_user, update_user)
 
         content = UserUpdatedContent(data=user_updated)
@@ -122,6 +123,9 @@ class UserRouter(BaseRouter):
         try:
 
             self.user_service.remove_user(user_data.email, str(user_data.cd_auth))
+
+            # TODO: Forçar logout do usuário
+            # TODO: Limpar cache de dados do usuário
             return NoContent(headers=request.headers)
 
         except Exception as e:

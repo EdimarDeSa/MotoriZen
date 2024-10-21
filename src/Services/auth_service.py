@@ -28,6 +28,7 @@ class AuthService(BaseService):
         self.logger.info("Starting authenticate_user")
 
         try:
+            # TODO: Adicionar caching de autenticação com redis
             self.logger.debug("Authenticating user")
             token_dict = self._open_id.token(email, password)
             self.logger.debug("User authenticated")
@@ -44,12 +45,19 @@ class AuthService(BaseService):
         user_service = UserService()
 
         try:
+            # TODO: Adicionar caching de dados do usuário com redis
             self.logger.debug("Decoding token")
             token_data = self._open_id.decode_token(token)
             cd_auth = token_data["sub"]
             self.logger.debug(f"Token decoded: <cd_auth: {cd_auth}>")
 
             user_data: UserModel = user_service.get_user_by_cd_auth(cd_auth)
+
+            if not user_data.is_active:
+                raise MotoriZenError(
+                    err=MotoriZenErrorEnum.USER_NOT_ACTIVE,
+                    detail="The user is not active",
+                )
 
             return user_data
 

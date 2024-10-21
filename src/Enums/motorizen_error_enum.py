@@ -2,8 +2,9 @@ from enum import IntEnum
 
 
 class MotoriZenErrorEnum(IntEnum):
-    USER_NOT_FOUND = -100
-    USER_ALREADY_EXISTS = -101
+    USER_NOT_ACTIVE = -100
+    USER_NOT_FOUND = -104
+    USER_ALREADY_EXISTS = -109
 
     LOGIN_ERROR = -200
 
