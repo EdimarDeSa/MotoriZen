@@ -2,7 +2,7 @@ import uuid
 from datetime import date
 from os import error
 
-from pydantic import EmailStr, Field, field_validator
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 from db.Models.base_model import BaseModelDb, NewBaseModelDb
 
@@ -58,13 +58,16 @@ class NewUserModel(NewBaseModelDb):
     birthdate: date
 
     @field_validator("birthdate", mode="after")
+    @classmethod
     def validate_birthdate(cls, value: date) -> date:
         if value >= date.today():
             raise ValueError("Birthdate cannot be in the future")
         return value
 
-    @field_validator("password", mode="after")
+    @field_validator("password", mode="before")
+    @classmethod
     def validate_password(cls, value: str) -> str:
+        print(value)
         errors = []
         if len(value) < 8:
             errors.append("Password must be at least 8 characters long")
@@ -89,7 +92,7 @@ class NewUserModel(NewBaseModelDb):
         return value
 
 
-class NewDbUserModel(BaseModelDb):
+class NewDbUserModel(BaseModel):
     first_name: str
     last_name: str
     email: EmailStr
@@ -98,7 +101,7 @@ class NewDbUserModel(BaseModelDb):
     is_active: bool = True
 
 
-class UpdateUserModel(BaseModelDb):
+class UpdateUserModel(BaseModel):
     first_name: str = Field(
         max_length=50,
         min_length=3,
@@ -114,6 +117,7 @@ class UpdateUserModel(BaseModelDb):
     birthdate: date
 
     @field_validator("birthdate", mode="after")
+    @classmethod
     def validate_birthdate(cls, value: date) -> date:
         if value >= date.today():
             raise ValueError("Birthdate cannot be in the future")
