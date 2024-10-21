@@ -1,14 +1,14 @@
 from fastapi import HTTPException
 
 from Contents.exception_content import ExceptionContent
-from Enums import MotorizenErrorEnum
+from Enums import MotoriZenErrorEnum
 from ErrorHandler import ErrorModel
 
 
-class MotorizenError(Exception):
+class MotoriZenError(Exception):
     def __init__(
         self,
-        err: MotorizenErrorEnum,
+        err: MotoriZenErrorEnum,
         detail: str,
         headers: dict[str, str] | None = None,
     ) -> None:
@@ -29,23 +29,17 @@ class MotorizenError(Exception):
         status_code = self.__cehck_error_code()
         return HTTPException(
             status_code=status_code,
-            detail=content,
+            detail=content.model_dump(exclude_none=True),
             headers=self.headers,
         )
 
     def __cehck_error_code(self) -> int:
         match self.err.value:
-            case MotorizenErrorEnum.USER_NOT_FOUND:
+            case MotoriZenErrorEnum.USER_NOT_FOUND:
                 return 404
-            case MotorizenErrorEnum.USER_ALREADY_EXISTS:
+            case MotoriZenErrorEnum.USER_ALREADY_EXISTS:
                 return 409
-            case MotorizenErrorEnum.LOGIN_ERROR:
+            case MotoriZenErrorEnum.LOGIN_ERROR:
                 return 401
-            case (
-                MotorizenErrorEnum.ROUTERS_NOT_INITIALIZED
-                | MotorizenErrorEnum.INVALID_ROUTER
-                | MotorizenErrorEnum.LOGGER_NOT_INITIALIZED
-            ):
-                return 500
             case _:
                 return 500

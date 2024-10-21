@@ -1,7 +1,7 @@
 from .error_model import ErrorModel
-from .motorizen_error import MotorizenError
+from .motorizen_error import MotoriZenError
 
 __all__ = [
-    "MotorizenError",
+    "MotoriZenError",
     "ErrorModel",
 ]
