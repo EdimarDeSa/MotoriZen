@@ -10,6 +10,8 @@ class MotoriZenErrorEnum(IntEnum):
     LOGIN_ERROR = -200
     LOGOUT_ERROR = -201
 
+    CAR_NOT_FOUND = -300
+
     UNKNOWN_ERROR = -999
 
     def __repr__(self) -> str:

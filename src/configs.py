@@ -3,7 +3,7 @@ from fastapi import FastAPI
 
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
-from Routers import AuthRouter, UserRouter
+from Routers import AuthRouter, CarsRouter, UserRouter
 from Routers.base_router import BaseRouter
 
 load_dotenv()
@@ -26,6 +26,7 @@ __all__ = [
 ROUTERS: list[type[BaseRouter]] = [
     AuthRouter,
     UserRouter,
+    CarsRouter,
 ]
 
 
