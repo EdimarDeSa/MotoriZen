@@ -9,7 +9,6 @@ from Enums import MotoriZenErrorEnum
 from Enums.redis_dbs_enum import RedisDbsEnum
 from ErrorHandler import MotoriZenError
 from Repositories.user_repository import UserRepository
-from Services.auth_service import AuthService
 from Services.base_service import BaseService
 from Utils.redis_handler import RedisHandler
 
@@ -110,6 +109,8 @@ class UserService(BaseService):
             raise e
 
     def remove_user(self, email: str, cd_auth: str) -> None:
+        from Services.auth_service import AuthService
+
         self.logger.debug("Starting delete_user")
         db_session = self.create_session(write=True)
 

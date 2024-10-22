@@ -40,7 +40,7 @@ class AuthRouter(BaseRouter):
         Example:
 
             $ curl -X POST \\
-            --url http://localhost:8080/token \\
+            --url http://localhost:8000/token \\
             --header 'Content-Type: multipart/form-data' \\
             --form username={email@domain.com} \\
             --form password={P@s5W0rd}
@@ -78,7 +78,7 @@ class AuthRouter(BaseRouter):
         Example:
 
             $ curl -X POST \\
-            --url http://localhost:8080/refresh \\
+            --url http://localhost:8000/refresh \\
             --header 'Authorization: Bearer acess_token'
         """
         self.logger.info("Starting refresh_token")
@@ -102,7 +102,7 @@ class AuthRouter(BaseRouter):
         Example:
 
             $ curl -X POST \\
-            --url http://localhost:8080/logout \\
+            --url http://localhost:8000/logout \\
             --header 'Authorization: Bearer acess_token'
         """
         self.logger.info("Starting logout")

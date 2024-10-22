@@ -33,9 +33,9 @@ def home() -> str:
 
 
 @app.get("/version", summary="Version", tags=["Utils"])
-def home() -> str:
+def home() -> dict[str, str]:
     """
-    Home page
+    Return the version of the API
     """
     return {"version": VERSION}
 

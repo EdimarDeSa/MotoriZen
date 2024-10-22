@@ -86,4 +86,4 @@ if DEBUG_MODE:
 
 
 ### VERSION ###
-VERSION: str = "0.0.1"
+VERSION: str = "V0.0.1"
