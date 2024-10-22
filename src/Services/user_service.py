@@ -56,7 +56,7 @@ class UserService(BaseService):
             cd_auth = self._create_user_auth(new_user.email, new_user.first_name, new_user.last_name, new_user.password)
 
             self.logger.debug("Creating user data")
-            new_user_data = UserSchema(cd_auth=cd_auth, **new_user.model_dump(exclude_none=True))
+            new_user_data = UserSchema(cd_auth=cd_auth, **new_user.model_dump(exclude_none=True, exclude={"password"}))
 
             self.logger.debug("Inserting user data")
             self._user_repository.insert_user(db_session, new_user_data)
