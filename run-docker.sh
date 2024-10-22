@@ -1,6 +1,4 @@
 !#/bin/bash
 
-cd docker/
-
-docker-compose down
-docker-compose up -d
+docker-compose -f docker/compose.yaml down
+docker-compose -f docker/compose.yaml up -d
