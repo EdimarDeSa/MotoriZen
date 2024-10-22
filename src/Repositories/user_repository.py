@@ -4,7 +4,7 @@ from typing import Any
 from sqlalchemy import Delete, Insert, Select, Update
 from sqlalchemy.orm import Session, scoped_session
 
-from db.Models.user_model import NewDbUserModel, UpdateUserModel
+from db.Models.user_model import UpdateUserModel
 from db.Schemas.user_schema import UserSchema
 from Enums import MotoriZenErrorEnum
 from ErrorHandler.motorizen_error import MotoriZenError
@@ -51,11 +51,11 @@ class UserRepository(BaseRepository):
         except Exception as e:
             raise e
 
-    def insert_user(self, db_session: scoped_session[Session], new_user_data: NewDbUserModel) -> None:
+    def insert_user(self, db_session: scoped_session[Session], new_user_data: UserSchema) -> None:
         self.logger.debug("Starting insert_user")
 
         try:
-            new_data: dict[str, Any] = new_user_data.model_dump(exclude_none=True)
+            new_data: dict[str, Any] = new_user_data.as_dict(exclude_none=True)
 
             query: Insert[UserSchema] = self.querys.insert_user(new_data)
 

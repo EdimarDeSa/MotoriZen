@@ -7,6 +7,7 @@ from db.Models import NewUserModel, UpdateUserModel, UserModel
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
 from Responses import Created, NoContent, Ok
+from Services.auth_service import AuthService
 from Services.user_service import UserService
 from Utils.custom_types import CurrentActiveUser
 
@@ -41,7 +42,7 @@ class UserRouter(BaseRouter):
 
         self.logger.debug(f"User: {user_data.email}")
 
-        return Ok(content=UserMeContent(data=user_data), headers=request.headers)
+        return Ok(content=UserMeContent(data=user_data))
 
     def new_user(self, request: Request, new_user: NewUserModel) -> Created:
         """
@@ -101,11 +102,19 @@ class UserRouter(BaseRouter):
             http://localhost:8000/users/update-user
         """
 
-        # TODO: Adicionar retorno de erros
-        user_updated = self.user_service.update_user(user_data.id_user, update_user)
+        try:
+            user_updated = self.user_service.update_user(user_data.id_user, update_user)
 
-        content = UserUpdatedContent(data=user_updated)
-        return Ok(content=content, headers=request.headers)
+            content = UserUpdatedContent(data=user_updated)
+            return Ok(content=content)
+
+        except Exception as e:
+            self.logger.exception(e)
+
+            if not isinstance(e, MotoriZenError):
+                e = MotoriZenError(err=MotoriZenErrorEnum.UNKNOWN_ERROR, detail="")
+
+            raise e.as_http_response()
 
     def delete_user(self, request: Request, user_data: CurrentActiveUser) -> NoContent:
         """
@@ -124,9 +133,7 @@ class UserRouter(BaseRouter):
 
             self.user_service.remove_user(user_data.email, str(user_data.cd_auth))
 
-            # TODO: Forçar logout do usuário
-            # TODO: Limpar cache de dados do usuário
-            return NoContent(headers=request.headers)
+            return NoContent()
 
         except Exception as e:
             self.logger.exception(e)

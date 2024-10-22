@@ -3,13 +3,15 @@ import uuid
 
 from keycloak import KeycloakAdmin, KeycloakError
 
-from db.Models.user_model import NewDbUserModel, NewUserModel, UpdateUserModel, UserModel
+from db.Models.user_model import NewUserModel, UpdateUserModel, UserModel
 from db.Schemas.user_schema import UserSchema
 from Enums import MotoriZenErrorEnum
+from Enums.redis_dbs_enum import RedisDbsEnum
 from ErrorHandler import MotoriZenError
 from Repositories.user_repository import UserRepository
+from Services.auth_service import AuthService
 from Services.base_service import BaseService
-from Utils.random_password import generate_random_password
+from Utils.redis_handler import RedisHandler
 
 
 class UserService(BaseService):
@@ -24,6 +26,7 @@ class UserService(BaseService):
             verify=True,
         )
         self._user_repository = UserRepository()
+        self._cache_handler = RedisHandler()
         self.create_logger(__name__)
 
     def get_user_by_cd_auth(self, cd_auth: str) -> UserModel:
@@ -54,7 +57,7 @@ class UserService(BaseService):
             cd_auth = self._create_user_auth(new_user.email, new_user.first_name, new_user.last_name, new_user.password)
 
             self.logger.debug("Creating user data")
-            new_user_data = NewDbUserModel(cd_auth=cd_auth, **new_user.model_dump(exclude_none=True))
+            new_user_data = UserSchema(cd_auth=cd_auth, **new_user.model_dump(exclude_none=True))
 
             self.logger.debug("Inserting user data")
             self._user_repository.insert_user(db_session, new_user_data)
@@ -86,6 +89,14 @@ class UserService(BaseService):
             self.logger.debug("Retrieving user data")
             user_data: UserSchema = self._user_repository.select_user_by_id(db_session, str(id_user))
 
+            self.logger.debug("Updating user data in cache")
+
+            self._cache_handler.set_data(
+                RedisDbsEnum.USERS,
+                str(user_data.cd_auth),
+                user_data.as_dict(exclude_none=True),
+            )
+
             self.logger.debug("User data retrieved")
             return UserModel.model_validate(user_data, from_attributes=True)
 
@@ -103,9 +114,13 @@ class UserService(BaseService):
         db_session = self.create_session(write=True)
 
         try:
+            AuthService().logout_user(email, str(cd_auth))
+
             self._delete_user_auth(cd_auth)
             self._user_repository.delete_user(db_session, email)
             db_session.commit()
+
+            self._cache_handler.delete_data(RedisDbsEnum.USERS, cd_auth)
 
         except Exception as e:
             self.logger.exception(e)
