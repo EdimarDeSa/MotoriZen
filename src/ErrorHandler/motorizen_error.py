@@ -18,28 +18,18 @@ class MotoriZenError(Exception):
         super().__init__(f"<{self.err.name}: {self.err.value}>: {detail}")
 
     def as_http_response(self) -> HTTPException:
+        err_data = self.err.value
         error_model = ErrorModel(
             error=self.err.name,
             description=self.detail,
         )
         content = ExceptionContent(
-            rc=self.err,
+            rc=err_data.rc,
             data=error_model,
         )
-        status_code = self.__cehck_error_code()
+        status_code = err_data.status_code
         return HTTPException(
             status_code=status_code,
             detail=content.model_dump(exclude_none=True),
             headers=self.headers,
         )
-
-    def __cehck_error_code(self) -> int:
-        match self.err.value:
-            case MotoriZenErrorEnum.USER_NOT_FOUND:
-                return 404
-            case MotoriZenErrorEnum.USER_ALREADY_EXISTS:
-                return 409
-            case MotoriZenErrorEnum.LOGIN_ERROR:
-                return 401
-            case _:
-                return 500

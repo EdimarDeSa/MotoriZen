@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from configs import CONTACT, TITLE, VERSION, register_routers
+from configs import CONTACT, TITLE, VERSION, register_middlewares, register_routers
 
 app = FastAPI(
     title=TITLE,
@@ -10,6 +10,7 @@ app = FastAPI(
     license_info={"name": "MIT License", "url": "https://opensource.org/licenses/MIT"},
 )
 
+register_middlewares(app)
 register_routers(app)
 
 
