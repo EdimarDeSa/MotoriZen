@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS "tb_car"
     "color" VARCHAR(25) NOT NULL,
     "license_plate" VARCHAR(10) UNIQUE DEFAULT '0000000000',
     "odometer" FLOAT NOT NULL,
+    "is_active" BOOLEAN DEFAULT TRUE NOT NULL,
     "last_update" TIMESTAMP,
     "creation" TIMESTAMP
 );

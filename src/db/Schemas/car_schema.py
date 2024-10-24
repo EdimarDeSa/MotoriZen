@@ -1,7 +1,8 @@
 import uuid
+from calendar import c
 from datetime import datetime
 
-from sqlalchemy import UUID, DateTime, Float, ForeignKey, Integer, String
+from sqlalchemy import UUID, Boolean, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import MappedColumn, mapped_column
 
 from db.Schemas.base_schema import BaseSchema
@@ -19,6 +20,7 @@ class CarSchema(BaseSchema):
     color: MappedColumn[str] = mapped_column(String(25), nullable=False)
     license_plate: MappedColumn[str] = mapped_column(String(10), nullable=False, unique=True)
     odometer: MappedColumn[float] = mapped_column(Float(precision=2), nullable=False, default=0.0)
+    is_active: MappedColumn[bool] = mapped_column(Boolean(), nullable=False, default=True)
     last_update: MappedColumn[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
     creation: MappedColumn[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
 

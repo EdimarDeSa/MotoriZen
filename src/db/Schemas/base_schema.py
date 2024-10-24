@@ -30,3 +30,13 @@ class BaseSchema(Base):
         if exclude_none:
             return {c.name: getattr(self, c.name) for c in self.__table__.c if getattr(self, c.name) is not None}
         return {c.name: getattr(self, c.name) for c in self.__table__.c}
+
+    @classmethod
+    def fields(cls) -> tuple[str]:
+        """
+        Returns a tuple of fields in the schema
+
+        Returns:
+            fields (tuple[str]): Tuple of fields in the schema
+        """
+        return tuple(c.name for c in cls.__table__.c)
