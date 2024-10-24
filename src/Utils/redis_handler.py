@@ -1,7 +1,7 @@
 import json
 import logging
 import os
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 from fastapi.encoders import jsonable_encoder
 from redis import Redis
@@ -25,7 +25,7 @@ class RedisHandler:
             decode_responses=True,
         )
 
-    def set_data(self, db: RedisDbsEnum, key: str, value: dict[str, Any], ex: Optional[int] = None) -> Any:
+    def set_data(self, db: RedisDbsEnum, key: str, value: dict[str, Any] | list[Any], ex: Optional[int] = None) -> Any:
         self._logger.info("Starting set_data")
         redis = self.__create_redis_client(db)
 
@@ -38,7 +38,7 @@ class RedisHandler:
         redis.quit()
         return result
 
-    def get_data(self, db: RedisDbsEnum, key: str) -> dict[str, Any] | None:
+    def get_data(self, db: RedisDbsEnum, key: str) -> Union[dict[str, Any], list[Any], None]:
         self._logger.info("Starting get_data")
         redis = self.__create_redis_client(db)
         self._logger.debug(f"Searching for key: {key} on db: {db}")

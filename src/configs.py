@@ -1,19 +1,25 @@
+from typing import Any, Union
+
 from dotenv import load_dotenv
 from fastapi import FastAPI
+from fastapi.middleware import Middleware
+from starlette.middleware.cors import CORSMiddleware
 
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
-from Routers import AuthRouter, UserRouter
+from Middlewares.process_time_header_middleware import ProcessTimeHeaderMiddleware
+from Routers import AuthRouter, CarsRouter, UserRouter
 from Routers.base_router import BaseRouter
 
 load_dotenv()
-
 import logging
 import os
 import sys
 from logging import Handler, Logger
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
+
+from starlette.middleware.cors import CORSMiddleware
 
 __all__ = [
     "register_routers",
@@ -26,6 +32,7 @@ __all__ = [
 ROUTERS: list[type[BaseRouter]] = [
     AuthRouter,
     UserRouter,
+    CarsRouter,
 ]
 
 
@@ -44,6 +51,33 @@ def register_routers(app: FastAPI) -> None:
 
         for route in r.router.routes:
             logger.debug(f"Route: {list(route.methods)[0]} - {route.tags[0]} - {route.path}")
+
+
+### MIDDLEWARES ###
+ORIGINS: list[str] = ["*"]
+MIDDLEWARES: list[dict[str, dict[str, Any] | Any]] = [
+    {
+        "middleware_class": CORSMiddleware,
+        "options": {
+            "allow_origins": ORIGINS,
+            "allow_credentials": True,
+            "allow_methods": ["*"],
+            "allow_headers": ["*"],
+        },
+    },
+    {"middleware_class": ProcessTimeHeaderMiddleware, "options": {}},
+]
+
+
+def register_middlewares(app: FastAPI) -> None:
+    for middleware in MIDDLEWARES:
+        logger.debug(f"Iniciando - {middleware['middleware_class'].__name__}")
+
+        if "http" in middleware.get("options"):
+            app.middleware("http")(middleware["middleware_class"])
+            return
+
+        app.add_middleware(middleware["middleware_class"], **middleware["options"])
 
 
 ### PROJECT INFO ###

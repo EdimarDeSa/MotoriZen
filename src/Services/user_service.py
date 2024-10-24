@@ -46,6 +46,9 @@ class UserService(BaseService):
 
             raise e
 
+        finally:
+            db_session.close()
+
     def create_user(self, new_user: NewUserModel) -> None:
         self.logger.debug("Starting insert_user")
         db_session = self.create_session(write=True)
@@ -56,7 +59,7 @@ class UserService(BaseService):
             cd_auth = self._create_user_auth(new_user.email, new_user.first_name, new_user.last_name, new_user.password)
 
             self.logger.debug("Creating user data")
-            new_user_data = UserSchema(cd_auth=cd_auth, **new_user.model_dump(exclude_none=True))
+            new_user_data = UserSchema(cd_auth=cd_auth, **new_user.model_dump(exclude_none=True, exclude={"password"}))
 
             self.logger.debug("Inserting user data")
             self._user_repository.insert_user(db_session, new_user_data)
@@ -76,6 +79,9 @@ class UserService(BaseService):
                 e = MotoriZenError(err=MotoriZenErrorEnum.UNKNOWN_ERROR, detail=repr(e), headers=None)
 
             raise e
+
+        finally:
+            db_session.close()
 
     def update_user(self, id_user: uuid.UUID, update_user: UpdateUserModel) -> UserModel:
         self.logger.debug("Starting update_user")
@@ -108,6 +114,9 @@ class UserService(BaseService):
 
             raise e
 
+        finally:
+            db_session.close()
+
     def remove_user(self, email: str, cd_auth: str) -> None:
         from Services.auth_service import AuthService
 
@@ -130,6 +139,9 @@ class UserService(BaseService):
                 e = MotoriZenError(err=MotoriZenErrorEnum.UNKNOWN_ERROR, detail=repr(e), headers=None)
 
             raise e
+
+        finally:
+            db_session.close()
 
     def _create_user_auth(self, email: str, first_name: str, last_name: str, password: str) -> str:
         self.logger.debug("Creating user in Keycloak")

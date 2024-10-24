@@ -1,7 +1,3 @@
-from typing import Optional
-
-from pydantic import Field
-
 from db.Models import UserModel
 from db.Models.user_model import NewUserModel
 from Responses.base_response import BaseContent

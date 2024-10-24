@@ -1,17 +1,6 @@
 from fastapi import FastAPI
 
-from configs import CONTACT, TITLE, VERSION, register_routers
-from db import DBConnectionHandler
-
-
-def main() -> None:
-    print(TITLE)
-    print(f"Contact: {CONTACT['name']} <{CONTACT['email']}>")
-    print(f"Project URL: {CONTACT['url']}")
-
-    db_session = DBConnectionHandler.create_session(write=True)
-    DBConnectionHandler.test_connection(db_session)
-
+from configs import CONTACT, TITLE, VERSION, register_middlewares, register_routers
 
 app = FastAPI(
     title=TITLE,
@@ -21,6 +10,7 @@ app = FastAPI(
     license_info={"name": "MIT License", "url": "https://opensource.org/licenses/MIT"},
 )
 
+register_middlewares(app)
 register_routers(app)
 
 
@@ -38,7 +28,3 @@ def home() -> dict[str, str]:
     Return the version of the API
     """
     return {"version": VERSION}
-
-
-if __name__ == "__main__":
-    main()
