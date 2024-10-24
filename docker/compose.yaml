@@ -1,0 +1,54 @@
+services:
+  postgres:
+    container_name: motorizen_db
+    image: postgres:16
+    env_file:
+      - ../.env
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - PGUSER=${DB_USER}
+      - PGPASSWORD=${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./init_sql:/docker-entrypoint-initdb.d/
+    networks:
+      - db_network
+    shm_size: 128mb
+  
+  keycloak:
+    container_name: motorizen_keycloak
+    image: quay.io/keycloak/keycloak:25.0.6
+    env_file:
+      - ../.env
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+    command: ["start-dev"]
+    ports:
+      - "8080:8080"
+    networks:
+      - db_network
+    shm_size: 512mb
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis_config:/etc/redis/
+    networks:
+      - db_network
+    shm_size: 128mb
+    
+
+volumes:
+  db_data:
+  keycloak_data:
+
+
+networks:
+  db_network:
+    driver: bridge
