@@ -21,9 +21,9 @@ class AuthRouter(BaseRouter):
 
     def _register_routes(self) -> None:
         # POST
-        self.router.add_api_route("/token", self.login, response_model=TokenModel, methods=["POST"])
-        self.router.add_api_route("/refresh", self.refresh_token, methods=["POST"])
-        self.router.add_api_route("/logout", self.logout, methods=["GET"])
+        self.router.add_api_route("/token", self.login, response_model=TokenModel, methods=["POST"], tags=["POST"])
+        self.router.add_api_route("/refresh", self.refresh_token, methods=["POST"], tags=["POST"])
+        self.router.add_api_route("/logout", self.logout, methods=["GET"], tags=["GET"])
 
     async def login(
         self,

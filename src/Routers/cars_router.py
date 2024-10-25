@@ -26,17 +26,29 @@ class CarsRouter(BaseRouter):
         self._register_routes()
 
     def _register_routes(self) -> None:
-        self.router.add_api_route("/get-cars", self.get_cars, response_model=CarsContent, methods=["POST"])
-        self.router.add_api_route("/get-car/{id_car}", self.get_car, response_model=CarContent, methods=["GET"])
-        self.router.add_api_route("/new-car", self.new_car, methods=["POST"])
-        self.router.add_api_route("/update-car", self.update_car, response_model=CarContent, methods=["PUT"])
-        self.router.add_api_route("/delete-car/{id_car}", self.delete_car, response_model=None, methods=["DELETE"])
-
         self.router.add_api_route(
-            "/get-brands", self.get_brands, response_model=BrandContent, methods=["POST"], tags=["Brands"]
+            "/get-cars", self.get_cars, response_model=CarsContent, methods=["POST"], tags=["POST"]
         )
         self.router.add_api_route(
-            "/get-brand", self.get_brand, response_model=BrandContent, methods=["POST"], tags=["Brands"]
+            "/get-car/{id_car}", self.get_car, response_model=CarContent, methods=["GET"], tags=["GET"]
+        )
+        self.router.add_api_route("/new-car", self.new_car, methods=["POST"], tags=["POST"])
+        self.router.add_api_route(
+            "/update-car", self.update_car, response_model=CarContent, methods=["PUT"], tags=["PUT"]
+        )
+        self.router.add_api_route(
+            "/delete-car/{id_car}", self.delete_car, response_model=None, methods=["DELETE"], tags=["DELETE"]
+        )
+
+        self.router.add_api_route(
+            "/get-brands", self.get_brands, response_model=BrandContent, methods=["POST"], tags=["Brands", "POST"]
+        )
+        self.router.add_api_route(
+            "/get-brand/{id_brand}",
+            self.get_brand,
+            response_model=BrandContent,
+            methods=["POST"],
+            tags=["Brands", "POST"],
         )
 
     def get_car(self, request: Request, user_data: CurrentActiveUser, id_car: str) -> Ok:
