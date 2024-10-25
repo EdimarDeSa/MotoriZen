@@ -4,8 +4,8 @@ from typing import Any
 from sqlalchemy import Delete, Insert, Select, Update
 from sqlalchemy.orm import Session, scoped_session
 
-from db.Models.user_model import UpdateUserModel
-from db.Schemas.user_schema import UserSchema
+from db.Models import UserUpdatesModel
+from db.Schemas import UserSchema
 from Enums import MotoriZenErrorEnum
 from ErrorHandler.motorizen_error import MotoriZenError
 from Repositories.base_repository import BaseRepository
@@ -57,7 +57,7 @@ class UserRepository(BaseRepository):
         try:
             new_data: dict[str, Any] = new_user_data.as_dict(exclude_none=True)
 
-            query: Insert[UserSchema] = self.querys.insert_user(new_data)
+            query: Insert = self.querys.insert_user(new_data)
 
             self.logger.debug("Inserting new user")
             result = db_session.execute(query)
@@ -66,13 +66,13 @@ class UserRepository(BaseRepository):
         except Exception as e:
             raise e
 
-    def update_user(self, db_session: scoped_session[Session], id_user: str, update_user: UpdateUserModel) -> None:
+    def update_user(self, db_session: scoped_session[Session], id_user: str, update_user: UserUpdatesModel) -> None:
         self.logger.debug("Starting update_user")
 
         try:
             new_data: dict[str, Any] = update_user.model_dump(exclude_none=True)
 
-            query: Update[UserSchema] = self.querys.update_user(id_user, new_data)
+            query: Update = self.querys.update_user(id_user, new_data)
 
             self.logger.debug(f"Updating user: {id_user}")
             db_session.execute(query)
@@ -85,7 +85,7 @@ class UserRepository(BaseRepository):
         self.logger.debug("Starting delete_user")
 
         try:
-            query: Delete[UserSchema] = self.querys.delete_user(email)
+            query: Delete = self.querys.delete_user(email)
 
             self.logger.debug("Deleting user")
             db_session.execute(query)
