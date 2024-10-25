@@ -4,14 +4,10 @@ from fastapi import APIRouter, Request
 
 from Contents.brand_content import BrandContent
 from Contents.car_contents import CarContent, CarsContent
-from db.Models import NewCarModel, UpdateCarModel
-from db.Models.brand_model import BrandModel
-from db.Models.car_model import CarModel, CarsQueryModel, CarsQueryResponseModel
-from Enums.motorizen_error_enum import MotoriZenErrorEnum
-from ErrorHandler.motorizen_error import MotoriZenError
-from Responses.created import Created
-from Responses.no_content import NoContent
-from Responses.ok import Ok
+from db.Models import BrandModel, CarModel, CarQueryModel, CarQueryResponseModel, CarUpdatesModel, NewCarModel
+from Enums import MotoriZenErrorEnum
+from ErrorHandler import MotoriZenError
+from Responses import Created, NoContent, Ok
 from Routers.base_router import BaseRouter
 from Services.car_service import CarService
 from Utils.custom_types import CurrentActiveUser
@@ -67,7 +63,7 @@ class CarsRouter(BaseRouter):
                 e = MotoriZenError(err=MotoriZenErrorEnum.UNKNOWN_ERROR, detail="")
             raise e.as_http_response()
 
-    def get_cars(self, request: Request, user_data: CurrentActiveUser, query_data: CarsQueryModel) -> Ok:
+    def get_cars(self, request: Request, user_data: CurrentActiveUser, query_data: CarQueryModel) -> Ok:
         self.logger.debug("Starting get_cars")
 
         try:
@@ -77,7 +73,7 @@ class CarsRouter(BaseRouter):
                 str(user_data.id_user), query_data.query_params, query_data.query_options, count
             )
 
-            car_query_response_model = CarsQueryResponseModel(total_results=count, cars=car_model)
+            car_query_response_model = CarQueryResponseModel(total_results=count, cars=car_model)
             content = CarsContent(data=car_query_response_model)
             return Ok(content=content)
 
@@ -105,7 +101,7 @@ class CarsRouter(BaseRouter):
 
             raise e.as_http_response()
 
-    def update_car(self, request: Request, user_data: CurrentActiveUser, update_car: UpdateCarModel) -> Ok:
+    def update_car(self, request: Request, user_data: CurrentActiveUser, update_car: CarUpdatesModel) -> Ok:
         self.logger.debug("Starting update_car")
 
         try:

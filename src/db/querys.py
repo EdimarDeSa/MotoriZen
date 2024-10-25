@@ -2,9 +2,8 @@ from typing import Any
 
 from sqlalchemy import Delete, Insert, Select, Text, Update, delete, func, insert, select, text, update
 
-from db.Models.car_model import CarQueryOptions
+from db.Models import CarQueryOptionsModel
 from db.Schemas.base_schema import BaseSchema
-from db.Schemas.brand_schema import BrandSchema
 
 from .Schemas import *
 
@@ -34,7 +33,7 @@ class Querys:
         self,
         id_user: str,
         query_params_dict: dict[str, Any],
-        query_options: CarQueryOptions,
+        query_options: CarQueryOptionsModel,
     ) -> Select[tuple[CarSchema]]:
         offset = self._calculate_offset(query_options.per_page, query_options.page)
 

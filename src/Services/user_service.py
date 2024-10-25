@@ -3,10 +3,9 @@ import uuid
 
 from keycloak import KeycloakAdmin, KeycloakError
 
-from db.Models.user_model import NewUserModel, UpdateUserModel, UserModel
-from db.Schemas.user_schema import UserSchema
-from Enums import MotoriZenErrorEnum
-from Enums.redis_dbs_enum import RedisDbsEnum
+from db.Models import NewUserModel, UserModel, UserUpdatesModel
+from db.Schemas import UserSchema
+from Enums import MotoriZenErrorEnum, RedisDbsEnum
 from ErrorHandler import MotoriZenError
 from Repositories.user_repository import UserRepository
 from Services.base_service import BaseService
@@ -83,7 +82,7 @@ class UserService(BaseService):
         finally:
             db_session.close()
 
-    def update_user(self, id_user: uuid.UUID, update_user: UpdateUserModel) -> UserModel:
+    def update_user(self, id_user: uuid.UUID, update_user: UserUpdatesModel) -> UserModel:
         self.logger.debug("Starting update_user")
         db_session = self.create_session(write=True)
 
