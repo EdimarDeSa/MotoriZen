@@ -20,6 +20,7 @@ class MotoriZenErrorEnum(Enum):
 
     CAR_NOT_FOUND = ErrorData(404, -300)
     BRAND_NOT_FOUND = ErrorData(404, -301)
+    INVALID_UPDATES_DATA = ErrorData(400, -302)
 
     INVALID_SORT_KEY = ErrorData(400, -800)
 
