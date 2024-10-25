@@ -1,35 +1,33 @@
-from typing import Any, Union
-
-from dotenv import load_dotenv
-from fastapi import FastAPI
-from fastapi.middleware import Middleware
-from starlette.middleware.cors import CORSMiddleware
-
-from Enums import MotoriZenErrorEnum
-from ErrorHandler import MotoriZenError
-from Middlewares.process_time_header_middleware import ProcessTimeHeaderMiddleware
-from Routers import AuthRouter, CarsRouter, UserRouter
-from Routers.base_router import BaseRouter
-
-load_dotenv()
 import logging
 import os
 import sys
 from logging import Handler, Logger
-from logging.handlers import RotatingFileHandler
 from pathlib import Path
+from typing import Any, Callable, Sequence
 
+from dotenv import load_dotenv
+from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
+load_dotenv()
+
+from Enums import MotoriZenErrorEnum
+from ErrorHandler import MotoriZenError
+from Middlewares import ProcessTimeHeaderMiddleware
+from Routers import AuthRouter, CarsRouter, UserRouter
+from Routers.base_router import BaseRouter
+from Utils.custom_types import MiddlewareSequence, RoutersSequence
+
 __all__ = [
-    "register_routers",
+    "REGISTER_ROUTERS",
+    "REGISTER_MIDDLEWARES",
     "CONTACT",
     "TITLE",
 ]
 
 
 ### ROUTERS ###
-ROUTERS: list[type[BaseRouter]] = [
+ROUTERS: RoutersSequence = [
     AuthRouter,
     UserRouter,
     CarsRouter,
@@ -50,12 +48,17 @@ def register_routers(app: FastAPI) -> None:
         app.include_router(r.router)
 
         for route in r.router.routes:
-            logger.debug(f"Route: {list(route.methods)[0]} - {route.tags[0]} - {route.path}")
+            path: str = route.path if hasattr(route, "path") else str(route)
+            tags: Sequence[str] = route.tags if hasattr(route, "tags") else []
+            logger.debug(f"Route => {path} => {tags}")
+
+
+REGISTER_ROUTERS: Callable[[FastAPI], None] = register_routers
 
 
 ### MIDDLEWARES ###
 ORIGINS: list[str] = ["*"]
-MIDDLEWARES: list[dict[str, dict[str, Any] | Any]] = [
+MIDDLEWARES: MiddlewareSequence = [
     {
         "middleware_class": CORSMiddleware,
         "options": {
@@ -73,12 +76,14 @@ def register_middlewares(app: FastAPI) -> None:
     for middleware in MIDDLEWARES:
         logger.debug(f"Iniciando - {middleware['middleware_class'].__name__}")
 
-        if "http" in middleware.get("options"):
+        if middleware["options"].get("http"):
             app.middleware("http")(middleware["middleware_class"])
             return
 
         app.add_middleware(middleware["middleware_class"], **middleware["options"])
 
+
+REGISTER_MIDDLEWARES: Callable[[FastAPI], None] = register_middlewares
 
 ### PROJECT INFO ###
 TITLE: str = "MotoriZen – Controle de Ganhos, KM e Consumo para Motoristas"
@@ -95,7 +100,7 @@ CONTACT: dict[str, str] = {
 ### LOGGER ###
 logger: Logger = logging.getLogger(__name__)
 
-DEBUG_MODE: bool = bool(int(os.getenv("DEBUG_MODE", "0")))
+DEBUG_MODE: bool = bool(int(os.getenv("DEBUG_MODE", 0)))
 
 if DEBUG_MODE:
     log_format: str = (

@@ -3,13 +3,9 @@ import json
 import uuid
 from typing import Any
 
-from db.Models.brand_model import BrandModel
-from db.Models.car_model import CarModel, CarQueryOptions, CarQueryParams, CarUpdates, NewCarModel, UpdateCarModel
-from db.Schemas.brand_schema import BrandSchema
-from db.Schemas.car_schema import CarSchema
-from Enums.motorizen_error_enum import MotoriZenErrorEnum
-from Enums.redis_dbs_enum import RedisDbsEnum
-from ErrorHandler.motorizen_error import MotoriZenError
+from db.Models import BrandModel, CarModel, CarQueryOptionsModel, CarQueryParamsModel, CarUpdatesModel, NewCarModel
+from db.Schemas import BrandSchema, CarSchema
+from Enums import RedisDbsEnum
 from Repositories.car_repository import CarRepository
 from Utils.redis_handler import RedisHandler
 
@@ -39,7 +35,7 @@ class CarService(BaseService):
             raise e
 
     def get_cars(
-        self, id_user: str, query_params: CarQueryParams, query_options: CarQueryOptions, count: int
+        self, id_user: str, query_params: CarQueryParamsModel, query_options: CarQueryOptionsModel, count: int
     ) -> list[CarModel]:
         self.logger.debug("Starting get_cars")
         db_session = self.create_session(write=False)
@@ -71,7 +67,7 @@ class CarService(BaseService):
         except Exception as e:
             raise e
 
-    def get_cars_count(self, id_user: str, query_params: CarQueryParams) -> int:
+    def get_cars_count(self, id_user: str, query_params: CarQueryParamsModel) -> int:
         self.logger.debug("Starting get_cars_count")
         db_session = self.create_session(write=False)
 
@@ -123,7 +119,7 @@ class CarService(BaseService):
         self.logger.debug(f"Hash created: {base64_hash}")
         return base64_hash
 
-    def update_car(self, id_user: str, car_id: str, car_updates: CarUpdates) -> CarModel:
+    def update_car(self, id_user: str, car_id: str, car_updates: CarUpdatesModel) -> CarModel:
         self.logger.debug("Starting update_car")
         db_session = self.create_session(write=True)
 

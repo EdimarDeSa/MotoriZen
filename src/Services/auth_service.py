@@ -5,8 +5,7 @@ from fastapi import Depends
 from jwcrypto.jwt import JWTExpired
 from keycloak import KeycloakOpenID
 
-from db.Models.token_model import TokenModel
-from db.Models.user_model import UserModel
+from db.Models import TokenModel, UserModel
 from Enums.motorizen_error_enum import MotoriZenErrorEnum
 from Enums.redis_dbs_enum import RedisDbsEnum
 from ErrorHandler.motorizen_error import MotoriZenError
@@ -52,7 +51,11 @@ class AuthService(BaseService):
     def _get_token_from_cache(self, email: str) -> dict[str, Any] | None:
         try:
             self.logger.debug(f"Getting token from cache for email: {email}")
-            return self._cache_handler.get_data(RedisDbsEnum.TOKENS, email)
+            result = self._cache_handler.get_data(RedisDbsEnum.TOKENS, email)
+
+            if isinstance(result, dict):
+                return result
+            return None
 
         except Exception as e:
             raise e

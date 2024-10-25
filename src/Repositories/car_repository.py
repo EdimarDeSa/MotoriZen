@@ -3,11 +3,10 @@ from typing import Any
 
 from sqlalchemy.orm import Session, scoped_session
 
-from db.Models.car_model import CarQueryOptions, CarUpdates, NewCarModel
-from db.Schemas.brand_schema import BrandSchema
-from db.Schemas.car_schema import CarSchema
-from Enums.motorizen_error_enum import MotoriZenErrorEnum
-from ErrorHandler.motorizen_error import MotoriZenError
+from db.Models import CarQueryOptionsModel, CarUpdatesModel, NewCarModel
+from db.Schemas import BrandSchema, CarSchema
+from Enums import MotoriZenErrorEnum
+from ErrorHandler import MotoriZenError
 
 from .base_repository import BaseRepository
 
@@ -39,7 +38,7 @@ class CarRepository(BaseRepository):
         db_session: scoped_session[Session],
         id_user: str,
         query_params_dict: dict[str, Any],
-        query_options: CarQueryOptions,
+        query_options: CarQueryOptionsModel,
     ) -> list[CarSchema]:
         self.logger.debug("Starting select_cars")
 
@@ -92,7 +91,7 @@ class CarRepository(BaseRepository):
             raise e
 
     def update_car(
-        self, db_session: scoped_session[Session], id_user: str, id_car: str, car_updates: CarUpdates
+        self, db_session: scoped_session[Session], id_user: str, id_car: str, car_updates: CarUpdatesModel
     ) -> None:
         self.logger.debug("Starting update_car")
 

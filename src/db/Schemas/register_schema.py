@@ -7,14 +7,14 @@ from sqlalchemy.orm import MappedColumn, mapped_column
 from db.Schemas.base_schema import BaseSchema
 
 
-class DayResulltSchema(BaseSchema):
-    __tablename__ = "tb_day_result"
+class RegisterSchema(BaseSchema):
+    __tablename__ = "tb_register"
 
-    id_day_result: MappedColumn[uuid.UUID] = mapped_column(UUID(), primary_key=True, default=uuid.uuid4, nullable=False)
+    id_register: MappedColumn[uuid.UUID] = mapped_column(UUID(), primary_key=True, default=uuid.uuid4, nullable=False)
     cd_user: MappedColumn[uuid.UUID] = mapped_column(UUID(), ForeignKey("tb_user.id_user"), nullable=False, index=True)
     cd_car: MappedColumn[uuid.UUID] = mapped_column(UUID(), ForeignKey("tb_car.id_car"), nullable=False, index=True)
     distance: MappedColumn[float] = mapped_column(Float(precision=2), nullable=False, default=0.0)
-    duration: MappedColumn[time] = mapped_column(Time(), nullable=False)
+    working_time: MappedColumn[time] = mapped_column(Time(), nullable=False)
     mean_consuption: MappedColumn[float] = mapped_column(Float(precision=2), nullable=False, default=0.0)
     number_of_trips: MappedColumn[int] = mapped_column(Integer(), nullable=False, default=1)
     total_value: MappedColumn[float] = mapped_column(Float(precision=2), nullable=False, default=0.0)

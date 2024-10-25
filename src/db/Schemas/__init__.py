@@ -1,9 +1,11 @@
+from .brand_schema import BrandSchema
 from .car_schema import CarSchema
-from .resultado_do_dia_schema import DayResulltSchema
+from .register_schema import RegisterSchema
 from .user_schema import UserSchema
 
 __all__ = [
     "CarSchema",
+    "RegisterSchema",
     "UserSchema",
-    "DayResulltSchema",
+    "BrandSchema",
 ]
