@@ -5,7 +5,7 @@ from pydantic import EmailStr, Field, field_validator
 from db.Models.base_model import NewBaseModelDb
 
 
-class NewUserModel(NewBaseModelDb):
+class UserNewModel(NewBaseModelDb):
     first_name: str = Field(max_length=50, min_length=3, examples=["Eduardo"], description="User first name")
     last_name: str = Field(max_length=100, min_length=3, examples=["Eduardo"], description="User last name")
     email: EmailStr = Field(max_length=255, min_length=3, examples=["email@domain.com"], description="User email")

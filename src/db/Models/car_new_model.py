@@ -4,7 +4,7 @@ from typing import Optional
 from pydantic import BaseModel, Field
 
 
-class NewCarModel(BaseModel):
+class CarNewModel(BaseModel):
     cd_brand: int = Field(description="Brand id")
     renavam: Optional[str] = Field(default=None, max_length=11, description="Renavam of the car")
     model: str = Field(max_length=100, description="Model of the car")

@@ -4,7 +4,7 @@ from typing import Optional
 from pydantic import BaseModel, Field
 
 
-class CarQueryParamsModel(BaseModel):
+class CarQueryFiltersModel(BaseModel):
     id_car: Optional[uuid.UUID] = Field(default=None, description="Car id")
     cd_brand: Optional[int] = Field(default=None, description="Brand id")
     renavam: Optional[str] = Field(default=None, max_length=11, description="Renavam of the car")
