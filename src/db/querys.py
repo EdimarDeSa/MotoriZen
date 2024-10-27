@@ -67,6 +67,27 @@ class Querys:
     def select_brand(self, id_brand: int) -> Select[tuple[BrandSchema]]:
         return select(BrandSchema).where(BrandSchema.id_brand == id_brand)
 
+    ### Register Querys ###
+    def select_register_by_id(self, id_user: str, id_register: str) -> Select[tuple[RegisterSchema]]:
+        return select(RegisterSchema).where(
+            RegisterSchema.cd_user == id_user, RegisterSchema.id_register == id_register
+        )
+
+    def insert_register(self, new_register_data: dict[str, Any]) -> Insert:
+        return insert(RegisterSchema).values(**new_register_data)
+
+    def update_register(self, id_user: str, id_register: str, updates: dict[str, Any]) -> Update:
+        return (
+            update(RegisterSchema)
+            .where(RegisterSchema.cd_user == id_user, RegisterSchema.id_register == id_register)
+            .values(**updates)
+        )
+
+    def delete_register(self, id_user: str, id_register: str) -> Delete:
+        return delete(RegisterSchema).where(
+            RegisterSchema.cd_user == id_user, RegisterSchema.id_register == id_register
+        )
+
     ### Internal functions ###
     @classmethod
     def _calculate_offset(cls, per_page: int | None, page: int | None) -> int:
