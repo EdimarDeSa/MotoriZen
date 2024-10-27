@@ -3,7 +3,7 @@ import json
 import uuid
 from typing import Any
 
-from db.Models import BrandModel, CarModel, CarQueryOptionsModel, CarQueryParamsModel, CarUpdatesModel, NewCarModel
+from db.Models import BrandModel, CarModel, CarNewModel, CarQueryFiltersModel, CarQueryOptionsModel, CarUpdatesDataModel
 from db.Schemas import BrandSchema, CarSchema
 from Enums import RedisDbsEnum
 from Repositories.car_repository import CarRepository
@@ -35,7 +35,7 @@ class CarService(BaseService):
             raise e
 
     def get_cars(
-        self, id_user: str, query_params: CarQueryParamsModel, query_options: CarQueryOptionsModel, count: int
+        self, id_user: str, query_params: CarQueryFiltersModel, query_options: CarQueryOptionsModel, count: int
     ) -> list[CarModel]:
         self.logger.debug("Starting get_cars")
         db_session = self.create_session(write=False)
@@ -67,7 +67,7 @@ class CarService(BaseService):
         except Exception as e:
             raise e
 
-    def get_cars_count(self, id_user: str, query_params: CarQueryParamsModel) -> int:
+    def get_cars_count(self, id_user: str, query_params: CarQueryFiltersModel) -> int:
         self.logger.debug("Starting get_cars_count")
         db_session = self.create_session(write=False)
 
@@ -83,7 +83,7 @@ class CarService(BaseService):
         except Exception as e:
             raise e
 
-    def create_car(self, id_user: uuid.UUID, new_car: NewCarModel) -> None:
+    def create_car(self, id_user: uuid.UUID, new_car: CarNewModel) -> None:
         self.logger.debug("Starting create_car")
         db_session = self.create_session(write=True)
 
@@ -119,7 +119,7 @@ class CarService(BaseService):
         self.logger.debug(f"Hash created: {base64_hash}")
         return base64_hash
 
-    def update_car(self, id_user: str, car_id: str, car_updates: CarUpdatesModel) -> CarModel:
+    def update_car(self, id_user: str, car_id: str, car_updates: CarUpdatesDataModel) -> CarModel:
         self.logger.debug("Starting update_car")
         db_session = self.create_session(write=True)
 

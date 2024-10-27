@@ -3,7 +3,7 @@ from typing import Any
 
 from sqlalchemy.orm import Session, scoped_session
 
-from db.Models import CarQueryOptionsModel, CarUpdatesModel, NewCarModel
+from db.Models import CarNewModel, CarQueryOptionsModel, CarUpdatesDataModel
 from db.Schemas import BrandSchema, CarSchema
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
@@ -72,7 +72,7 @@ class CarRepository(BaseRepository):
         except Exception as e:
             raise e
 
-    def insert_car(self, db_session: scoped_session[Session], id_user: uuid.UUID, new_car: NewCarModel) -> None:
+    def insert_car(self, db_session: scoped_session[Session], id_user: uuid.UUID, new_car: CarNewModel) -> None:
         self.logger.debug("Starting create_car")
 
         try:
@@ -91,7 +91,7 @@ class CarRepository(BaseRepository):
             raise e
 
     def update_car(
-        self, db_session: scoped_session[Session], id_user: str, id_car: str, car_updates: CarUpdatesModel
+        self, db_session: scoped_session[Session], id_user: str, id_car: str, car_updates: CarUpdatesDataModel
     ) -> None:
         self.logger.debug("Starting update_car")
 

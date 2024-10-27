@@ -3,7 +3,7 @@ import uuid
 
 from keycloak import KeycloakAdmin, KeycloakError
 
-from db.Models import NewUserModel, UserModel, UserUpdatesModel
+from db.Models import UserModel, UserNewModel, UserUpdatesModel
 from db.Schemas import UserSchema
 from Enums import MotoriZenErrorEnum, RedisDbsEnum
 from ErrorHandler import MotoriZenError
@@ -48,7 +48,7 @@ class UserService(BaseService):
         finally:
             db_session.close()
 
-    def create_user(self, new_user: NewUserModel) -> None:
+    def create_user(self, new_user: UserNewModel) -> None:
         self.logger.debug("Starting insert_user")
         db_session = self.create_session(write=True)
         cd_auth = None

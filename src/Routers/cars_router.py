@@ -4,7 +4,7 @@ from fastapi import APIRouter, Request
 
 from Contents.brand_content import BrandContent
 from Contents.car_contents import CarContent, CarsContent
-from db.Models import BrandModel, CarModel, CarQueryModel, CarQueryResponseModel, CarUpdatesModel, NewCarModel
+from db.Models import BrandModel, CarModel, CarNewModel, CarQueryModel, CarQueryResponseModel, CarUpdatesModel
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
 from Responses import Created, NoContent, Ok
@@ -22,29 +22,21 @@ class CarsRouter(BaseRouter):
         self._register_routes()
 
     def _register_routes(self) -> None:
-        self.router.add_api_route(
-            "/get-cars", self.get_cars, response_model=CarsContent, methods=["POST"], tags=["POST"]
-        )
-        self.router.add_api_route(
-            "/get-car/{id_car}", self.get_car, response_model=CarContent, methods=["GET"], tags=["GET"]
-        )
-        self.router.add_api_route("/new-car", self.new_car, methods=["POST"], tags=["POST"])
-        self.router.add_api_route(
-            "/update-car", self.update_car, response_model=CarContent, methods=["PUT"], tags=["PUT"]
-        )
-        self.router.add_api_route(
-            "/delete-car/{id_car}", self.delete_car, response_model=None, methods=["DELETE"], tags=["DELETE"]
-        )
+        self.router.add_api_route("/get-cars", self.get_cars, response_model=CarsContent, methods=["POST"])
+        self.router.add_api_route("/get-car/{id_car}", self.get_car, response_model=CarContent, methods=["GET"])
+        self.router.add_api_route("/new-car", self.new_car, methods=["POST"])
+        self.router.add_api_route("/update-car", self.update_car, response_model=CarContent, methods=["PUT"])
+        self.router.add_api_route("/delete-car/{id_car}", self.delete_car, response_model=None, methods=["DELETE"])
 
         self.router.add_api_route(
-            "/get-brands", self.get_brands, response_model=BrandContent, methods=["POST"], tags=["Brands", "POST"]
+            "/get-brands", self.get_brands, response_model=BrandContent, methods=["POST"], tags=["Brands"]
         )
         self.router.add_api_route(
             "/get-brand/{id_brand}",
             self.get_brand,
             response_model=BrandContent,
             methods=["POST"],
-            tags=["Brands", "POST"],
+            tags=["Brands"],
         )
 
     def get_car(self, request: Request, user_data: CurrentActiveUser, id_car: str) -> Ok:
@@ -67,13 +59,13 @@ class CarsRouter(BaseRouter):
         self.logger.debug("Starting get_cars")
 
         try:
-            count: int = self.car_service.get_cars_count(str(user_data.id_user), query_data.query_params)
+            count: int = self.car_service.get_cars_count(str(user_data.id_user), query_data.query_filters)
 
             car_model: list[CarModel] = self.car_service.get_cars(
-                str(user_data.id_user), query_data.query_params, query_data.query_options, count
+                str(user_data.id_user), query_data.query_filters, query_data.query_options, count
             )
 
-            car_query_response_model = CarQueryResponseModel(total_results=count, cars=car_model)
+            car_query_response_model = CarQueryResponseModel(total_results=count, results=car_model)
             content = CarsContent(data=car_query_response_model)
             return Ok(content=content)
 
@@ -84,7 +76,7 @@ class CarsRouter(BaseRouter):
                 e = MotoriZenError(err=MotoriZenErrorEnum.UNKNOWN_ERROR, detail="")
             raise e.as_http_response()
 
-    def new_car(self, request: Request, user_data: CurrentActiveUser, new_car: NewCarModel) -> Created:
+    def new_car(self, request: Request, user_data: CurrentActiveUser, new_car: CarNewModel) -> Created:
         self.logger.debug("Starting new_car")
 
         try:
