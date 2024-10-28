@@ -4,6 +4,7 @@ from pydantic import BaseModel, InstanceOf
 from sqlalchemy import Delete, Insert, Select, Text, Update, delete, func, insert, select, text, update
 
 from DB.Models import CarQueryOptionsModel, RegisterQueryFiltersModel, RegisterQueryOptionsModel
+from DB.Models.base_query_options_models import BaseQueryOptionsModel
 from DB.Models.car_query_filters_model import CarQueryFiltersModel
 from DB.Models.range_model import RangeModel
 from DB.Schemas.base_schema import BaseSchema
@@ -102,7 +103,7 @@ class Querys:
         table: type[BaseSchema],
         id_user: str,
         query_filters: InstanceOf[BaseModel],
-        query_options: InstanceOf[BaseModel],
+        query_options: InstanceOf[BaseQueryOptionsModel],
     ) -> Select[tuple[BaseSchema]]:
         offset = cls._calculate_offset(query_options.per_page, query_options.page)
 
@@ -162,3 +163,26 @@ class Querys:
             filters.append(getattr(table, key) == value)
 
         return filters
+
+    @classmethod
+    def count_total_results(
+        cls, table: type[BaseSchema], id_user: str, query_filters: InstanceOf[BaseModel]
+    ) -> Select[tuple[int]]:
+        """
+        Count total results of a query for a given user and filters
+
+        Args:
+
+            table (type[BaseSchema]): The table schema to query from
+            id_user (str): The user id
+            query_filters (InstanceOf[BaseModel]): The query filters to apply
+
+        Returns:
+
+            Select[tuple[int]]: The total results count
+        """
+        filters = cls._crete_data_filter(table, id_user, query_filters)
+
+        id_column = getattr(table, "id_" + table.__tablename__[3:])
+
+        return select(func.count(id_column)).where(*filters)
