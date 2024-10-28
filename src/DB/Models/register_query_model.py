@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 
-from db.Models import RegisterQueryFiltersModel, RegisterQueryOptionsModel
+from DB.Models.register_query_filters_model import RegisterQueryFiltersModel
+from DB.Models.register_query_options import RegisterQueryOptionsModel
 
 
 class RegistersQueryModel(BaseModel):

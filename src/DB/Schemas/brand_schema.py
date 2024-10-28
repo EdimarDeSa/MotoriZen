@@ -3,7 +3,7 @@ import uuid
 from sqlalchemy import INTEGER, String
 from sqlalchemy.orm import MappedColumn, mapped_column
 
-from db.Schemas.base_schema import BaseSchema
+from DB.Schemas.base_schema import BaseSchema
 
 
 class BrandSchema(BaseSchema):

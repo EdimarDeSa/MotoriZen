@@ -4,7 +4,7 @@ from typing import Optional, Self
 
 from pydantic import Field, model_validator
 
-from db.Models.base_model import BaseModelDb
+from DB.Models.base_model import BaseModelDb
 from Enums.motorizen_error_enum import MotoriZenErrorEnum
 from ErrorHandler.motorizen_error import MotoriZenError
 

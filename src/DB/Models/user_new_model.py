@@ -2,7 +2,7 @@ from datetime import date
 
 from pydantic import EmailStr, Field, field_validator
 
-from db.Models.base_model import NewBaseModelDb
+from DB.Models.base_model import NewBaseModelDb
 
 
 class UserNewModel(NewBaseModelDb):

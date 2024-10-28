@@ -3,7 +3,7 @@ from datetime import date
 
 from pydantic import EmailStr, Field
 
-from db.Models.base_model import BaseModelDb
+from DB.Models.base_model import BaseModelDb
 
 
 class UserModel(BaseModelDb):

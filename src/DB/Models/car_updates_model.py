@@ -2,7 +2,7 @@ import uuid
 
 from pydantic import BaseModel, Field
 
-from db.Models import CarUpdatesDataModel
+from DB.Models import CarUpdatesDataModel
 
 
 class CarUpdatesModel(BaseModel):

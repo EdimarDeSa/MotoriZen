@@ -4,7 +4,7 @@ from typing import Optional
 
 from pydantic import BaseModel, Field, field_validator
 
-from db.Models import RangeModel
+from DB.Models.range_model import RangeModel
 
 
 class RegisterQueryFiltersModel(BaseModel):

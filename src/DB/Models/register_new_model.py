@@ -9,12 +9,12 @@ from ErrorHandler import MotoriZenError
 
 
 class RegisterNewModel(BaseModel):
-    __config__: ConfigDict = Field(description="New register model config")
 
     cd_car: uuid.UUID = Field(description="Car id")
     number_of_trips: int = Field(description="Number of trips")
     distance: Optional[float] = Field(
-        description="Distance traveled, in kilometers. If odometer is provided, this field will be ignored in user car odometer update."
+        default=None,
+        description="Distance traveled, in kilometers. If odometer is provided, this field will be ignored in user car odometer update.",
     )
     odometer: Optional[float] = Field(
         default=None,

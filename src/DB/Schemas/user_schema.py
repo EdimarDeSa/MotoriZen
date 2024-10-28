@@ -4,7 +4,7 @@ from datetime import date, datetime
 from sqlalchemy import UUID, Boolean, Date, DateTime, String
 from sqlalchemy.orm import MappedColumn, mapped_column
 
-from db.Schemas.base_schema import BaseSchema
+from DB.Schemas.base_schema import BaseSchema
 
 
 class UserSchema(BaseSchema):

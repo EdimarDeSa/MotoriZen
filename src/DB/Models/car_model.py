@@ -3,7 +3,7 @@ from typing import Optional
 
 from pydantic import Field
 
-from db.Models.base_model import BaseModelDb
+from DB.Models.base_model import BaseModelDb
 
 
 class CarModel(BaseModelDb):

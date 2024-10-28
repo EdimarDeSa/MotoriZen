@@ -4,7 +4,7 @@ from datetime import date, datetime, time
 from sqlalchemy import UUID, Date, DateTime, Float, ForeignKey, Integer, Time
 from sqlalchemy.orm import MappedColumn, mapped_column
 
-from db.Schemas.base_schema import BaseSchema
+from DB.Schemas.base_schema import BaseSchema
 
 
 class RegisterSchema(BaseSchema):

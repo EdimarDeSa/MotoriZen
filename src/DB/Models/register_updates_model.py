@@ -2,7 +2,7 @@ import uuid
 
 from pydantic import BaseModel, Field
 
-from db.Models import RegisterUpdateDataModel
+from DB.Models import RegisterUpdateDataModel
 
 
 class RegisterUpdatesModel(BaseModel):
