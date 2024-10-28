@@ -4,7 +4,7 @@ from fastapi import APIRouter, Request
 
 from Contents.brand_content import BrandContent
 from Contents.car_contents import CarContent, CarsContent
-from db.Models import BrandModel, CarModel, CarNewModel, CarQueryModel, CarQueryResponseModel, CarUpdatesModel
+from DB.Models import BrandModel, CarModel, CarNewModel, CarQueryModel, CarQueryResponseModel, CarUpdatesModel
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
 from Responses import Created, NoContent, Ok
@@ -95,6 +95,7 @@ class CarsRouter(BaseRouter):
 
     def update_car(self, request: Request, user_data: CurrentActiveUser, update_car: CarUpdatesModel) -> Ok:
         self.logger.debug("Starting update_car")
+        # FIXME: Não está atualizando o cache, verificar modo de fazer isso
 
         try:
             result: CarModel = self.car_service.update_car(

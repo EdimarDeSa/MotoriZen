@@ -3,7 +3,7 @@ import uuid
 from fastapi import APIRouter, Request
 
 from Contents.register_content import RegisterContent
-from db.Models import RegisterModel, RegisterNewModel, RegistersQueryModel, RegisterUpdatesModel
+from DB.Models import RegisterModel, RegisterNewModel, RegistersQueryModel, RegisterUpdatesModel
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
 from Responses import Created, NoContent, Ok
@@ -30,9 +30,25 @@ class RegisterRouter(BaseRouter):
         self.router.add_api_route("/delete-register", self.delete_register, methods=["DELETE"])
 
     def get_registers(self, request: Request, user_data: CurrentActiveUser, query_data: RegistersQueryModel) -> Ok:
-        raise NotImplementedError
+        self.logger.debug("Starting get_registers")
 
-    def get_register(self, request: Request, user_data: CurrentActiveUser, id_register: uuid.UUID) -> Ok:
+        try:
+            registers: list[RegisterModel] = self.register_service.get_registers(
+                str(user_data.id_user), query_data.query_filters, query_data.query_options
+            )
+
+            content = RegisterContent(data=registers)
+            return Ok(content=content)
+
+        except Exception as e:
+            self.logger.exception(e)
+
+            if not isinstance(e, MotoriZenError):
+                e = MotoriZenError(err=MotoriZenErrorEnum.UNKNOWN_ERROR, detail="")
+
+            raise e.as_http_response()
+
+    def get_register(self, request: Request, user_data: CurrentActiveUser, id_register: str) -> Ok:
         self.logger.debug("Starting get_register")
 
         try:
@@ -52,11 +68,12 @@ class RegisterRouter(BaseRouter):
     def new_register(self, request: Request, user_data: CurrentActiveUser, new_register: RegisterNewModel) -> Created:
         self.logger.debug("Starting new_register")
 
+        # FIXME: Dar um jeito de "resetar" o cache a cada novo registro
         try:
             self.logger.debug("Creating new register")
-            self.register_service.create_register(str(user_data.id_user), new_register)
+            response_data = self.register_service.create_register(str(user_data.id_user), new_register)
 
-            return Created()
+            return Created(content=response_data)
 
         except Exception as e:
             self.logger.exception(e)
@@ -86,5 +103,19 @@ class RegisterRouter(BaseRouter):
 
             raise e.as_http_response()
 
-    def delete_register(self, request: Request, user_data: CurrentActiveUser, id_register: int) -> NoContent:
+    def delete_register(self, request: Request, user_data: CurrentActiveUser, id_register: str) -> NoContent:
+        self.logger.debug("Starting delete_register")
+
+        try:
+            self.register_service.delete_register(str(user_data.id_user), id_register)
+
+            return NoContent()
+
+        except Exception as e:
+            self.logger.exception(e)
+
+            if not isinstance(e, MotoriZenError):
+                e = MotoriZenError(err=MotoriZenErrorEnum.UNKNOWN_ERROR, detail="")
+
+            raise e.as_http_response()
         raise NotImplementedError

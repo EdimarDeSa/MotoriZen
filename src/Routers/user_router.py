@@ -3,7 +3,7 @@ from typing import Any, Literal
 from fastapi import APIRouter, Request
 
 from Contents.user_contents import UserMeContent, UserUpdatedContent
-from db.Models import UserModel, UserNewModel, UserUpdatesModel
+from DB.Models import UserModel, UserNewModel, UserUpdatesModel
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
 from Responses import Created, NoContent, Ok

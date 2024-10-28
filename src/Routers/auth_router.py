@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request
 
-from db.Models import RefreshTokenModel, TokenModel
+from DB.Models import RefreshTokenModel, TokenModel
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
 from Responses import NoContent
