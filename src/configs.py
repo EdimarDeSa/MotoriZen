@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
+from Routers.register_router import RegisterRouter
+
 load_dotenv()
 
 from Enums import MotoriZenErrorEnum
@@ -31,6 +33,7 @@ ROUTERS: RoutersSequence = [
     AuthRouter,
     UserRouter,
     CarsRouter,
+    RegisterRouter,
 ]
 
 
