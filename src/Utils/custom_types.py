@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from db.Models import UserModel
+from DB.Models import UserModel
 from Routers.base_router import BaseRouter
 from Services.auth_service import AuthService
 
