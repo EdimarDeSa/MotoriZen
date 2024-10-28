@@ -3,8 +3,8 @@ import json
 import uuid
 from typing import Any
 
-from db.Models import BrandModel, CarModel, CarNewModel, CarQueryFiltersModel, CarQueryOptionsModel, CarUpdatesDataModel
-from db.Schemas import BrandSchema, CarSchema
+from DB.Models import BrandModel, CarModel, CarNewModel, CarQueryFiltersModel, CarQueryOptionsModel, CarUpdatesDataModel
+from DB.Schemas import BrandSchema, CarSchema
 from Enums import RedisDbsEnum
 from Repositories.car_repository import CarRepository
 from Utils.redis_handler import RedisHandler
@@ -49,12 +49,15 @@ class CarService(BaseService):
             base64_hash = self._create_hash(hash_data)
 
             cars_schema = self._get_cached_data(base64_hash)
+            # TODO: Ajustar sistema de cache, método de numero de registros não é confiável, um valor pode ser atualizado e isso não afetará o cache
+            # TODO: Adicionar a quantidade de registros no retorno
+            # TODO: Adicionar offset-page no retorno
 
             if cars_schema is None:
                 cars_schema = self._car_repository.select_cars(
                     db_session,
                     id_user,
-                    query_params_dict,
+                    query_params,
                     query_options,
                 )
 
@@ -67,16 +70,14 @@ class CarService(BaseService):
         except Exception as e:
             raise e
 
-    def get_cars_count(self, id_user: str, query_params: CarQueryFiltersModel) -> int:
+    def get_cars_count(self, id_user: str, query_filters: CarQueryFiltersModel) -> int:
         self.logger.debug("Starting get_cars_count")
         db_session = self.create_session(write=False)
 
         try:
             self.logger.debug("Getting cars count")
 
-            query_params_dict = query_params.model_dump(exclude_none=True)
-
-            cars_count = self._car_repository.select_cars_count(db_session, id_user, query_params_dict)
+            cars_count = self._car_repository.select_cars_count(db_session, id_user, query_filters)
 
             return cars_count
 

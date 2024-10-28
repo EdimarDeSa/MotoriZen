@@ -3,8 +3,8 @@ import uuid
 
 from keycloak import KeycloakAdmin, KeycloakError
 
-from db.Models import UserModel, UserNewModel, UserUpdatesModel
-from db.Schemas import UserSchema
+from DB.Models import UserModel, UserNewModel, UserUpdatesModel
+from DB.Schemas import UserSchema
 from Enums import MotoriZenErrorEnum, RedisDbsEnum
 from ErrorHandler import MotoriZenError
 from Repositories.user_repository import UserRepository

@@ -5,7 +5,7 @@ from fastapi import Depends
 from jwcrypto.jwt import JWTExpired
 from keycloak import KeycloakOpenID
 
-from db.Models import TokenModel, UserModel
+from DB.Models import TokenModel, UserModel
 from Enums.motorizen_error_enum import MotoriZenErrorEnum
 from Enums.redis_dbs_enum import RedisDbsEnum
 from ErrorHandler.motorizen_error import MotoriZenError
@@ -116,10 +116,15 @@ class AuthService(BaseService):
                 raise MotoriZenError(err=MotoriZenErrorEnum.TOKEN_EXPIRED, detail=str(e))
             raise e
 
-    def _get_user_from_cache(self, cd_auth: str) -> Optional[dict[str, Any]]:
+    def _get_user_from_cache(self, cd_auth: str) -> dict[str, Any] | None:
         try:
             self.logger.debug(f"Getting user from cache for cd_auth: {cd_auth}")
-            return self._cache_handler.get_data(RedisDbsEnum.USERS, cd_auth)
+            user_data = self._cache_handler.get_data(RedisDbsEnum.USERS, cd_auth)
+
+            if isinstance(user_data, dict):
+                return user_data
+
+            return None
 
         except Exception as e:
             raise e

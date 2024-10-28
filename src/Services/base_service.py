@@ -5,7 +5,7 @@ from abc import ABC
 
 from sqlalchemy.orm import Session, scoped_session
 
-from db.connection_handler import DBConnectionHandler
+from DB.connection_handler import DBConnectionHandler
 
 
 class BaseService(ABC):
