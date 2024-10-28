@@ -1,9 +1,13 @@
-import uuid
-
 from fastapi import APIRouter, Request
 
-from Contents.register_content import RegisterContent
-from DB.Models import RegisterModel, RegisterNewModel, RegistersQueryModel, RegisterUpdatesModel
+from Contents.register_content import RegisterContent, RegisterNewContent, RegistersContent
+from DB.Models import (
+    RegisterModel,
+    RegisterNewModel,
+    RegisterQueryResponseModel,
+    RegistersQueryModel,
+    RegisterUpdatesModel,
+)
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
 from Responses import Created, NoContent, Ok
@@ -23,9 +27,15 @@ class RegisterRouter(BaseRouter):
         self._register_routes()
 
     def _register_routes(self) -> None:
-        self.router.add_api_route("/get-registers", self.get_registers, methods=["POST"])
-        self.router.add_api_route("/get-register/{id_register}", self.get_register, methods=["GET"])
-        self.router.add_api_route("/new-register", self.new_register, methods=["POST"])
+        self.router.add_api_route(
+            "/get-registers", self.get_registers, response_model=RegistersContent, methods=["POST"]
+        )
+        self.router.add_api_route(
+            "/get-register/{id_register}", self.get_register, response_model=RegisterContent, methods=["GET"]
+        )
+        self.router.add_api_route(
+            "/new-register", self.new_register, response_model=RegisterNewContent, methods=["POST"]
+        )
         self.router.add_api_route("/update-register", self.update_register, methods=["PUT"])
         self.router.add_api_route("/delete-register", self.delete_register, methods=["DELETE"])
 
@@ -33,11 +43,11 @@ class RegisterRouter(BaseRouter):
         self.logger.debug("Starting get_registers")
 
         try:
-            registers: list[RegisterModel] = self.register_service.get_registers(
+            response: RegisterQueryResponseModel = self.register_service.get_registers(
                 str(user_data.id_user), query_data.query_filters, query_data.query_options
             )
 
-            content = RegisterContent(data=registers)
+            content = RegistersContent(data=response)
             return Ok(content=content)
 
         except Exception as e:
@@ -73,7 +83,8 @@ class RegisterRouter(BaseRouter):
             self.logger.debug("Creating new register")
             response_data = self.register_service.create_register(str(user_data.id_user), new_register)
 
-            return Created(content=response_data)
+            content = RegisterNewContent.model_validate(response_data)
+            return Created(content=content)
 
         except Exception as e:
             self.logger.exception(e)

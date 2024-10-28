@@ -1,13 +1,24 @@
-from DB.Models import CarModel, RegisterModel, RegisterNewModel, RegisterNewResponseModel, RegisterUpdateDataModel
-from DB.Models.register_query_filters_model import RegisterQueryFiltersModel
-from DB.Models.register_query_options import RegisterQueryOptionsModel
+from typing import Any
+
+from pydantic import InstanceOf
+
+from DB.Models import (
+    CarModel,
+    RegisterModel,
+    RegisterNewModel,
+    RegisterQueryFiltersModel,
+    RegisterQueryOptionsModel,
+    RegisterQueryResponseModel,
+    RegisterUpdateDataModel,
+)
+from DB.Models.base_model import BaseModelDb
 from DB.Schemas import RegisterSchema
 from Enums import MotoriZenErrorEnum
+from Enums.redis_dbs_enum import RedisDbsEnum
 from ErrorHandler import MotoriZenError
 from Repositories.car_repository import CarRepository
 from Repositories.register_repository import RegisterRepository
 from Services.base_service import BaseService
-from Utils.redis_handler import RedisHandler
 
 
 class RegisterService(BaseService):
@@ -15,32 +26,54 @@ class RegisterService(BaseService):
         self.create_logger(__name__)
         self._register_repository = RegisterRepository()
         self._car_repository = CarRepository()
-        self._cache_handler = RedisHandler()
 
     def get_registers(
         self, id_user: str, query_filters: RegisterQueryFiltersModel, query_options: RegisterQueryOptionsModel
-    ) -> list[RegisterModel]:
+    ) -> RegisterQueryResponseModel:
         self.logger.debug("Starting get_registers")
         db_session = self.create_session(write=False)
 
         try:
             self.logger.debug(f"Getting registers for <user: {id_user}>")
 
-            registers_schemas: list[RegisterSchema] = self._register_repository.select_registers(
-                db_session, id_user, query_filters, query_options
-            )
+            b64_data = {
+                **query_filters.model_dump(exclude_none=True),
+                **query_options.model_dump(exclude_none=True),
+            }
+            b64_key = self.create_hash(b64_data)
 
-            # TODO: Colocar cache aqui
-            # TODO: Criar função para a contagem de registros
-            # TODO: Adicionar a quantidade de registros no retorno
-            # TODO: Adicionar offset-page no retorno
+            result_data = self.get_user_cached_data(RedisDbsEnum.REGISTERS, id_user, b64_key)
 
-            registers_models = [
-                RegisterModel.model_validate(register_schema, from_attributes=True)
-                for register_schema in registers_schemas
-            ]
+            if result_data is None:
+                total_registers: int = self._register_repository.count_registers(db_session, id_user, query_filters)
 
-            return registers_models
+                registers_schemas: list[RegisterSchema] = self._register_repository.select_registers(
+                    db_session, id_user, query_filters, query_options
+                )
+
+                registers_data: list[dict[str, Any]] = [
+                    register_schema.as_dict(exclude_none=True) for register_schema in registers_schemas
+                ]
+
+                offset: int = self.calculate_offset(query_options.per_page, query_options.page)
+
+                total_pages: int = self.calculate_max_pages(total_registers, query_options.per_page or 10)
+
+                result_data = dict(
+                    results=registers_data,
+                    sort_by=query_options.sort_by or "id_register",
+                    sort_order=query_options.sort_order or "asc",
+                    page=query_options.page or 1,
+                    per_page=query_options.per_page or 10,
+                    total_pages=total_pages,
+                    first_index=offset + 1,
+                    last_index=offset + len(registers_schemas),
+                    total_results=total_registers,
+                )
+
+                self.insert_cache_data(RedisDbsEnum.REGISTERS, id_user, b64_key, result_data)
+
+            return RegisterQueryResponseModel.model_validate(result_data)
 
         except Exception as e:
             raise e
@@ -69,7 +102,7 @@ class RegisterService(BaseService):
         finally:
             db_session.close()
 
-    def create_register(self, id_user: str, new_register: RegisterNewModel) -> RegisterNewResponseModel:
+    def create_register(self, id_user: str, new_register: RegisterNewModel) -> dict[str, InstanceOf[BaseModelDb]]:
         self.logger.debug("Starting create_register")
         db_session = self.create_session(write=True)
 
@@ -119,10 +152,12 @@ class RegisterService(BaseService):
 
             car_model = CarModel.model_validate(car_schema, from_attributes=True)
 
-            return RegisterNewResponseModel(
-                register_data=register_model,
-                car_data=car_model,
-            )
+            response_data = {
+                "register_data": register_model,
+                "car_data": car_model,
+            }
+
+            return response_data
 
         except Exception as e:
             db_session.rollback()

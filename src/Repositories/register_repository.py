@@ -56,6 +56,27 @@ class RegisterRepository(BaseRepository):
         except Exception as e:
             raise e
 
+    def count_registers(
+        self, db_session: scoped_session[Session], id_user: str, query_filters: RegisterQueryFiltersModel
+    ) -> int:
+        self.logger.debug("Starting count_registers")
+
+        try:
+            query = self.querys.count_total_results(RegisterSchema, id_user, query_filters)
+
+            self.logger.debug(f"Counting registers for <user: {id_user}>")
+            total_registers: int | None = db_session.execute(query).scalar()
+
+            if total_registers is None:
+                raise MotoriZenError(
+                    err=MotoriZenErrorEnum.REGISTER_NOT_FOUND,
+                    detail="Any register found with given filters",
+                )
+
+            return total_registers
+        except Exception as e:
+            raise e
+
     def insert_register(self, db_session: scoped_session[Session], new_register: RegisterSchema) -> str:
         self.logger.debug("Starting insert_register")
 
