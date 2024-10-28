@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS "tb_car"
 (
     "id_car" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     "cd_user" UUID NOT NULL REFERENCES "tb_user"("id_user") ON DELETE CASCADE,
-    "cd_brand" INTEGER NOT NULL REFERENCES "tb_brand"("id_brand") ON DELETE CASCADE,
+    "cd_brand" INTEGER NOT NULL REFERENCES "tb_brand"("id_brand") ON DELETE SET NULL,
     "renavam" VARCHAR(11) UNIQUE DEFAULT '00000000000',
     "model" VARCHAR(100) NOT NULL,
     "year" SMALLINT NOT NULL,

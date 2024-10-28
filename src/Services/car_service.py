@@ -3,13 +3,9 @@ import json
 import uuid
 from typing import Any
 
-from db.Models.brand_model import BrandModel
-from db.Models.car_model import CarModel, CarQueryOptions, CarQueryParams, CarUpdates, NewCarModel, UpdateCarModel
-from db.Schemas.brand_schema import BrandSchema
-from db.Schemas.car_schema import CarSchema
-from Enums.motorizen_error_enum import MotoriZenErrorEnum
-from Enums.redis_dbs_enum import RedisDbsEnum
-from ErrorHandler.motorizen_error import MotoriZenError
+from DB.Models import BrandModel, CarModel, CarNewModel, CarQueryFiltersModel, CarQueryOptionsModel, CarUpdatesDataModel
+from DB.Schemas import BrandSchema, CarSchema
+from Enums import RedisDbsEnum
 from Repositories.car_repository import CarRepository
 from Utils.redis_handler import RedisHandler
 
@@ -39,7 +35,7 @@ class CarService(BaseService):
             raise e
 
     def get_cars(
-        self, id_user: str, query_params: CarQueryParams, query_options: CarQueryOptions, count: int
+        self, id_user: str, query_params: CarQueryFiltersModel, query_options: CarQueryOptionsModel, count: int
     ) -> list[CarModel]:
         self.logger.debug("Starting get_cars")
         db_session = self.create_session(write=False)
@@ -53,12 +49,15 @@ class CarService(BaseService):
             base64_hash = self._create_hash(hash_data)
 
             cars_schema = self._get_cached_data(base64_hash)
+            # TODO: Ajustar sistema de cache, método de numero de registros não é confiável, um valor pode ser atualizado e isso não afetará o cache
+            # TODO: Adicionar a quantidade de registros no retorno
+            # TODO: Adicionar offset-page no retorno
 
             if cars_schema is None:
                 cars_schema = self._car_repository.select_cars(
                     db_session,
                     id_user,
-                    query_params_dict,
+                    query_params,
                     query_options,
                 )
 
@@ -71,23 +70,21 @@ class CarService(BaseService):
         except Exception as e:
             raise e
 
-    def get_cars_count(self, id_user: str, query_params: CarQueryParams) -> int:
+    def get_cars_count(self, id_user: str, query_filters: CarQueryFiltersModel) -> int:
         self.logger.debug("Starting get_cars_count")
         db_session = self.create_session(write=False)
 
         try:
             self.logger.debug("Getting cars count")
 
-            query_params_dict = query_params.model_dump(exclude_none=True)
-
-            cars_count = self._car_repository.select_cars_count(db_session, id_user, query_params_dict)
+            cars_count = self._car_repository.select_cars_count(db_session, id_user, query_filters)
 
             return cars_count
 
         except Exception as e:
             raise e
 
-    def create_car(self, id_user: uuid.UUID, new_car: NewCarModel) -> None:
+    def create_car(self, id_user: uuid.UUID, new_car: CarNewModel) -> None:
         self.logger.debug("Starting create_car")
         db_session = self.create_session(write=True)
 
@@ -112,7 +109,7 @@ class CarService(BaseService):
 
     def _cache_data(self, base64_hash: str, cars_schema: list[CarSchema | BrandSchema]) -> None:
         self.logger.debug("Starting _cache_data")
-        self._cache_handler.set_data(RedisDbsEnum.CARS, base64_hash, cars_schema, ex=300)
+        self._cache_handler.set_data_for_user(RedisDbsEnum.CARS, base64_hash, cars_schema, ex=300)
         self.logger.debug("Data cached")
 
     def _create_hash(self, hash_data: dict[str, Any]) -> str:
@@ -123,7 +120,7 @@ class CarService(BaseService):
         self.logger.debug(f"Hash created: {base64_hash}")
         return base64_hash
 
-    def update_car(self, id_user: str, car_id: str, car_updates: CarUpdates) -> CarModel:
+    def update_car(self, id_user: str, car_id: str, car_updates: CarUpdatesDataModel) -> CarModel:
         self.logger.debug("Starting update_car")
         db_session = self.create_session(write=True)
 

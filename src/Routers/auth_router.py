@@ -1,10 +1,9 @@
 from fastapi import APIRouter, Request
 
-from db.Models import TokenModel
-from db.Models.refresh_token_model import RefreshTokenModel
-from Enums.motorizen_error_enum import MotoriZenErrorEnum
+from DB.Models import RefreshTokenModel, TokenModel
+from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
-from Responses.no_content import NoContent
+from Responses import NoContent
 from Services.auth_service import AuthService
 from Utils.custom_types import CurrentActiveUser, PasswordRequestForm
 
