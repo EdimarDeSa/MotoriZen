@@ -109,7 +109,7 @@ class CarService(BaseService):
 
     def _cache_data(self, base64_hash: str, cars_schema: list[CarSchema | BrandSchema]) -> None:
         self.logger.debug("Starting _cache_data")
-        self._cache_handler.set_data(RedisDbsEnum.CARS, base64_hash, cars_schema, ex=300)
+        self._cache_handler.set_data_for_user(RedisDbsEnum.CARS, base64_hash, cars_schema, ex=300)
         self.logger.debug("Data cached")
 
     def _create_hash(self, hash_data: dict[str, Any]) -> str:

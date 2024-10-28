@@ -27,6 +27,9 @@ class AuthService(BaseService):
         self.create_logger(__name__)
         self._cache_handler = RedisHandler()
 
+        # TODO: Melhorar o tratamento de erros
+        # TODO: Ao retornar erros do redis isso não deve interromper a operação, apenas "pular" o cache
+
     def authenticate_user(self, email: str, password: str) -> TokenModel:
         self.logger.info("Starting authenticate_user")
 
