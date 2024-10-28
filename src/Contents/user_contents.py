@@ -1,4 +1,4 @@
-from db.Models import UserModel, UserNewModel
+from DB.Models import UserModel, UserNewModel
 from Responses.base_response import BaseContent
 
 
