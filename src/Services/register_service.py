@@ -71,7 +71,7 @@ class RegisterService(BaseService):
                     total_results=total_registers,
                 )
 
-                self.insert_cache_data(RedisDbsEnum.REGISTERS, id_user, b64_key, result_data)
+                self.insert_user_cache_data(RedisDbsEnum.REGISTERS, id_user, b64_key, result_data)
 
             return RegisterQueryResponseModel.model_validate(result_data)
 

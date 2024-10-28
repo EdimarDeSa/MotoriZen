@@ -27,7 +27,9 @@ class RedisHandler:
             decode_responses=True,
         )
 
-    def set_data(self, db: RedisDbsEnum, key: str, value: dict[str, Any], ex: Optional[int] = None) -> Any:
+    def set_data(
+        self, db: RedisDbsEnum, key: str, value: dict[str, Any] | list[dict[str, Any]], ex: Optional[int] = None
+    ) -> Any:
         self._logger.info("Starting set_data")
         redis = self.__create_redis_client(db)
 

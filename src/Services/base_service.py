@@ -47,7 +47,7 @@ class BaseService(ABC):
             raise TypeError("Cache handler must be an instance of RedisHandler")
         self._cache_handler = value
 
-    def insert_cache_data(
+    def insert_user_cache_data(
         self,
         db: RedisDbsEnum,
         id_user: str,

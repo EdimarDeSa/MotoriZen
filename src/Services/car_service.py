@@ -61,7 +61,7 @@ class CarService(BaseService):
                     query_options,
                 )
 
-                self._cache_data(base64_hash, cars_schema)
+                self._cache_data(id_user, base64_hash, cars_schema)
 
             cars_model = [CarModel.model_validate(car_schema, from_attributes=True) for car_schema in cars_schema]
 
@@ -107,9 +107,11 @@ class CarService(BaseService):
         self.logger.debug(f"Cached data: {cars_schema if not cars_schema else 'found'}")
         return cars_schema
 
-    def _cache_data(self, base64_hash: str, cars_schema: list[CarSchema | BrandSchema]) -> None:
+    def _cache_data(self, id_user: str, base64_hash: str, cars_schema: list[CarSchema | BrandSchema]) -> None:
         self.logger.debug("Starting _cache_data")
-        self._cache_handler.set_data_for_user(RedisDbsEnum.CARS, base64_hash, cars_schema, ex=300)
+        data = {base64_hash: cars_schema}
+
+        self.insert_user_cache_data(RedisDbsEnum.CARS, id_user, base64_hash, data)
         self.logger.debug("Data cached")
 
     def _create_hash(self, hash_data: dict[str, Any]) -> str:
@@ -174,7 +176,11 @@ class CarService(BaseService):
                 self.logger.debug("Geting all brands")
                 brand_schema_list = self._car_repository.select_brands(db_session)
 
-                self._cache_data(base64_hash, brand_schema_list)
+                self.cache_handler.set_data(
+                    RedisDbsEnum.BRANDS,
+                    base64_hash,
+                    [schema.as_dict(exclude_none=True) for schema in brand_schema_list],
+                )
 
             return [BrandModel.model_validate(brand_schema, from_attributes=True) for brand_schema in brand_schema_list]
 

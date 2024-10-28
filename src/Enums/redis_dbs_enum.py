@@ -10,3 +10,4 @@ class RedisDbsEnum(IntEnum):
     TOKENS = 1
     CARS = 2
     REGISTERS = 3
+    BRANDS = 4
