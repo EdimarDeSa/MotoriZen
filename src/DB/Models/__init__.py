@@ -10,7 +10,6 @@ from .car_updates_model import CarUpdatesModel
 from .refresh_token_model import RefreshTokenModel
 from .register_model import RegisterModel
 from .register_new_model import RegisterNewModel
-from .register_new_response_model import RegisterNewResponseModel
 from .register_query_filters_model import RegisterQueryFiltersModel
 from .register_query_model import RegistersQueryModel
 from .register_query_options import RegisterQueryOptionsModel
@@ -35,7 +34,6 @@ __all__ = [
     "RefreshTokenModel",
     "RegisterModel",
     "RegisterNewModel",
-    "RegisterNewResponseModel",
     "RegisterQueryFiltersModel",
     "RegistersQueryModel",
     "RegisterQueryOptionsModel",
