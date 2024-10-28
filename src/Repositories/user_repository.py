@@ -4,8 +4,8 @@ from typing import Any
 from sqlalchemy import Delete, Insert, Select, Update
 from sqlalchemy.orm import Session, scoped_session
 
-from db.Models import UserUpdatesModel
-from db.Schemas import UserSchema
+from DB.Models import UserUpdatesModel
+from DB.Schemas import UserSchema
 from Enums import MotoriZenErrorEnum
 from ErrorHandler.motorizen_error import MotoriZenError
 from Repositories.base_repository import BaseRepository

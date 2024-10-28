@@ -3,8 +3,8 @@ from typing import Any
 
 from sqlalchemy.orm import Session, scoped_session
 
-from db.Models import CarNewModel, CarQueryOptionsModel, CarUpdatesDataModel
-from db.Schemas import BrandSchema, CarSchema
+from DB.Models import CarNewModel, CarQueryFiltersModel, CarQueryOptionsModel, CarUpdatesDataModel
+from DB.Schemas import BrandSchema, CarSchema
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
 
@@ -37,13 +37,13 @@ class CarRepository(BaseRepository):
         self,
         db_session: scoped_session[Session],
         id_user: str,
-        query_params_dict: dict[str, Any],
+        query_filters: CarQueryFiltersModel,
         query_options: CarQueryOptionsModel,
     ) -> list[CarSchema]:
         self.logger.debug("Starting select_cars")
 
         try:
-            query = self.querys.select_cars(id_user, query_params_dict, query_options)
+            query = self.querys.select_cars(id_user, query_filters, query_options)
 
             self.logger.debug("Selecting cars")
             result: list[CarSchema] = list(db_session.execute(query).scalars().all())
@@ -54,18 +54,35 @@ class CarRepository(BaseRepository):
             raise e
 
     def select_cars_count(
-        self, db_session: scoped_session[Session], id_user: str, query_params_dict: dict[str, Any]
+        self, db_session: scoped_session[Session], id_user: str, query_filters: CarQueryFiltersModel
     ) -> int:
         self.logger.debug("Starting select_cars_count")
 
         try:
-            query = self.querys.select_cars_count(id_user, query_params_dict)
+            query = self.querys.select_cars_count(id_user, query_filters)
 
             self.logger.debug("Selecting cars count")
             result: int | None = db_session.execute(query).scalar()
 
             if result is None:
                 raise MotoriZenError(err=MotoriZenErrorEnum.CAR_NOT_FOUND, detail="Any car found")
+
+            return result
+
+        except Exception as e:
+            raise e
+
+    def get_last_odometer(self, db_session: scoped_session[Session], id_user: str, id_car: str) -> float:
+        self.logger.debug("Starting get_last_odometer")
+
+        try:
+            query = self.querys.select_last_odometer(id_user, id_car)
+
+            self.logger.debug("Getting last odometer")
+            result: float | None = db_session.execute(query).scalar()
+
+            if result is None:
+                raise MotoriZenError(err=MotoriZenErrorEnum.CAR_NOT_FOUND, detail=f"Car not found with id: {id_car}")
 
             return result
 
@@ -107,6 +124,22 @@ class CarRepository(BaseRepository):
         except Exception as e:
             raise e
 
+    def update_car_odometer(
+        self, db_session: scoped_session[Session], id_user: str, id_car: str, odometer: float
+    ) -> None:
+        self.logger.debug("Starting update_car_odometer")
+
+        try:
+            query = self.querys.update_car_odometer(id_user, id_car, odometer)
+
+            self.logger.debug(f"Updating car <car_id: {id_car}> on table <Table: {CarSchema.__tablename__}>")
+            db_session.execute(query)
+
+            self.logger.debug(f"Car updated <car_id: {id_car}>")
+
+        except Exception as e:
+            raise e
+
     def delete_car(self, db_session: scoped_session[Session], id_user: str, id_car: str) -> None:
         self.logger.debug("Starting delete_car")
 
@@ -131,9 +164,7 @@ class CarRepository(BaseRepository):
             brand_schema: list[BrandSchema] | None = list(db_session.execute(query).scalars().all())
 
             if brand_schema is None:
-                raise MotoriZenError(
-                    err=MotoriZenErrorEnum.BRAND_NOT_FOUND, detail=f"Brand not faound with id: {id_brand}"
-                )
+                raise MotoriZenError(err=MotoriZenErrorEnum.BRAND_NOT_FOUND, detail="Brands not found")
 
             self.logger.debug(f"Brands selected")
 
