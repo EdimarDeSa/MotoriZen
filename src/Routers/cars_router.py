@@ -4,14 +4,10 @@ from fastapi import APIRouter, Request
 
 from Contents.brand_content import BrandContent
 from Contents.car_contents import CarContent, CarsContent
-from db.Models import NewCarModel, UpdateCarModel
-from db.Models.brand_model import BrandModel
-from db.Models.car_model import CarModel, CarsQueryModel, CarsQueryResponseModel
-from Enums.motorizen_error_enum import MotoriZenErrorEnum
-from ErrorHandler.motorizen_error import MotoriZenError
-from Responses.created import Created
-from Responses.no_content import NoContent
-from Responses.ok import Ok
+from DB.Models import BrandModel, CarModel, CarNewModel, CarQueryModel, CarQueryResponseModel, CarUpdatesModel
+from Enums import MotoriZenErrorEnum
+from ErrorHandler import MotoriZenError
+from Responses import Created, NoContent, Ok
 from Routers.base_router import BaseRouter
 from Services.car_service import CarService
 from Utils.custom_types import CurrentActiveUser
@@ -36,7 +32,11 @@ class CarsRouter(BaseRouter):
             "/get-brands", self.get_brands, response_model=BrandContent, methods=["POST"], tags=["Brands"]
         )
         self.router.add_api_route(
-            "/get-brand", self.get_brand, response_model=BrandContent, methods=["POST"], tags=["Brands"]
+            "/get-brand/{id_brand}",
+            self.get_brand,
+            response_model=BrandContent,
+            methods=["POST"],
+            tags=["Brands"],
         )
 
     def get_car(self, request: Request, user_data: CurrentActiveUser, id_car: str) -> Ok:
@@ -55,17 +55,17 @@ class CarsRouter(BaseRouter):
                 e = MotoriZenError(err=MotoriZenErrorEnum.UNKNOWN_ERROR, detail="")
             raise e.as_http_response()
 
-    def get_cars(self, request: Request, user_data: CurrentActiveUser, query_data: CarsQueryModel) -> Ok:
+    def get_cars(self, request: Request, user_data: CurrentActiveUser, query_data: CarQueryModel) -> Ok:
         self.logger.debug("Starting get_cars")
 
         try:
-            count: int = self.car_service.get_cars_count(str(user_data.id_user), query_data.query_params)
+            count: int = self.car_service.get_cars_count(str(user_data.id_user), query_data.query_filters)
 
             car_model: list[CarModel] = self.car_service.get_cars(
-                str(user_data.id_user), query_data.query_params, query_data.query_options, count
+                str(user_data.id_user), query_data.query_filters, query_data.query_options, count
             )
 
-            car_query_response_model = CarsQueryResponseModel(total_results=count, cars=car_model)
+            car_query_response_model = CarQueryResponseModel(total_results=count, results=car_model)
             content = CarsContent(data=car_query_response_model)
             return Ok(content=content)
 
@@ -76,7 +76,7 @@ class CarsRouter(BaseRouter):
                 e = MotoriZenError(err=MotoriZenErrorEnum.UNKNOWN_ERROR, detail="")
             raise e.as_http_response()
 
-    def new_car(self, request: Request, user_data: CurrentActiveUser, new_car: NewCarModel) -> Created:
+    def new_car(self, request: Request, user_data: CurrentActiveUser, new_car: CarNewModel) -> Created:
         self.logger.debug("Starting new_car")
 
         try:
@@ -93,8 +93,9 @@ class CarsRouter(BaseRouter):
 
             raise e.as_http_response()
 
-    def update_car(self, request: Request, user_data: CurrentActiveUser, update_car: UpdateCarModel) -> Ok:
+    def update_car(self, request: Request, user_data: CurrentActiveUser, update_car: CarUpdatesModel) -> Ok:
         self.logger.debug("Starting update_car")
+        # FIXME: Não está atualizando o cache, verificar modo de fazer isso
 
         try:
             result: CarModel = self.car_service.update_car(

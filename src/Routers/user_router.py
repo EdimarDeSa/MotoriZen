@@ -3,7 +3,7 @@ from typing import Any, Literal
 from fastapi import APIRouter, Request
 
 from Contents.user_contents import UserMeContent, UserUpdatedContent
-from db.Models import NewUserModel, UpdateUserModel, UserModel
+from DB.Models import UserModel, UserNewModel, UserUpdatesModel
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
 from Responses import Created, NoContent, Ok
@@ -44,7 +44,7 @@ class UserRouter(BaseRouter):
 
         return Ok(content=UserMeContent(data=user_data))
 
-    def new_user(self, request: Request, new_user: NewUserModel) -> Created:
+    def new_user(self, request: Request, new_user: UserNewModel) -> Created:
         """
         Creates a new user.
 
@@ -80,7 +80,7 @@ class UserRouter(BaseRouter):
 
             raise e.as_http_response()
 
-    def update_user(self, request: Request, user_data: CurrentActiveUser, update_user: UpdateUserModel) -> Ok:
+    def update_user(self, request: Request, user_data: CurrentActiveUser, update_user: UserUpdatesModel) -> Ok:
         """
         Update a user
 

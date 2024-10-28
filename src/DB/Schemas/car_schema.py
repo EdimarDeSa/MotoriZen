@@ -5,7 +5,7 @@ from datetime import datetime
 from sqlalchemy import UUID, Boolean, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import MappedColumn, mapped_column
 
-from db.Schemas.base_schema import BaseSchema
+from DB.Schemas.base_schema import BaseSchema
 
 
 class CarSchema(BaseSchema):

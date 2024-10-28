@@ -5,8 +5,7 @@ from fastapi import Depends
 from jwcrypto.jwt import JWTExpired
 from keycloak import KeycloakOpenID
 
-from db.Models.token_model import TokenModel
-from db.Models.user_model import UserModel
+from DB.Models import TokenModel, UserModel
 from Enums.motorizen_error_enum import MotoriZenErrorEnum
 from Enums.redis_dbs_enum import RedisDbsEnum
 from ErrorHandler.motorizen_error import MotoriZenError
@@ -27,6 +26,9 @@ class AuthService(BaseService):
         )
         self.create_logger(__name__)
         self._cache_handler = RedisHandler()
+
+        # TODO: Melhorar o tratamento de erros
+        # TODO: Ao retornar erros do redis isso não deve interromper a operação, apenas "pular" o cache
 
     def authenticate_user(self, email: str, password: str) -> TokenModel:
         self.logger.info("Starting authenticate_user")
@@ -52,7 +54,11 @@ class AuthService(BaseService):
     def _get_token_from_cache(self, email: str) -> dict[str, Any] | None:
         try:
             self.logger.debug(f"Getting token from cache for email: {email}")
-            return self._cache_handler.get_data(RedisDbsEnum.TOKENS, email)
+            result = self._cache_handler.get_data(RedisDbsEnum.TOKENS, email)
+
+            if isinstance(result, dict):
+                return result
+            return None
 
         except Exception as e:
             raise e
@@ -113,10 +119,15 @@ class AuthService(BaseService):
                 raise MotoriZenError(err=MotoriZenErrorEnum.TOKEN_EXPIRED, detail=str(e))
             raise e
 
-    def _get_user_from_cache(self, cd_auth: str) -> Optional[dict[str, Any]]:
+    def _get_user_from_cache(self, cd_auth: str) -> dict[str, Any] | None:
         try:
             self.logger.debug(f"Getting user from cache for cd_auth: {cd_auth}")
-            return self._cache_handler.get_data(RedisDbsEnum.USERS, cd_auth)
+            user_data = self._cache_handler.get_data(RedisDbsEnum.USERS, cd_auth)
+
+            if isinstance(user_data, dict):
+                return user_data
+
+            return None
 
         except Exception as e:
             raise e
