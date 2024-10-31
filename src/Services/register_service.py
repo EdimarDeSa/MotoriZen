@@ -40,7 +40,7 @@ class RegisterService(BaseService):
                 **query_filters.model_dump(exclude_none=True),
                 **query_options.model_dump(exclude_none=True),
             }
-            b64_key = self.create_hash(b64_data)
+            b64_key = self.create_hash_key(b64_data)
 
             result_data = self.get_user_cached_data(RedisDbsEnum.REGISTERS, id_user, b64_key)
 
@@ -115,6 +115,10 @@ class RegisterService(BaseService):
             odometer_old = self._car_repository.get_last_odometer(db_session, id_user, str(new_register.cd_car))
             distance: float = new_register_data.get("distance", 0.0)
 
+            if odometer_new is None and distance:
+                self.logger.debug("Calculating odometer")
+                odometer_new = odometer_old + distance
+
             if odometer_old >= odometer_new:
                 raise MotoriZenError(
                     err=MotoriZenErrorEnum.INVALID_REGISTER_DATA,
@@ -126,11 +130,7 @@ class RegisterService(BaseService):
                 distance = odometer_new - odometer_old
                 new_register_data["distance"] = distance
 
-            if odometer_new is None and not distance:
-                self.logger.debug("Calculating odometer")
-                odometer_new = odometer_old + distance
-
-            if (odometer_old + distance) >= odometer_new:
+            if (odometer_old + distance) > odometer_new:
                 raise MotoriZenError(
                     err=MotoriZenErrorEnum.INVALID_REGISTER_DATA,
                     detail="Last odometer + distance cannot be lower than the new odometer.",

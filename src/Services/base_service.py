@@ -54,9 +54,8 @@ class BaseService(ABC):
         b64_hash: str,
         data_dict: dict[str, Any] | list[dict[str, Any]],
     ) -> None:
-        data = {b64_hash: data_dict}
         self.logger.debug("Starting _cache_data")
-        self.cache_handler.set_data(db, id_user, data, int(os.getenv("REDIS_TTL", 300)))
+        self.cache_handler.set_data_for_user(db, id_user, b64_hash, data_dict, int(os.getenv("REDIS_TTL", 300)))
         self.logger.debug("Data cached")
 
     def get_user_cached_data(
@@ -70,13 +69,13 @@ class BaseService(ABC):
 
         return schema
 
-    def create_hash(self, data: dict[str, Any]) -> str:
+    def create_hash_key(self, data: dict[str, Any]) -> str:
         self.logger.debug("Starting create_hash")
 
         self.logger.debug("Creating hash")
         b64_hash = base64.b64encode(bytes(json.dumps(data), "utf-8")).decode("utf-8")
 
-        self.logger.debug(f"Hash created: {b64_hash}")
+        self.logger.debug(f"Hash created")
 
         return b64_hash
 

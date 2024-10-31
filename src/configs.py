@@ -9,14 +9,12 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from Routers.register_router import RegisterRouter
-
 load_dotenv()
 
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
 from Middlewares import ProcessTimeHeaderMiddleware
-from Routers import AuthRouter, CarsRouter, UserRouter
+from Routers import AuthRouter, CarsRouter, RegisterRouter, ReportsRouter, UserRouter
 from Routers.base_router import BaseRouter
 from Utils.custom_types import MiddlewareSequence, RoutersSequence
 
@@ -34,6 +32,7 @@ ROUTERS: RoutersSequence = [
     UserRouter,
     CarsRouter,
     RegisterRouter,
+    ReportsRouter,
 ]
 
 
@@ -42,10 +41,7 @@ def register_routers(app: FastAPI) -> None:
         r = router()
 
         if not isinstance(r, BaseRouter):
-            raise MotoriZenError(
-                detail="Invalid router, must be an instance of Routers.base_router.BaseRouter",
-                err=MotoriZenErrorEnum.INVALID_ROUTER,
-            )
+            raise TypeError("Invalid router, must be an instance of Routers.base_router.BaseRouter")
 
         logger.debug(f"Starting - {r.__class__.__name__}")
         app.include_router(r.router)

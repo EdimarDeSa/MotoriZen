@@ -42,6 +42,30 @@ class RedisHandler:
         redis.quit()
         return result
 
+    def set_data_for_user(
+        self,
+        db: RedisDbsEnum,
+        user_id: str,
+        hash_key: str,
+        value: dict[str, Any] | list[dict[str, Any]],
+        ex: int,
+    ) -> Any:
+        self._logger.info("Starting set_data")
+        redis = self.__create_redis_client(db)
+
+        _value = json.dumps(jsonable_encoder(value))
+
+        self._logger.debug(f"Setting key: {hash_key} on db: {db} with ttl: {ex}")
+        result = redis.hset(user_id, hash_key, _value)
+        self._logger.debug("Data set")
+
+        self._logger.debug("Setting TTL")
+        redis.expire(user_id, ex)
+        self._logger.debug("TTL set")
+
+        redis.quit()
+        return result
+
     def get_data(self, db: RedisDbsEnum, key: str) -> RedisReturnTypes:
         self._logger.info("Starting get_data")
         redis = self.__create_redis_client(db)
@@ -62,22 +86,16 @@ class RedisHandler:
         redis = self.__create_redis_client(db)
 
         self._logger.debug(f"Searching for key: {b64_key} on db: {db}")
-        result = redis.get(user_id)
-
-        print(type(result))
-        print(result)
+        result = redis.hget(user_id, b64_key)
 
         result_data = json.loads(str(result)) if result else None
 
         if result_data is None:
             return None
-
-        data = result_data.get(b64_key, None)
-
-        self._logger.debug(f"Data get {data}")
+        self._logger.debug(f"Data get {result_data}")
         redis.quit()
 
-        return data
+        return result_data
 
     def delete_data(self, db: RedisDbsEnum, key: str) -> Any:
         self._logger.info("Starting delete_data")

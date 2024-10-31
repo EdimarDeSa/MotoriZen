@@ -16,6 +16,7 @@ from .register_query_options import RegisterQueryOptionsModel
 from .register_query_response_model import RegisterQueryResponseModel
 from .register_update_data_model import RegisterUpdateDataModel
 from .register_updates_model import RegisterUpdatesModel
+from .reports_query_model import ReportsQueryModel
 from .token_model import TokenModel
 from .user_model import UserModel
 from .user_new_model import UserNewModel
@@ -40,6 +41,7 @@ __all__ = [
     "RegisterQueryResponseModel",
     "RegisterUpdateDataModel",
     "RegisterUpdatesModel",
+    "ReportsQueryModel",
     "TokenModel",
     "UserModel",
     "UserNewModel",

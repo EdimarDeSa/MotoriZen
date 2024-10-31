@@ -11,3 +11,4 @@ class RedisDbsEnum(IntEnum):
     CARS = 2
     REGISTERS = 3
     BRANDS = 4
+    REPORTS = 5

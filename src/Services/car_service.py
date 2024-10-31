@@ -49,9 +49,7 @@ class CarService(BaseService):
             base64_hash = self._create_hash(hash_data)
 
             cars_schema = self._get_cached_data(base64_hash)
-            # TODO: Ajustar sistema de cache, método de numero de registros não é confiável, um valor pode ser atualizado e isso não afetará o cache
-            # TODO: Adicionar a quantidade de registros no retorno
-            # TODO: Adicionar offset-page no retorno
+            # TODO: Atualizar retorno, agora deve serguir modelo de get_registers
 
             if cars_schema is None:
                 cars_schema = self._car_repository.select_cars(
@@ -163,6 +161,7 @@ class CarService(BaseService):
             db_session.close()
 
     def get_brands(self) -> list[BrandModel]:
+        # TODO: Separar brands de cars
         self.logger.debug("Starting get_brands")
         db_session = self.create_session(write=False)
 
@@ -191,6 +190,7 @@ class CarService(BaseService):
             db_session.close()
 
     def get_brand(self, id_brand: int) -> BrandModel:
+        # TODO: Separar brands de cars
         self.logger.debug("Starting get_brands")
         db_session = self.create_session(write=False)
 
