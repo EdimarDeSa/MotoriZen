@@ -2,18 +2,10 @@ from typing import Generic, Sequence
 
 from pydantic import BaseModel, Field
 
-from Utils.custom_primitive_types import PerPageOptions, SortOrderOptions, T
+from DB.Models.base_query_metadata_model import BaseQueryMetadataModel
+from Utils.custom_primitive_types import T
 
 
 class BaseQueryResponseModel(BaseModel, Generic[T]):
     results: Sequence[T] = Field(description="Results of the query.")
-    sort_by: str = Field(description="Field to sort by")
-    sort_order: SortOrderOptions = Field(description="Order of sorting. asc for ascending and desc for descending")
-
-    page: int = Field(description="Actual page number")
-    per_page: PerPageOptions = Field(description="Number of records per page")
-    total_pages: int = Field(description="Total pages")
-
-    first_index: int = Field(description="First index of the query")
-    last_index: int = Field(description="Last index of the query")
-    total_results: int = Field(description="Total results existent in the database for the given filter")
+    metadata: BaseQueryMetadataModel = Field(description="Query metada.")

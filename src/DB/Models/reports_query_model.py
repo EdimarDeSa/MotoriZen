@@ -15,14 +15,7 @@ from Enums import (
 )
 
 ReportsType = Sequence[
-    Union[
-        ReportsTotalEnum,
-        ReportsMeanEnum,
-        ReportsDailyEnum,
-        ReportsWeeklyEnum,
-        ReportsMonthlyEnum,
-        ReportsYearlyEnum,
-    ]
+    ReportsTotalEnum | ReportsMeanEnum | ReportsDailyEnum | ReportsWeeklyEnum | ReportsMonthlyEnum | ReportsYearlyEnum
 ]
 
 
@@ -32,9 +25,9 @@ class ReportsQueryModel(BaseModel):
         description="Reports to be returned, check Reports<type>Enum above. Can be multiple. If not provided, all reports will be returned.",
         examples=[
             [
-                ReportsTotalEnum.TOTAL_COMSUPTION,
-                ReportsMeanEnum.MEAN_COMSUPTION_PER_DISTANCE,
-                ReportsDailyEnum.DAILY_COMSUPTION,
+                ReportsTotalEnum.TOTAL_CONSUMPTION,
+                ReportsMeanEnum.MEAN_CONSUMPTION_PER_DISTANCE,
+                ReportsDailyEnum.DAILY_CONSUMPTION,
             ]
         ],
     )
@@ -47,8 +40,3 @@ class ReportsQueryModel(BaseModel):
         description="Date of the trip. If not provided, current week will be used. Week starts on Monday.",
         alias="date",
     )
-    # time_: Optional[RangeModel[time]] = Field(
-    #     default=None,
-    #     description="Time of the trip. If not provided, current day will be used.",
-    #     alias="time",
-    # )
