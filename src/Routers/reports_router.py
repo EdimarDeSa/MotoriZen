@@ -1,16 +1,16 @@
-import uuid
-from typing import Any, Literal
-
 from fastapi import APIRouter, Request
 
 from Contents.reports_content import ReportsContent
 from DB.Models import ReportsQueryModel
+from DB.Models.report_reponse_metadata_model import ReportResponseMetadataModel
+from DB.Models.report_response_model import ReportResponseModel
 from Enums.motorizen_error_enum import MotoriZenErrorEnum
 from ErrorHandler.motorizen_error import MotoriZenError
 from Responses import Ok
 from Routers.base_router import BaseRouter
 from Services.reports_service import ReportsService
 from Utils.custom_types import CurrentActiveUser
+from Utils.data_frame import DataFrame
 
 
 class ReportsRouter(BaseRouter):
@@ -28,11 +28,24 @@ class ReportsRouter(BaseRouter):
         self.logger.debug("Starting get_reports")
 
         try:
-            response: dict[uuid.UUID | Literal["-1"], dict[str, Any]] = self.reports_service.get_reports(
-                str(user_data.id_user), reports_query
+            response: DataFrame = self.reports_service.get_reports(str(user_data.id_user), reports_query)
+            keys_ = list(response.keys())
+            total_cars = len(keys_)
+            total_results = 0
+            for key in keys_:
+                total_results += len(response[key])
+
+            report_response = ReportResponseModel(
+                results=response,
+                metadata=ReportResponseMetadataModel(
+                    total_cars=total_cars,
+                    total_results=total_results,
+                    total_reports_selected=reports_query.reports.__len__() if reports_query.reports else 0,
+                    total_bites=response.nbytes,
+                ),
             )
 
-            content = ReportsContent(data=response)
+            content = ReportsContent(data=report_response)
             return Ok(content=content)
 
         except Exception as e:
