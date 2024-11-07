@@ -1,13 +1,14 @@
+from curses import meta
 from typing import Any
 
 from sqlalchemy.orm import DeclarativeBase, declarative_base
 
 from Utils.custom_primitive_types import TableDict
 
-base: DeclarativeBase = declarative_base()
+Base: DeclarativeBase = declarative_base()
 
 
-class BaseSchema(base):
+class BaseSchema(Base):  # type: ignore
     __abstract__ = True
     __table_args__ = {"schema": "motorizen"}
 
