@@ -1,7 +1,6 @@
 import os
-from typing import Annotated, Any, Optional
+from typing import Any, Optional
 
-from fastapi import Depends
 from jwcrypto.jwt import JWTExpired
 from keycloak import KeycloakOpenID
 
@@ -11,7 +10,7 @@ from Enums.redis_dbs_enum import RedisDbsEnum
 from ErrorHandler.motorizen_error import MotoriZenError
 from Services.base_service import BaseService
 from Services.user_service import UserService
-from Utils.oauth_service import oauth2_scheme
+from Utils.oauth_service import TokenSelector
 from Utils.redis_handler import RedisHandler
 
 
@@ -72,7 +71,7 @@ class AuthService(BaseService):
         except Exception as e:
             raise e
 
-    async def get_current_active_user(self, token: Annotated[str, Depends(oauth2_scheme)]) -> UserModel:
+    async def get_current_active_user(self, token: TokenSelector) -> UserModel:
         self.logger.debug("Starting get_current_active_user")
         user_service = UserService()
 

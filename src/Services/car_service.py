@@ -75,7 +75,7 @@ class CarService(BaseService):
         try:
             self.logger.debug("Getting cars count")
 
-            cars_count = self._car_repository.select_cars_count(db_session, id_user, query_filters)
+            cars_count = self._car_repository.count_cars(db_session, id_user, query_filters)
 
             return cars_count
 
