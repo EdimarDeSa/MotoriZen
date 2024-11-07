@@ -3,11 +3,11 @@ from typing import Any
 from sqlalchemy import Insert
 from sqlalchemy.orm import Session, scoped_session
 
-from DB.Models.register_query_filters_model import RegisterQueryFiltersModel
-from DB.Models.register_query_options import RegisterQueryOptionsModel
+from DB.Models import RegisterQueryFiltersModel, RegisterQueryOptionsModel
+from DB.Querys import UserQueryManager
 from DB.Schemas import RegisterSchema
-from Enums.motorizen_error_enum import MotoriZenErrorEnum
-from ErrorHandler.motorizen_error import MotoriZenError
+from Enums import MotoriZenErrorEnum
+from ErrorHandler import MotoriZenError
 
 from .base_repository import BaseRepository
 
@@ -16,6 +16,7 @@ class RegisterRepository(BaseRepository):
     def __init__(self) -> None:
         super().__init__()
         self.create_logger(__name__)
+        self._user_querys = UserQueryManager()
 
     def select_registers(
         self,
@@ -27,7 +28,7 @@ class RegisterRepository(BaseRepository):
         self.logger.debug("Starting select_registers")
 
         try:
-            query = self.querys.select_registers(id_user, query_filters, query_options)
+            query = self._user_querys.select_filtered_user_data(RegisterSchema, id_user, query_filters, query_options)
 
             self.logger.debug(f"Selecting registers for <user: {id_user}>")
             registers_schemas: list[RegisterSchema] = list(db_session.execute(query).scalars().all())
@@ -41,7 +42,7 @@ class RegisterRepository(BaseRepository):
     ) -> RegisterSchema:
         self.logger.debug("Starting select_register_by_id")
         try:
-            query = self.querys.select_register_by_id(id_user, id_register)
+            query = self._user_querys.select_user_data_by_id(RegisterSchema, id_user, id_register)
 
             self.logger.debug(f"Selecting register <register_id: {id_register}> for <user: {id_user}>")
             register_schema: RegisterSchema | None = db_session.execute(query).scalar()
@@ -62,7 +63,7 @@ class RegisterRepository(BaseRepository):
         self.logger.debug("Starting count_registers")
 
         try:
-            query = self.querys.count_total_results(RegisterSchema, id_user, query_filters)
+            query = self._user_querys.count_total_results(RegisterSchema, id_user, query_filters)
 
             self.logger.debug(f"Counting registers for <user: {id_user}>")
             total_registers: int | None = db_session.execute(query).scalar()
@@ -81,7 +82,8 @@ class RegisterRepository(BaseRepository):
         self.logger.debug("Starting insert_register")
 
         try:
-            query: Insert = self.querys.insert_register(new_register.as_dict(exclude_none=True))
+            register_data = new_register.as_dict(exclude_none=True)
+            query: Insert = self._user_querys.insert_data(RegisterSchema, register_data)
 
             self.logger.debug("Inserting new register")
             result = db_session.execute(query)
@@ -98,7 +100,7 @@ class RegisterRepository(BaseRepository):
         self.logger.debug("Starting update_register")
 
         try:
-            query = self.querys.update_register(id_user, id_register, updates)
+            query = self._user_querys.update_user_data(RegisterSchema, id_user, id_register, updates)
 
             self.logger.debug(f"Updating register <register_id: {id_register}> for <user: {id_user}>")
             db_session.execute(query)
@@ -110,7 +112,7 @@ class RegisterRepository(BaseRepository):
         self.logger.debug("Starting delete_register")
 
         try:
-            query = self.querys.delete_register(id_user, id_register)
+            query = self._user_querys.delete_user_data(RegisterSchema, id_user, id_register)
 
             self.logger.debug(f"Deleting register <register_id: {id_register}> for <user: {id_user}>")
             db_session.execute(query)

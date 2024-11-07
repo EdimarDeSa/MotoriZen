@@ -1,10 +1,10 @@
-import uuid
 from typing import Any
 
 from sqlalchemy import Delete, Insert, Select, Update
 from sqlalchemy.orm import Session, scoped_session
 
 from DB.Models import UserUpdatesModel
+from DB.Querys.user_query_manager import UserQueryManager
 from DB.Schemas import UserSchema
 from Enums import MotoriZenErrorEnum
 from ErrorHandler.motorizen_error import MotoriZenError
@@ -14,12 +14,13 @@ from Repositories.base_repository import BaseRepository
 class UserRepository(BaseRepository):
     def __init__(self) -> None:
         self.create_logger(__name__)
+        self._user_querys = UserQueryManager()
 
     def select_user_by_id(self, db_session: scoped_session[Session], id_user: str) -> UserSchema:
         self.logger.debug("Starting select_user_by_id")
 
         try:
-            query: Select[tuple[UserSchema]] = self.querys.select_user_by_id(id_user)
+            query: Select[tuple[UserSchema]] = self._user_querys.select_user_by_id(id_user)
 
             self.logger.debug("Getting user by id")
             user_data: UserSchema | None = db_session.execute(query).scalar()
@@ -36,7 +37,7 @@ class UserRepository(BaseRepository):
         self.logger.debug("Starting select_user_by_cd_auth")
 
         try:
-            query: Select[tuple[UserSchema]] = self.querys.select_user_by_cd_auth(cd_auth)
+            query: Select[tuple[UserSchema]] = self._user_querys.select_user_by_cd_auth(cd_auth)
 
             self.logger.debug("Getting user by cd_auth")
             user_data: UserSchema | None = db_session.execute(query).scalar()
@@ -55,9 +56,9 @@ class UserRepository(BaseRepository):
         self.logger.debug("Starting insert_user")
 
         try:
-            new_data: dict[str, Any] = new_user_data.as_dict(exclude_none=True)
+            new_data = new_user_data.as_dict(exclude_none=True)
 
-            query: Insert = self.querys.insert_user(new_data)
+            query: Insert = self._user_querys.insert_data(UserSchema, new_data)
 
             self.logger.debug("Inserting new user")
             result = db_session.execute(query)
@@ -72,7 +73,7 @@ class UserRepository(BaseRepository):
         try:
             new_data: dict[str, Any] = update_user.model_dump(exclude_none=True)
 
-            query: Update = self.querys.update_user(id_user, new_data)
+            query: Update = self._user_querys.update_user(id_user, new_data)
 
             self.logger.debug(f"Updating user: {id_user}")
             db_session.execute(query)
@@ -85,7 +86,7 @@ class UserRepository(BaseRepository):
         self.logger.debug("Starting delete_user")
 
         try:
-            query: Delete = self.querys.delete_user(email)
+            query: Delete = self._user_querys.delete_user(email)
 
             self.logger.debug("Deleting user")
             db_session.execute(query)
