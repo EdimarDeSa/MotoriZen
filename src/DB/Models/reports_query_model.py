@@ -1,33 +1,22 @@
 import uuid
-from datetime import date, time
-from typing import Optional, Sequence, Union
+from datetime import date
+from typing import Optional, Sequence
 
 from pydantic import BaseModel, Field
 
 from DB.Models.range_model import RangeModel
-from Enums import (
-    ReportsDailyEnum,
-    ReportsMeanEnum,
-    ReportsMonthlyEnum,
-    ReportsTotalEnum,
-    ReportsWeeklyEnum,
-    ReportsYearlyEnum,
-)
-
-ReportsType = Sequence[
-    ReportsTotalEnum | ReportsMeanEnum | ReportsDailyEnum | ReportsWeeklyEnum | ReportsMonthlyEnum | ReportsYearlyEnum
-]
+from Enums import AggregationIntervalEnum, ReportsEnum
 
 
 class ReportsQueryModel(BaseModel):
-    reports: Optional[ReportsType] = Field(
+    reports: Optional[Sequence[ReportsEnum]] = Field(
         default=None,
         description="Reports to be returned, check Reports<type>Enum above. Can be multiple. If not provided, all reports will be returned.",
         examples=[
             [
-                ReportsTotalEnum.TOTAL_CONSUMPTION,
-                ReportsMeanEnum.MEAN_CONSUMPTION_PER_DISTANCE,
-                ReportsDailyEnum.DAILY_CONSUMPTION,
+                ReportsEnum.TOTAL_CONSUMPTION,
+                ReportsEnum.MEAN_CONSUMPTION_PER_DISTANCE,
+                ReportsEnum.MEAN_CONSUMPTION_PER_TRIP,
             ]
         ],
     )
@@ -35,8 +24,12 @@ class ReportsQueryModel(BaseModel):
         default=None,
         description="Car ids to be returned. If not provided, all cars will be returned.",
     )
-    date_: Optional[RangeModel[date]] = Field(
+    time_frame: Optional[RangeModel[date]] = Field(
         default=None,
-        description="Date of the trip. If not provided, current week will be used. Week starts on Monday.",
-        alias="date",
+        description="Time range to search for reports. If not provided, current week will be used. Week starts on Monday.",
+    )
+
+    aggregation_interval: Optional[AggregationIntervalEnum] = Field(
+        default=None,
+        description="Aggregation interval for reports. If not provided, reports will not be aggregated.",
     )

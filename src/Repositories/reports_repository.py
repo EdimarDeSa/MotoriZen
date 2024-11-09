@@ -1,4 +1,5 @@
 import calendar
+import json
 import uuid
 from datetime import date, datetime, timedelta
 from decimal import Decimal
@@ -12,14 +13,10 @@ from sqlalchemy.orm import Session, scoped_session
 from DB.Models.range_model import RangeModel
 from DB.Querys import RegisterQueryManager
 from DB.Querys.user_query_manager import UserQueryManager
-from Enums.reports_daily_enum import ReportsDailyEnum
-from Enums.reports_mean_enum import ReportsMeanEnum
-from Enums.reports_monthly_enum import ReportsMonthlyEnum
-from Enums.reports_total_enum import ReportsTotalEnum
-from Enums.reports_weekly_enum import ReportsWeeklyEnum
-from Enums.reports_yearly_enum import ReportsYearlyEnum
+from Enums import AggregationIntervalEnum
+from Enums.report_enum import ReportsEnum
 from Utils.constants import *
-from Utils.custom_primitive_types import DataFrameType, Periodes
+from Utils.custom_primitive_types import DataFrameType
 
 from .base_repository import BaseRepository
 
@@ -38,92 +35,91 @@ class ReportsRepository(BaseRepository):
         _query: Label[Any] | Null = null()
 
         match report:
-            case ReportsMeanEnum.MEAN_CONSUMPTION_PER_DISTANCE:
-                _query = self._register_querys.mean_consumption_per_distance()
-
-            case ReportsMeanEnum.MEAN_CONSUMPTION_PER_TRIP:
-                _query = self._register_querys.mean_consumption_per_trip()
-
-            case ReportsMeanEnum.MEAN_CONSUMPTION_PER_WORKING_HOUR:
-                _query = self._register_querys.mean_consumption_per_working_hour()
-
-            case ReportsMeanEnum.MEAN_CONSUMPTION_PER_WORKING_MINUTE:
-                _query = self._register_querys.mean_consumption_per_working_minute()
-
-            case ReportsMeanEnum.MEAN_DISTANCE:
+            ### Distance reports ###
+            case ReportsEnum.MEAN_DISTANCE:
                 _query = self._register_querys.mean_distance()
 
-            case ReportsMeanEnum.MEAN_NUMBER_OF_TRIPS:
-                _query = self._register_querys.mean_number_of_trips()
+            case ReportsEnum.MEAN_DISTANCE_PER_TRIP:
+                _query = self._register_querys.mean_distance_per_trip()
 
-            case ReportsMeanEnum.MEAN_WORKING_TIME:
-                _query = self._register_querys.mean_working_time()
+            case ReportsEnum.MEAN_DISTANCE_PER_WORKING_HOUR:
+                _query = self._register_querys.mean_distance_per_working_hour()
 
-            case ReportsMeanEnum.MEAN_WORKING_TIME_PER_TRIP:
-                _query = self._register_querys.mean_working_time_per_trip()
+            case ReportsEnum.MEAN_DISTANCE_PER_WORKING_MINUTE:
+                _query = self._register_querys.mean_distance_per_working_minute()
 
-            case ReportsMeanEnum.MEAN_VALUE_RECEIVED:
-                _query = self._register_querys.mean_value_received()
-
-            case ReportsMeanEnum.MEAN_VALUE_RECEIVED_PER_CONSUMPTION:
-                _query = self._register_querys.mean_value_received_per_consumption()
-
-            case ReportsMeanEnum.MEAN_VALUE_RECEIVED_PER_DISTANCE:
-                _query = self._register_querys.mean_value_received_per_distance()
-
-            case ReportsMeanEnum.MEAN_VALUE_RECEIVED_PER_TRIP:
-                _query = self._register_querys.mean_value_received_per_trip()
-
-            case ReportsMeanEnum.MEAN_VALUE_RECEIVED_PER_WORKING_HOUR:
-                _query = self._register_querys.mean_value_received_per_working_hour()
-
-            case ReportsMeanEnum.MEAN_VALUE_RECEIVED_PER_WORKING_MINUTE:
-                _query = self._register_querys.mean_value_received_per_working_minute()
-
-            case (
-                ReportsTotalEnum.TOTAL_CONSUMPTION
-                | ReportsDailyEnum.DAILY_CONSUMPTION
-                | ReportsWeeklyEnum.WEEKLY_CONSUMPTION
-                | ReportsMonthlyEnum.MONTHLY_CONSUMPTION
-                | ReportsYearlyEnum.YEARLY_CONSUMPTION
-            ):
-                _query = self._register_querys.total_consumption()
-
-            case (
-                ReportsTotalEnum.TOTAL_DISTANCE
-                | ReportsDailyEnum.DAILY_DISTANCE
-                | ReportsWeeklyEnum.WEEKLY_DISTANCE
-                | ReportsMonthlyEnum.MONTHLY_DISTANCE
-                | ReportsYearlyEnum.YEARLY_DISTANCE
-            ):
+            case ReportsEnum.TOTAL_DISTANCE:
                 _query = self._register_querys.total_distance()
 
-            case (
-                ReportsTotalEnum.TOTAL_WORKING_TIME
-                | ReportsDailyEnum.DAILY_WORKING_TIME
-                | ReportsWeeklyEnum.WEEKLY_WORKING_TIME
-                | ReportsMonthlyEnum.MONTHLY_WORKING_TIME
-                | ReportsYearlyEnum.YEARLY_WORKING_TIME
-            ):
+            ### Working time reports ###
+            case ReportsEnum.MEAN_WORKING_TIME:
+                _query = self._register_querys.mean_working_time()
+
+            case ReportsEnum.MEAN_WORKING_TIME_PER_TRIP:
+                _query = self._register_querys.mean_working_time_per_trip()
+
+            case ReportsEnum.MEAN_WORKING_TIME_PER_DISTANCE:
+                _query = self._register_querys.mean_working_time_per_distance()
+
+            case ReportsEnum.TOTAL_WORKING_TIME:
                 _query = self._register_querys.total_working_time()
 
-            case (
-                ReportsTotalEnum.TOTAL_NUMBER_OF_TRIPS
-                | ReportsDailyEnum.DAILY_NUMBER_OF_TRIPS
-                | ReportsWeeklyEnum.WEEKLY_NUMBER_OF_TRIPS
-                | ReportsMonthlyEnum.MONTHLY_NUMBER_OF_TRIPS
-                | ReportsYearlyEnum.YEARLY_NUMBER_OF_TRIPS
-            ):
-                _query = self._register_querys.total_number_of_trips()
+            ### Consumption reports ###
+            case ReportsEnum.MEAN_CONSUMPTION_PER_DISTANCE:
+                _query = self._register_querys.mean_consumption_per_distance()
 
-            case (
-                ReportsTotalEnum.TOTAL_VALUE_RECEIVED
-                | ReportsDailyEnum.DAILY_VALUE_RECEIVED
-                | ReportsWeeklyEnum.WEEKLY_VALUE_RECEIVED
-                | ReportsMonthlyEnum.MONTHLY_VALUE_RECEIVED
-                | ReportsYearlyEnum.YEARLY_VALUE_RECEIVED
-            ):
+            case ReportsEnum.MEAN_CONSUMPTION_PER_TRIP:
+                _query = self._register_querys.mean_consumption_per_trip()
+
+            case ReportsEnum.MEAN_CONSUMPTION_PER_WORKING_HOUR:
+                _query = self._register_querys.mean_consumption_per_working_hour()
+
+            case ReportsEnum.MEAN_CONSUMPTION_PER_WORKING_MINUTE:
+                _query = self._register_querys.mean_consumption_per_working_minute()
+
+            case ReportsEnum.TOTAL_CONSUMPTION:
+                _query = self._register_querys.total_consumption()
+
+            case ReportsEnum.TOTAL_CONSUMPTION_PER_TRIP:
+                _query = self._register_querys.total_consumption_per_trip()
+
+            ### Value reports ###
+            case ReportsEnum.MEAN_VALUE_RECEIVED:
+                _query = self._register_querys.mean_value_received()
+
+            case ReportsEnum.MEAN_VALUE_RECEIVED_PER_CONSUMPTION:
+                _query = self._register_querys.mean_value_received_per_consumption()
+
+            case ReportsEnum.MEAN_VALUE_RECEIVED_PER_DISTANCE:
+                _query = self._register_querys.mean_value_received_per_distance()
+
+            case ReportsEnum.MEAN_VALUE_RECEIVED_PER_TRIP:
+                _query = self._register_querys.mean_value_received_per_trip()
+
+            case ReportsEnum.MEAN_VALUE_RECEIVED_PER_WORKING_HOUR:
+                _query = self._register_querys.mean_value_received_per_working_hour()
+
+            case ReportsEnum.MEAN_VALUE_RECEIVED_PER_WORKING_MINUTE:
+                _query = self._register_querys.mean_value_received_per_working_minute()
+
+            case ReportsEnum.TOTAL_VALUE_RECEIVED:
                 _query = self._register_querys.total_value_received()
+
+            ### Number of trips reports ###
+            case ReportsEnum.MEAN_NUMBER_OF_TRIPS:
+                _query = self._register_querys.mean_number_of_trips()
+
+            case ReportsEnum.MEAN_NUMBER_OF_TRIPS_PER_WORKING_HOUR:
+                _query = self._register_querys.mean_number_of_trips_per_working_hour()
+
+            case ReportsEnum.MEAN_NUMBER_OF_TRIPS_PER_WORKING_MINUTE:
+                _query = self._register_querys.mean_number_of_trips_per_working_minute()
+
+            case ReportsEnum.MEAN_NUMBER_OF_TRIPS_PER_10_KM:
+                _query = self._register_querys.mean_number_of_trips_per_10_km()
+
+            case ReportsEnum.TOTAL_NUMBER_OF_TRIPS:
+                _query = self._register_querys.total_number_of_trips()
 
         return _query.label(report)
 
@@ -144,6 +140,8 @@ class ReportsRepository(BaseRepository):
 
             results: Sequence[RowMapping] = db_session.execute(query).mappings().all()
 
+            self.logger.debug(f"Results: {json.dumps(jsonable_encoder(results))}")
+
             return {
                 result[ID_CAR]: {
                     report: self.__format_value(result[report]) for report in result.keys() if report != ID_CAR
@@ -154,33 +152,36 @@ class ReportsRepository(BaseRepository):
         except Exception as e:
             raise e
 
-    def select_periodicaly_reports(
+    def select_aggregated_reports(
         self,
         db_session: scoped_session[Session],
         id_user: str,
         date_: RangeModel[date],
         car_ids: Sequence[uuid.UUID],
-        periode: Periodes,
+        aggregation_interval: AggregationIntervalEnum,
         report_list: list[Label[Any]],
     ) -> DataFrameType:
         self.logger.debug("Starting select_periodicaly_reports")
 
         try:
-            query = self._user_querys.select_periodicaly_report(id_user, car_ids, date_, periode, report_list)
+            query = self._user_querys.select_periodicaly_report(
+                id_user, car_ids, date_, aggregation_interval, report_list
+            )
 
             self.logger.debug(f"Query: {query}")
 
             results: Sequence[RowMapping] = db_session.execute(query).mappings().all()
-            import json
 
             self.logger.debug(f"Results: {json.dumps(jsonable_encoder(results))}")
 
-            return self.__format_data_frame(results, periode)
+            return self.__format_data_frame(results, aggregation_interval)
 
         except Exception as e:
             raise e
 
-    def __format_data_frame(self, results: Sequence[RowMapping], periode: Periodes) -> DataFrameType:
+    def __format_data_frame(
+        self, results: Sequence[RowMapping], aggregation_interval: AggregationIntervalEnum
+    ) -> DataFrameType:
         data_frame: DataFrameType = {}
         for result in results:
             if result[ID_CAR] not in data_frame.keys():
@@ -193,13 +194,13 @@ class ReportsRepository(BaseRepository):
                 if report not in data_frame[result[ID_CAR]].keys():
                     data_frame[result[ID_CAR]][report] = {}
 
-                _key = self.__create_periode_key(result[PERIODE_START_DATE], periode)
+                _key = self.__create_periode_key(result[PERIODE_START_DATE], aggregation_interval)
                 data_frame[result[ID_CAR]][report][_key] = self.__format_value(result[report])
         return data_frame
 
-    def __create_periode_key(self, date_: date, periode: Periodes) -> str:
+    def __create_periode_key(self, date_: date, aggregation_interval: AggregationIntervalEnum) -> str:
         initial_date = self.__strfdate(date_)
-        final_date = self.__calculate_final_date(date_, periode)
+        final_date = self.__calculate_final_date(date_, aggregation_interval)
         return f"{initial_date} ~ {final_date}"
 
     def __format_value(self, value: Any) -> int | float | str:
@@ -218,19 +219,20 @@ class ReportsRepository(BaseRepository):
 
         return str(value)
 
-    def __calculate_final_date(self, initial_date: date, periode: Periodes) -> str:
+    def __calculate_final_date(self, initial_date: date, aggregation_interval: AggregationIntervalEnum) -> str:
         date_ = initial_date
 
-        if periode == WEEKLY:
-            date_ = initial_date + timedelta(days=6)
+        match aggregation_interval:
+            case AggregationIntervalEnum.WEEK:
+                date_ = initial_date + timedelta(days=6)
 
-        if periode == MONTHLY:
-            last_day = calendar.monthrange(initial_date.year, initial_date.month)[1]
-            date_ = date(initial_date.year, initial_date.month, last_day)
+            case AggregationIntervalEnum.MONTH:
+                last_day = calendar.monthrange(initial_date.year, initial_date.month)[1]
+                date_ = date(initial_date.year, initial_date.month, last_day)
 
-        if periode == YEARLY:
-            last_day = calendar.monthrange(initial_date.year, 12)[1]
-            date_ = date(initial_date.year, 12, last_day)
+            case AggregationIntervalEnum.YEAR:
+                last_day = calendar.monthrange(initial_date.year, 12)[1]
+                date_ = date(initial_date.year, 12, last_day)
 
         return self.__strfdate(date_)
 

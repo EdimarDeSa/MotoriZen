@@ -20,6 +20,18 @@ class DataFrame(DataFrameType):
         return id_car in self.keys()
 
     @property
+    def total_cars(self) -> int:
+        return len(self.keys())
+
+    @property
+    def total_results(self) -> int:
+        total_results = 0
+        for key in self.keys():
+            total_results += len(self[key])
+
+        return total_results
+
+    @property
     def nbytes(self) -> str:
         total_bites = self._deep_sizeof(self)
         return self._format_bytes(total_bites)

@@ -6,8 +6,9 @@ from pydantic import BaseModel, InstanceOf
 from sqlalchemy import Label, Null, Select, func, null, select, true
 
 from DB.Models.range_model import RangeModel
+from Enums import AggregationIntervalEnum
 from Utils.constants import ASCENDANT, CAR_LABEL, PERIODE_START_DATE
-from Utils.custom_primitive_types import Periodes, Table
+from Utils.custom_primitive_types import Table
 
 from ..Schemas import RegisterSchema
 
@@ -55,13 +56,13 @@ class BaseQueryManager:
         id_user: str,
         car_ids: Sequence[uuid.UUID],
         date_: RangeModel[date],
-        periode: Periodes,
+        aggregation_interval: AggregationIntervalEnum,
         report_list: list[Label[Any]],
     ) -> Select[tuple[uuid.UUID, Any]]:
         return (
             select(
                 RegisterSchema.cd_car.label(CAR_LABEL),
-                func.date_trunc(periode, RegisterSchema.register_date).label(PERIODE_START_DATE),
+                func.date_trunc(aggregation_interval, RegisterSchema.register_date).label(PERIODE_START_DATE),
                 *report_list,
             )
             .where(
@@ -69,7 +70,7 @@ class BaseQueryManager:
                 RegisterSchema.cd_car.in_(car_ids) if car_ids else true(),
                 RegisterSchema.register_date.between(date_.start, date_.end),
             )
-            .group_by(RegisterSchema.cd_car, func.date_trunc(periode, RegisterSchema.register_date))
+            .group_by(RegisterSchema.cd_car, func.date_trunc(aggregation_interval, RegisterSchema.register_date))
             .order_by(PERIODE_START_DATE)
         )
 

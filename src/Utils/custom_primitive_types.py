@@ -11,10 +11,8 @@ Headers = dict[str, Any]
 
 TableDict = dict[str, Any]
 
-Table = type["BaseSchema"]
+Table = type["BaseSchema"]  # type: ignore
 
 T = TypeVar("T")
 
 DataFrameType = dict[uuid.UUID | Literal["-1"], dict[str, Any]]
-
-Periodes = Literal["day", "week", "month", "year"]
