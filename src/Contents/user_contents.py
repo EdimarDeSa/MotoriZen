@@ -1,5 +1,4 @@
-from db.Models import UserModel
-from db.Models.user_model import NewUserModel
+from DB.Models import UserModel, UserNewModel
 from Responses.base_response import BaseContent
 
 
@@ -8,7 +7,7 @@ class UserMeContent(BaseContent):
 
 
 class UserNewContent(BaseContent):
-    data: NewUserModel
+    data: UserNewModel
 
 
 class UserUpdatedContent(BaseContent):

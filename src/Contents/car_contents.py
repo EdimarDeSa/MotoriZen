@@ -1,5 +1,5 @@
 from Contents.base_content import BaseContent
-from db.Models.car_model import CarModel, CarsQueryResponseModel
+from DB.Models import CarModel, CarQueryResponseModel
 
 
 class CarContent(BaseContent):
@@ -7,4 +7,4 @@ class CarContent(BaseContent):
 
 
 class CarsContent(BaseContent):
-    data: CarsQueryResponseModel
+    data: CarQueryResponseModel
