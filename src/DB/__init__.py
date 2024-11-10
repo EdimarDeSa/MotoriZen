@@ -1,7 +1,9 @@
 from .connection_handler import DBConnectionHandler
-from .querys import Querys
+from .Querys import BrandQueryManager, CarQueryManager, UserQueryManager
 
 __all__ = [
     "DBConnectionHandler",
-    "Querys",
+    "BrandQueryManager",
+    "CarQueryManager",
+    "UserQueryManager",
 ]

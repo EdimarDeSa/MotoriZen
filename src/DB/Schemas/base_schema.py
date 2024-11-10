@@ -1,15 +1,18 @@
+from curses import meta
 from typing import Any
 
 from sqlalchemy.orm import DeclarativeBase, declarative_base
 
+from Utils.custom_primitive_types import TableDict
+
 Base: DeclarativeBase = declarative_base()
 
 
-class BaseSchema(Base):
+class BaseSchema(Base):  # type: ignore
     __abstract__ = True
     __table_args__ = {"schema": "motorizen"}
 
-    def as_dict(self, *, exclude_none: bool = False) -> dict[str, Any]:
+    def as_dict(self, *, exclude_none: bool = False) -> TableDict:
         """
         Returns a dictionary representation of the schema
 
@@ -17,7 +20,7 @@ class BaseSchema(Base):
             exclude_none (bool, optional): If True, exclude columns with None values. Defaults to False.
 
         Returns:
-            dict[str, Any]: Dictionary representation of the schema
+            TableDict: Dictionary representation of the schema with optional filtering
 
         Example:
             >>> from db.Schemas.user_schema import UserSchema
@@ -40,3 +43,7 @@ class BaseSchema(Base):
             fields (tuple[str]): Tuple of fields in the schema
         """
         return tuple(c.name for c in cls.__table__.c)
+
+    @classmethod
+    def id_column(cls) -> Any:
+        return getattr(cls, "id_" + cls.__tablename__[3:])

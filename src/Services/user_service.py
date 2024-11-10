@@ -95,7 +95,7 @@ class UserService(BaseService):
 
             self.logger.debug("Updating user data in cache")
 
-            self._cache_handler.set_data_for_user(
+            self._cache_handler.set_data(
                 RedisDbsEnum.USERS,
                 str(user_data.cd_auth),
                 user_data.as_dict(exclude_none=True),
