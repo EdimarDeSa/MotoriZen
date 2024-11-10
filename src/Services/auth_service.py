@@ -1,18 +1,16 @@
 import os
-from typing import Annotated, Any, Optional
+from typing import Any, Optional
 
-from fastapi import Depends
 from jwcrypto.jwt import JWTExpired
 from keycloak import KeycloakOpenID
 
-from db.Models.token_model import TokenModel
-from db.Models.user_model import UserModel
+from DB.Models import TokenModel, UserModel
 from Enums.motorizen_error_enum import MotoriZenErrorEnum
 from Enums.redis_dbs_enum import RedisDbsEnum
 from ErrorHandler.motorizen_error import MotoriZenError
 from Services.base_service import BaseService
 from Services.user_service import UserService
-from Utils.oauth_service import oauth2_scheme
+from Utils.oauth_service import TokenSelector
 from Utils.redis_handler import RedisHandler
 
 
@@ -26,7 +24,6 @@ class AuthService(BaseService):
             verify=True,
         )
         self.create_logger(__name__)
-        self._cache_handler = RedisHandler()
 
     def authenticate_user(self, email: str, password: str) -> TokenModel:
         self.logger.info("Starting authenticate_user")
@@ -52,7 +49,11 @@ class AuthService(BaseService):
     def _get_token_from_cache(self, email: str) -> dict[str, Any] | None:
         try:
             self.logger.debug(f"Getting token from cache for email: {email}")
-            return self._cache_handler.get_data(RedisDbsEnum.TOKENS, email)
+            result = self.cache_handler.get_data(RedisDbsEnum.TOKENS, email)
+
+            if isinstance(result, dict):
+                return result
+            return None
 
         except Exception as e:
             raise e
@@ -61,12 +62,12 @@ class AuthService(BaseService):
         try:
             exp = token_data.get("expires_in", None)
             self.logger.debug(f"Saving token to cache with expiration: {exp}")
-            self._cache_handler.set_data(RedisDbsEnum.TOKENS, email, token_data, ex=exp)
+            self.cache_handler.set_data(RedisDbsEnum.TOKENS, email, token_data, ex=exp)
 
         except Exception as e:
             raise e
 
-    async def get_current_active_user(self, token: Annotated[str, Depends(oauth2_scheme)]) -> UserModel:
+    async def get_current_active_user(self, token: TokenSelector) -> UserModel:
         self.logger.debug("Starting get_current_active_user")
         user_service = UserService()
 
@@ -113,10 +114,15 @@ class AuthService(BaseService):
                 raise MotoriZenError(err=MotoriZenErrorEnum.TOKEN_EXPIRED, detail=str(e))
             raise e
 
-    def _get_user_from_cache(self, cd_auth: str) -> Optional[dict[str, Any]]:
+    def _get_user_from_cache(self, cd_auth: str) -> dict[str, Any] | None:
         try:
             self.logger.debug(f"Getting user from cache for cd_auth: {cd_auth}")
-            return self._cache_handler.get_data(RedisDbsEnum.USERS, cd_auth)
+            user_data = self.cache_handler.get_data(RedisDbsEnum.USERS, cd_auth)
+
+            if isinstance(user_data, dict):
+                return user_data
+
+            return None
 
         except Exception as e:
             raise e
@@ -124,7 +130,7 @@ class AuthService(BaseService):
     def _save_user_to_cache(self, cd_auth: str, user_data: dict[str, Any], expires_in: Optional[int] = None) -> None:
         try:
             self.logger.debug(f"Saving user to cache for cd_auth: {cd_auth}")
-            self._cache_handler.set_data(RedisDbsEnum.USERS, cd_auth, user_data, ex=expires_in)
+            self.cache_handler.set_data(RedisDbsEnum.USERS, cd_auth, user_data, ex=expires_in)
             self.logger.debug("User saved in cache service")
 
         except Exception as e:
@@ -158,8 +164,8 @@ class AuthService(BaseService):
             if token_dict is not None:
                 self._auth_handler.logout(token_dict.get("refresh_token", None))
 
-            self._cache_handler.delete_data(RedisDbsEnum.TOKENS, email)
-            self._cache_handler.delete_data(RedisDbsEnum.USERS, cd_auth)
+            self.cache_handler.delete_data(RedisDbsEnum.TOKENS, email)
+            self.cache_handler.delete_data(RedisDbsEnum.USERS, cd_auth)
 
             self.logger.debug("User logged out")
 

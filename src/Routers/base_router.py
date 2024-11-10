@@ -1,12 +1,7 @@
 import logging
 from abc import ABC, abstractmethod
-from enum import Enum
-from typing import Any
 
 from fastapi import APIRouter
-
-from Enums import MotoriZenErrorEnum
-from ErrorHandler import MotoriZenError
 
 
 class BaseRouter(ABC):

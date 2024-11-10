@@ -1,20 +1,9 @@
 import logging
 from abc import ABC
 
-from db.querys import Querys
-from Enums import MotoriZenErrorEnum
-from ErrorHandler import MotoriZenError
-
 
 class BaseRepository(ABC):
-    __querys: Querys | None = None
     __logger: logging.Logger | None = None
-
-    @property
-    def querys(self) -> Querys:
-        if self.__querys is None:
-            self.__querys = Querys()
-        return self.__querys
 
     @property
     def logger(self) -> logging.Logger:
