@@ -49,8 +49,6 @@ class AuthRouter(BaseRouter):
         user_email = form_data.username
         password = form_data.password
 
-        print(user_email, password)
-
         try:
             self.logger.debug(f"Try login with <Email: {user_email}>")
             token_: TokenModel = self.auth_service.authenticate_user(user_email, password)

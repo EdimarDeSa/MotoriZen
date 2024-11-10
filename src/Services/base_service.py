@@ -47,44 +47,104 @@ class BaseService(ABC):
             raise TypeError("Cache handler must be an instance of RedisHandler")
         self._cache_handler = value
 
-    def insert_cache_data(
+    def insert_user_cache_data(
         self,
         db: RedisDbsEnum,
         id_user: str,
         b64_hash: str,
         data_dict: dict[str, Any] | list[dict[str, Any]],
     ) -> None:
-        data = {b64_hash: data_dict}
+        """
+        Insert data into cache for the given user.
+
+        Args:
+            db (RedisDbsEnum): Database from which to retrieve data.
+            id_user (str): User ID for which to retrieve data.
+            hash_key (str): Hash key for the user's data.
+            data_dict (dict[str, Any] | list[dict[str, Any]]): Data to be cached.
+        """
         self.logger.debug("Starting _cache_data")
-        self.cache_handler.set_data(db, id_user, data, int(os.getenv("REDIS_TTL", 300)))
+        self.cache_handler.set_data_for_user(db, id_user, b64_hash, data_dict, int(os.getenv("REDIS_TTL", 300)))
         self.logger.debug("Data cached")
 
     def get_user_cached_data(
-        self, db: RedisDbsEnum, id_user: str, base64_hash: str
+        self, db: RedisDbsEnum, id_user: str, b64_hash: str
     ) -> Union[dict[str, Any], list[Any], None] | None:
+        """
+        Retrieves data from cache for the given user.
+
+        Args:
+            db (RedisDbsEnum): Database from which to retrieve data.
+            id_user (str): User ID for which to retrieve data.
+            hash_key (str): Hash key for the user's data.
+
+        Returns:
+            Union[dict[str, Any], list[Any], None] | None: Data from cache if found, otherwise None.
+        """
         self.logger.debug("Starting get_cached_data")
 
-        schema: Any = self.cache_handler.get_data_from_user(db, id_user, base64_hash)
+        schema: Any = self.cache_handler.get_data_from_user(db, id_user, b64_hash)
 
         self.logger.debug(f"Cached data: {None if not schema else 'found'}")
 
         return schema
 
-    def create_hash(self, data: dict[str, Any]) -> str:
+    def create_hash_key(self, data: dict[str, Any]) -> str:
+        """
+        Creates a hash key for the data.
+
+        Args:
+            data (dict[str, Any]): Values to be hashed.
+
+        Returns:
+            str: Hash key for the data.
+        """
         self.logger.debug("Starting create_hash")
 
         self.logger.debug("Creating hash")
         b64_hash = base64.b64encode(bytes(json.dumps(data), "utf-8")).decode("utf-8")
 
-        self.logger.debug(f"Hash created: {b64_hash}")
+        self.logger.debug(f"Hash created")
 
         return b64_hash
+
+    def reset_cache(self, id_user: str) -> None:
+        """
+        Resets cache for the given user.
+
+        Args:
+            db (RedisDbsEnum): Database from which to retrieve data.
+            id_user (str): User ID for which to retrieve data.
+        """
+        self.logger.debug("Starting reset_cache")
+
+        self.logger.debug("Resetting cache")
+
+        dbs = [
+            RedisDbsEnum.CARS,
+            RedisDbsEnum.REGISTERS,
+            RedisDbsEnum.REPORTS,
+        ]
+        for db in dbs:
+            self.cache_handler.delete_data(db, id_user)
+
+        self.logger.debug("Cache reset")
 
     def create_session(self, write: bool = False) -> scoped_session[Session]:
         return DBConnectionHandler.create_session(write=write)
 
     @classmethod
     def calculate_offset(cls, per_page: int | None, page: int | None) -> int:
+        """
+        Create offset for SQLAlchemy query pagination.
+
+        Args:
+            per_page (int | None): Number of results per page.
+            page (int | None): Actual page number.
+
+        Returns:
+            int: Offset for SQLAlchemy query pagination.
+        """
         if per_page is None:
             per_page = 10
 
@@ -95,6 +155,16 @@ class BaseService(ABC):
 
     @classmethod
     def calculate_max_pages(cls, total_results: int, per_page: int) -> int:
+        """
+        Calculate the maximum number of pages based on the total number of results and the results per page.
+
+        Args:
+            total_results (int): Total number of results.
+            per_page (int): Results per page.
+
+        Returns:
+            int: Maximum number of pages.
+        """
         pages = total_results / per_page
 
         int_pages = int(pages)

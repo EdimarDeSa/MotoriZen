@@ -78,7 +78,6 @@ class RegisterRouter(BaseRouter):
     def new_register(self, request: Request, user_data: CurrentActiveUser, new_register: RegisterNewModel) -> Created:
         self.logger.debug("Starting new_register")
 
-        # FIXME: Dar um jeito de "resetar" o cache a cada novo registro
         try:
             self.logger.debug("Creating new register")
             response_data = self.register_service.create_register(str(user_data.id_user), new_register)

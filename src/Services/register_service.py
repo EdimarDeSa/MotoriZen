@@ -39,8 +39,9 @@ class RegisterService(BaseService):
             b64_data = {
                 **query_filters.model_dump(exclude_none=True),
                 **query_options.model_dump(exclude_none=True),
+                "id_user": id_user,
             }
-            b64_key = self.create_hash(b64_data)
+            b64_key = self.create_hash_key(b64_data)
 
             result_data = self.get_user_cached_data(RedisDbsEnum.REGISTERS, id_user, b64_key)
 
@@ -71,7 +72,7 @@ class RegisterService(BaseService):
                     total_results=total_registers,
                 )
 
-                self.insert_cache_data(RedisDbsEnum.REGISTERS, id_user, b64_key, result_data)
+                self.insert_user_cache_data(RedisDbsEnum.REGISTERS, id_user, b64_key, result_data)
 
             return RegisterQueryResponseModel.model_validate(result_data)
 
@@ -115,6 +116,10 @@ class RegisterService(BaseService):
             odometer_old = self._car_repository.get_last_odometer(db_session, id_user, str(new_register.cd_car))
             distance: float = new_register_data.get("distance", 0.0)
 
+            if odometer_new is None and distance:
+                self.logger.debug("Calculating odometer")
+                odometer_new = odometer_old + distance
+
             if odometer_old >= odometer_new:
                 raise MotoriZenError(
                     err=MotoriZenErrorEnum.INVALID_REGISTER_DATA,
@@ -126,11 +131,7 @@ class RegisterService(BaseService):
                 distance = odometer_new - odometer_old
                 new_register_data["distance"] = distance
 
-            if odometer_new is None and not distance:
-                self.logger.debug("Calculating odometer")
-                odometer_new = odometer_old + distance
-
-            if (odometer_old + distance) >= odometer_new:
+            if (odometer_old + distance) > odometer_new:
                 raise MotoriZenError(
                     err=MotoriZenErrorEnum.INVALID_REGISTER_DATA,
                     detail="Last odometer + distance cannot be lower than the new odometer.",
@@ -146,6 +147,8 @@ class RegisterService(BaseService):
             id_register = self._register_repository.insert_register(db_session, new_register_schema)
 
             db_session.commit()
+
+            self.reset_cache(id_user)
 
             register_model = self.get_register(id_user, id_register)
             car_schema = self._car_repository.select_car_by_id(db_session, id_user, str(new_register.cd_car))
@@ -179,6 +182,8 @@ class RegisterService(BaseService):
 
             db_session.commit()
 
+            self.reset_cache(id_user)
+
         except Exception as e:
             db_session.rollback()
             raise e
@@ -193,6 +198,8 @@ class RegisterService(BaseService):
             self._register_repository.delete_register(db_session, id_user, id_register)
 
             db_session.commit()
+
+            self.reset_cache(id_user)
 
         except Exception as e:
             db_session.rollback()

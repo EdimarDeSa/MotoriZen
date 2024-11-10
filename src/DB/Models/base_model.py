@@ -8,5 +8,5 @@ class NewBaseModelDb(BaseModel):
 
 
 class BaseModelDb(NewBaseModelDb):
-    last_update: datetime = Field(serialization_alias="lastUpdate", description="Last update of the user")
+    last_update: datetime = Field(description="Last update of the user")
     creation: datetime = Field(description="Creation of the user")
