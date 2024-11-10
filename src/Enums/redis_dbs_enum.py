@@ -3,7 +3,7 @@ from enum import IntEnum
 
 class RedisDbsEnum(IntEnum):
     """
-    Redis databases
+    Redis databases enum.
     """
 
     USERS = 0

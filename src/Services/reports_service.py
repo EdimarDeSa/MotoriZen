@@ -64,7 +64,7 @@ class ReportsService(BaseService):
                     total_cars=data_frame.total_cars,
                     total_results=data_frame.total_results,
                     total_reports_selected=reports_query.reports.__len__() if reports_query.reports else 0,
-                    total_bites=data_frame.nbytes,
+                    total_bytes=data_frame.nbytes,
                 ),
             )
 

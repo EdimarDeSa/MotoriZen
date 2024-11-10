@@ -1,35 +1,19 @@
 import sys
-from typing import Literal
-from uuid import UUID
+from typing import Optional
 
-from Utils.custom_primitive_types import DataFrameType
+from pydantic import BaseModel, Field, field_validator
 
 
-class DataFrame(DataFrameType):
+class BaseMetadataModel(BaseModel):
+    total_results: int = Field(description="Total results existent in the database for the given filter")
+    total_bytes: Optional[str] = Field(default=None, description="Total bites selected.")
 
-    def insert_reports(self, other: DataFrameType) -> None:
-        for id_car, reports in other.items():
+    @field_validator("total_bytes", mode="after")
+    def validate_total_bytes(cls, value: Optional[str]) -> str:
+        if value is None:
+            return cls.nbytes
 
-            if not self.check_car_existence(id_car):
-                self[id_car] = dict()
-
-            for report, data in reports.items():
-                self[id_car][report] = data
-
-    def check_car_existence(self, id_car: UUID | Literal["-1"]) -> bool:
-        return id_car in self.keys()
-
-    @property
-    def total_cars(self) -> int:
-        return len(self.keys())
-
-    @property
-    def total_results(self) -> int:
-        total_results = 0
-        for key in self.keys():
-            total_results += len(self[key])
-
-        return total_results
+        return value
 
     @property
     def nbytes(self) -> str:

@@ -91,7 +91,7 @@ class CarRepository(BaseRepository):
         except Exception as e:
             raise e
 
-    def insert_car(self, db_session: scoped_session[Session], id_user: uuid.UUID, new_car: CarNewModel) -> None:
+    def insert_car(self, db_session: scoped_session[Session], id_user: uuid.UUID, new_car: CarNewModel) -> str:
         self.logger.debug("Starting create_car")
 
         try:
@@ -105,6 +105,8 @@ class CarRepository(BaseRepository):
             result = db_session.execute(query)
 
             self.logger.debug(f"Car inserted <car_id; {result.inserted_primary_key[0]}>")
+
+            return str(result.inserted_primary_key[0])
 
         except Exception as e:
             raise e

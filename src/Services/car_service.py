@@ -1,13 +1,17 @@
-import base64
-import json
 import uuid
-from typing import Any
 
-from DB.Models import BrandModel, CarModel, CarNewModel, CarQueryFiltersModel, CarQueryOptionsModel, CarUpdatesDataModel
-from DB.Schemas import BrandSchema, CarSchema
+from DB.Models import (
+    CarModel,
+    CarNewModel,
+    CarQueryFiltersModel,
+    CarQueryOptionsModel,
+    CarQueryResponseModel,
+    CarUpdatesDataModel,
+)
+from DB.Schemas import CarSchema
 from Enums import RedisDbsEnum
 from Repositories.car_repository import CarRepository
-from Utils.redis_handler import RedisHandler
+from Utils.constants import ASC
 
 from .base_service import BaseService
 
@@ -15,7 +19,6 @@ from .base_service import BaseService
 class CarService(BaseService):
     def __init__(self) -> None:
         self._car_repository = CarRepository()
-        self._cache_handler = RedisHandler()
         self.create_logger(__name__)
 
     def get_car(self, id_user: str, car_id: str) -> CarModel:
@@ -25,72 +28,85 @@ class CarService(BaseService):
         try:
             self.logger.debug(f"Getting car <car_id: {car_id}> for <user: {id_user}>")
 
-            car_schema: CarSchema = self._car_repository.select_car_by_id(db_session, id_user, car_id)
+            hash_data = {"id_user": id_user, "car_id": car_id}
+            hash_key = self.create_hash_key(hash_data)
 
-            car_model = CarModel.model_validate(car_schema, from_attributes=True)
+            car_schema = self.get_user_cached_data(RedisDbsEnum.CARS, id_user, hash_key)
 
-            return car_model
+            if car_schema is None:
+                car_schema = self._car_repository.select_car_by_id(db_session, id_user, car_id)
+
+                self.insert_user_cache_data(RedisDbsEnum.CARS, id_user, hash_key, car_schema)
+
+            return CarModel.model_validate(car_schema, from_attributes=True)
 
         except Exception as e:
             raise e
 
     def get_cars(
-        self, id_user: str, query_params: CarQueryFiltersModel, query_options: CarQueryOptionsModel, count: int
-    ) -> list[CarModel]:
+        self, id_user: str, query_filters: CarQueryFiltersModel, query_options: CarQueryOptionsModel
+    ) -> CarQueryResponseModel:
         self.logger.debug("Starting get_cars")
         db_session = self.create_session(write=False)
 
         try:
             self.logger.debug("Getting cars")
-            query_params_dict = query_params.model_dump(exclude_none=True)
+
+            query_filters_dict = query_filters.model_dump(exclude_none=True)
             query_options_dict = query_options.model_dump(exclude_none=True)
+            hash_data = {**query_filters_dict, **query_options_dict, "id_user": id_user}
+            hash_key = self.create_hash_key(hash_data)
 
-            hash_data = {**query_params_dict, **query_options_dict, "count": count, "id_user": id_user}
-            base64_hash = self._create_hash(hash_data)
+            result_data = self.get_user_cached_data(RedisDbsEnum.CARS, id_user, hash_key)
 
-            cars_schema = self._get_cached_data(base64_hash)
-            # TODO: Atualizar retorno, agora deve serguir modelo de get_registers
-
-            if cars_schema is None:
-                cars_schema = self._car_repository.select_cars(
+            if result_data is None:
+                cars_schemas: list[CarSchema] = self._car_repository.select_cars(
                     db_session,
                     id_user,
-                    query_params,
+                    query_filters,
                     query_options,
                 )
 
-                self._cache_data(id_user, base64_hash, cars_schema)
+                count: int = self._get_cars_count(str(id_user), query_filters)
 
-            cars_model = [CarModel.model_validate(car_schema, from_attributes=True) for car_schema in cars_schema]
+                offset = self.calculate_offset(query_options.per_page, query_options.page)
 
-            return cars_model
+                result_data = dict(
+                    results=cars_schemas,
+                    metadata=dict(
+                        sort_by=query_options.sort_by or "id_car",
+                        sort_order=query_options.sort_order or ASC,
+                        page=query_options.page or 1,
+                        per_page=query_options.per_page or 10,
+                        total_pages=self.calculate_max_pages(count, query_options.per_page or 10),
+                        first_index=offset + 1,
+                        last_index=offset + len(cars_schemas),
+                        total_results=count,
+                    ),
+                )
+
+                self.insert_user_cache_data(RedisDbsEnum.CARS, id_user, hash_key, result_data)
+
+            return CarQueryResponseModel.model_validate(result_data)
 
         except Exception as e:
             raise e
 
-    def get_cars_count(self, id_user: str, query_filters: CarQueryFiltersModel) -> int:
-        self.logger.debug("Starting get_cars_count")
-        db_session = self.create_session(write=False)
-
-        try:
-            self.logger.debug("Getting cars count")
-
-            cars_count = self._car_repository.count_cars(db_session, id_user, query_filters)
-
-            return cars_count
-
-        except Exception as e:
-            raise e
-
-    def create_car(self, id_user: uuid.UUID, new_car: CarNewModel) -> None:
+    def create_car(self, id_user: uuid.UUID, new_car: CarNewModel) -> CarModel:
         self.logger.debug("Starting create_car")
         db_session = self.create_session(write=True)
 
         try:
             self.logger.debug(f"Creating car for <user: {id_user}>")
-            self._car_repository.insert_car(db_session, id_user, new_car)
+            id_car = self._car_repository.insert_car(db_session, id_user, new_car)
 
             db_session.commit()
+
+            car = self.get_car(str(id_user), id_car)
+
+            self.reset_cache(str(id_user))
+
+            return car
 
         except Exception as e:
             db_session.rollback()
@@ -98,27 +114,6 @@ class CarService(BaseService):
 
         finally:
             db_session.close()
-
-    def _get_cached_data(self, base64_hash: str) -> list[CarSchema | BrandSchema] | None:
-        self.logger.debug("Starting _get_cached_data")
-        cars_schema: Any = self._cache_handler.get_data(RedisDbsEnum.CARS, base64_hash)
-        self.logger.debug(f"Cached data: {cars_schema if not cars_schema else 'found'}")
-        return cars_schema
-
-    def _cache_data(self, id_user: str, base64_hash: str, cars_schema: list[CarSchema | BrandSchema]) -> None:
-        self.logger.debug("Starting _cache_data")
-        data = {base64_hash: cars_schema}
-
-        self.insert_user_cache_data(RedisDbsEnum.CARS, id_user, base64_hash, data)
-        self.logger.debug("Data cached")
-
-    def _create_hash(self, hash_data: dict[str, Any]) -> str:
-        self.logger.debug("Starting _create_hash")
-
-        self.logger.debug("Creating hash")
-        base64_hash = base64.b64encode(bytes(json.dumps(hash_data), "utf-8")).decode("utf-8")
-        self.logger.debug(f"Hash created: {base64_hash}")
-        return base64_hash
 
     def update_car(self, id_user: str, car_id: str, car_updates: CarUpdatesDataModel) -> CarModel:
         self.logger.debug("Starting update_car")
@@ -130,11 +125,11 @@ class CarService(BaseService):
 
             car_schema: CarSchema = self._car_repository.select_car_by_id(db_session, id_user, car_id)
 
-            car_model = CarModel.model_validate(car_schema, from_attributes=True)
-
             db_session.commit()
 
-            return car_model
+            self.reset_cache(str(id_user))
+
+            return CarModel.model_validate(car_schema, from_attributes=True)
 
         except Exception as e:
             db_session.rollback()
@@ -153,6 +148,8 @@ class CarService(BaseService):
 
             db_session.commit()
 
+            self.reset_cache(str(id_user))
+
         except Exception as e:
             db_session.rollback()
             raise e
@@ -160,48 +157,16 @@ class CarService(BaseService):
         finally:
             db_session.close()
 
-    def get_brands(self) -> list[BrandModel]:
-        # TODO: Separar brands de cars
-        self.logger.debug("Starting get_brands")
+    def _get_cars_count(self, id_user: str, query_filters: CarQueryFiltersModel) -> int:
+        self.logger.debug("Starting get_cars_count")
         db_session = self.create_session(write=False)
 
         try:
-            hash_data = {"get_brands": "all_brands"}
-            base64_hash = self._create_hash(hash_data)
+            self.logger.debug("Getting cars count")
 
-            brand_schema_list = self._get_cached_data(base64_hash)
+            cars_count = self._car_repository.count_cars(db_session, id_user, query_filters)
 
-            if brand_schema_list is None:
-                self.logger.debug("Geting all brands")
-                brand_schema_list = self._car_repository.select_brands(db_session)
-
-                self.cache_handler.set_data(
-                    RedisDbsEnum.BRANDS,
-                    base64_hash,
-                    [schema.as_dict(exclude_none=True) for schema in brand_schema_list],
-                )
-
-            return [BrandModel.model_validate(brand_schema, from_attributes=True) for brand_schema in brand_schema_list]
+            return cars_count
 
         except Exception as e:
             raise e
-
-        finally:
-            db_session.close()
-
-    def get_brand(self, id_brand: int) -> BrandModel:
-        # TODO: Separar brands de cars
-        self.logger.debug("Starting get_brands")
-        db_session = self.create_session(write=False)
-
-        try:
-            self.logger.debug("Geting all brands")
-            brand_schema: BrandSchema = self._car_repository.select_brand(db_session, id_brand)
-
-            return BrandModel.model_validate(brand_schema, from_attributes=True)
-
-        except Exception as e:
-            raise e
-
-        finally:
-            db_session.close()

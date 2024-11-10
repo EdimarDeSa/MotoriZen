@@ -39,6 +39,7 @@ class RegisterService(BaseService):
             b64_data = {
                 **query_filters.model_dump(exclude_none=True),
                 **query_options.model_dump(exclude_none=True),
+                "id_user": id_user,
             }
             b64_key = self.create_hash_key(b64_data)
 
@@ -147,6 +148,8 @@ class RegisterService(BaseService):
 
             db_session.commit()
 
+            self.reset_cache(id_user)
+
             register_model = self.get_register(id_user, id_register)
             car_schema = self._car_repository.select_car_by_id(db_session, id_user, str(new_register.cd_car))
 
@@ -179,6 +182,8 @@ class RegisterService(BaseService):
 
             db_session.commit()
 
+            self.reset_cache(id_user)
+
         except Exception as e:
             db_session.rollback()
             raise e
@@ -193,6 +198,8 @@ class RegisterService(BaseService):
             self._register_repository.delete_register(db_session, id_user, id_register)
 
             db_session.commit()
+
+            self.reset_cache(id_user)
 
         except Exception as e:
             db_session.rollback()

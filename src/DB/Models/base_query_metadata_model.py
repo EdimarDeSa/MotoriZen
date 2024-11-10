@@ -1,9 +1,10 @@
-from pydantic import BaseModel, Field
+from pydantic import Field
 
-from Utils.custom_primitive_types import PerPageOptions, SortOrderOptions, T
+from DB.Models.base_metadata_model import BaseMetadataModel
+from Utils.custom_primitive_types import PerPageOptions, SortOrderOptions
 
 
-class BaseQueryMetadataModel(BaseModel):
+class BaseQueryMetadataModel(BaseMetadataModel):
     sort_by: str = Field(description="Field to sort by")
     sort_order: SortOrderOptions = Field(description="Order of sorting. asc for ascending and desc for descending")
 
@@ -13,4 +14,3 @@ class BaseQueryMetadataModel(BaseModel):
 
     first_index: int = Field(description="First index of the query")
     last_index: int = Field(description="Last index of the query")
-    total_results: int = Field(description="Total results existent in the database for the given filter")

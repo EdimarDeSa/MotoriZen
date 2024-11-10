@@ -1,10 +1,9 @@
-from math import e
-
 from fastapi import APIRouter, Request
 
 from Contents.brand_content import BrandContent
 from Contents.car_contents import CarContent, CarsContent
 from DB.Models import BrandModel, CarModel, CarNewModel, CarQueryModel, CarQueryResponseModel, CarUpdatesModel
+from DB.Models.car_models.car_metadata_model import CarsMetadataModel
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
 from Responses import Created, NoContent, Ok
@@ -28,17 +27,6 @@ class CarsRouter(BaseRouter):
         self.router.add_api_route("/update-car", self.update_car, response_model=CarContent, methods=["PUT"])
         self.router.add_api_route("/delete-car/{id_car}", self.delete_car, response_model=None, methods=["DELETE"])
 
-        self.router.add_api_route(
-            "/get-brands", self.get_brands, response_model=BrandContent, methods=["POST"], tags=["Brands"]
-        )
-        self.router.add_api_route(
-            "/get-brand/{id_brand}",
-            self.get_brand,
-            response_model=BrandContent,
-            methods=["POST"],
-            tags=["Brands"],
-        )
-
     def get_car(self, request: Request, user_data: CurrentActiveUser, id_car: str) -> Ok:
         self.logger.debug("Starting get_car")
 
@@ -59,13 +47,11 @@ class CarsRouter(BaseRouter):
         self.logger.debug("Starting get_cars")
 
         try:
-            count: int = self.car_service.get_cars_count(str(user_data.id_user), query_data.query_filters)
 
-            car_model: list[CarModel] = self.car_service.get_cars(
-                str(user_data.id_user), query_data.query_filters, query_data.query_options, count
+            car_query_response_model = self.car_service.get_cars(
+                str(user_data.id_user), query_data.query_filters, query_data.query_options
             )
 
-            car_query_response_model = CarQueryResponseModel(total_results=count, results=car_model)
             content = CarsContent(data=car_query_response_model)
             return Ok(content=content)
 
@@ -81,9 +67,10 @@ class CarsRouter(BaseRouter):
 
         try:
             self.logger.debug(f"Creating car for <user: {user_data.email}>")
-            self.car_service.create_car(user_data.id_user, new_car)
+            result: CarModel = self.car_service.create_car(user_data.id_user, new_car)
 
-            return Created()
+            content = CarContent(data=result)
+            return Created(content=content)
 
         except Exception as e:
             self.logger.exception(e)
@@ -95,7 +82,6 @@ class CarsRouter(BaseRouter):
 
     def update_car(self, request: Request, user_data: CurrentActiveUser, update_car: CarUpdatesModel) -> Ok:
         self.logger.debug("Starting update_car")
-        # FIXME: Não está atualizando o cache, verificar modo de fazer isso
 
         try:
             result: CarModel = self.car_service.update_car(
@@ -120,40 +106,6 @@ class CarsRouter(BaseRouter):
             self.car_service.delete_car(str(user_data.id_user), id_car)
 
             return NoContent()
-
-        except Exception as e:
-            self.logger.exception(e)
-
-            if not isinstance(e, MotoriZenError):
-                e = MotoriZenError(err=MotoriZenErrorEnum.UNKNOWN_ERROR, detail="")
-
-            raise e.as_http_response()
-
-    def get_brands(self, request: Request, user_data: CurrentActiveUser) -> Ok:
-        self.logger.debug("Starting get_brands")
-
-        try:
-            brand: list[BrandModel] = self.car_service.get_brands()
-
-            content = BrandContent(data=brand)
-            return Ok(content=content)
-
-        except Exception as e:
-            self.logger.exception(e)
-
-            if not isinstance(e, MotoriZenError):
-                e = MotoriZenError(err=MotoriZenErrorEnum.UNKNOWN_ERROR, detail="")
-
-            raise e.as_http_response()
-
-    def get_brand(self, request: Request, user_data: CurrentActiveUser, id_brand: int) -> Ok:
-        self.logger.debug("Starting get_brands")
-
-        try:
-            brand: BrandModel = self.car_service.get_brand(id_brand)
-
-            content = BrandContent(data=brand)
-            return Ok(content=content)
 
         except Exception as e:
             self.logger.exception(e)
