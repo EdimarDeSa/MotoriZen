@@ -8,12 +8,14 @@ from Responses import Ok
 from Routers.base_router import BaseRouter
 from Services.reports_service import ReportsService
 from Utils.custom_types import CurrentActiveUser
+from Utils.Internacionalization import InternationalizationManager
 
 
 class ReportsRouter(BaseRouter):
-    def __init__(self) -> None:
+    def __init__(self, txt_manager: InternationalizationManager) -> None:
         super().__init__()
         self.create_logger(__name__)
+        self.txt_manager = txt_manager
         self.reports_service = ReportsService()
         self.router = APIRouter(prefix="/reports", tags=["Reports"])
         self._register_routes()

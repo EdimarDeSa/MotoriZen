@@ -1,23 +1,22 @@
-from typing import Any, Literal
-
 from fastapi import APIRouter, Request
 
 from Contents.user_contents import UserMeContent, UserUpdatedContent
-from DB.Models import UserModel, UserNewModel, UserUpdatesModel
+from DB.Models import UserNewModel, UserUpdatesModel
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
 from Responses import Created, NoContent, Ok
-from Services.auth_service import AuthService
 from Services.user_service import UserService
 from Utils.custom_types import CurrentActiveUser
+from Utils.Internacionalization import InternationalizationManager
 
 from .base_router import BaseRouter
 
 
 class UserRouter(BaseRouter):
-    def __init__(self) -> None:
+    def __init__(self, txt_manager: InternationalizationManager) -> None:
         super().__init__()
         self.create_logger(__name__)
+        self.txt_manager = txt_manager
         self.router = APIRouter(prefix="/users", tags=["Users"])
         self.user_service = UserService()
         self._register_routes()

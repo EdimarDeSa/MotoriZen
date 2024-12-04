@@ -38,16 +38,16 @@ class RegisterQueryManager(BaseQueryManager):
         return func.sum(RegisterSchema.working_time)
 
     ### Consumption Reports ###
-    def mean_consumption_per_distance(self) -> Any:
+    def mean_consuption_per_distance(self) -> Any:
         return func.avg(self.fuel_consumpted)
 
-    def mean_consumption_per_trip(self) -> Any:
+    def mean_consuption_per_trip(self) -> Any:
         return func.avg(self.fuel_consumpted / RegisterSchema.number_of_trips)
 
-    def mean_consumption_per_working_hour(self) -> Any:
+    def mean_consuption_per_working_hour(self) -> Any:
         return func.avg(self.fuel_consumpted / self.working_time_per_hour)
 
-    def mean_consumption_per_working_minute(self) -> Any:
+    def mean_consuption_per_working_minute(self) -> Any:
         return func.avg(self.fuel_consumpted / self.working_time_per_minute)
 
     def total_consumption(self) -> Any:

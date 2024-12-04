@@ -1,10 +1,12 @@
 import logging
 import os
 import time
+from pathlib import Path
+from typing import Optional
 
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm import Session, scoped_session, sessionmaker
 
 logger = logging.getLogger(__name__)
 
@@ -20,10 +22,18 @@ def get_db_url() -> str:
     return f"{db_dialect}://{db_user}:{db_password}@{db_ip}:{db_port}/{db_name}"
 
 
+def internacionalization_db_url() -> str:
+    """Constrói a URL de conexão internacionalizada para o banco de dados."""
+    db_path = Path(__file__).resolve().parent.parent / "DB" / "internacionalization_database.db"
+
+    return f"sqlite://{db_path}"
+
+
 class DBConnectionHandler:
     @staticmethod
-    def create_session(*, write: bool = False) -> scoped_session:
-        db_url = get_db_url()
+    def create_session(*, db_url: Optional[str] = None, write: bool = False) -> scoped_session[Session]:
+        if db_url is None:
+            db_url = get_db_url()
 
         engine: Engine = create_engine(
             db_url, pool_size=250, max_overflow=50, pool_use_lifo=True, pool_pre_ping=True, pool_recycle=300
@@ -35,12 +45,12 @@ class DBConnectionHandler:
         return scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 
     @staticmethod
-    def test_connection(db_session: scoped_session) -> None:
+    def test_connection(db_session: scoped_session[Session]) -> None:
         retries, max_retries = 0, 5
         logger.debug("Testing database connection...")
         while retries < max_retries:
             try:
-                result: str = db_session.execute(text("SELECT 1"))
+                result: str = db_session.execute(text("SELECT 1"))  # type: ignore
                 logger.debug(f"Connection successful: {result}")
                 break
             except Exception as e:

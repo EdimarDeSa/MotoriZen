@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
+from Utils.Internacionalization import InternationalizationManager
+
 load_dotenv()
 
 from Enums import MotoriZenErrorEnum
@@ -21,6 +23,7 @@ from Utils.custom_types import MiddlewareSequence, RoutersSequence
 __all__ = [
     "REGISTER_ROUTERS",
     "REGISTER_MIDDLEWARES",
+    "SWAGGER_UI_PARAMETERS",
     "CONTACT",
     "TITLE",
 ]
@@ -36,9 +39,9 @@ ROUTERS: RoutersSequence = [
 ]
 
 
-def register_routers(app: FastAPI) -> None:
+def register_routers(app: FastAPI, txt_manager: InternationalizationManager) -> None:
     for router in ROUTERS:
-        r = router()
+        r = router(txt_manager=txt_manager)
 
         if not isinstance(r, BaseRouter):
             raise TypeError("Invalid router, must be an instance of Routers.base_router.BaseRouter")
@@ -52,7 +55,7 @@ def register_routers(app: FastAPI) -> None:
             logger.debug(f"Route => {path} => {tags}")
 
 
-REGISTER_ROUTERS: Callable[[FastAPI], None] = register_routers
+REGISTER_ROUTERS: Callable[[FastAPI, InternationalizationManager], None] = register_routers
 
 
 ### MIDDLEWARES ###
@@ -71,7 +74,7 @@ MIDDLEWARES: MiddlewareSequence = [
 ]
 
 
-def register_middlewares(app: FastAPI) -> None:
+def register_middlewares(app: FastAPI, txt_manager: InternationalizationManager) -> None:
     for middleware in MIDDLEWARES:
         logger.debug(f"Iniciando - {middleware['middleware_class'].__name__}")
 
@@ -82,7 +85,8 @@ def register_middlewares(app: FastAPI) -> None:
         app.add_middleware(middleware["middleware_class"], **middleware["options"])
 
 
-REGISTER_MIDDLEWARES: Callable[[FastAPI], None] = register_middlewares
+REGISTER_MIDDLEWARES: Callable[[FastAPI, InternationalizationManager], None] = register_middlewares
+
 
 ### PROJECT INFO ###
 TITLE: str = "MotoriZen – Controle de Ganhos, KM e Consumo para Motoristas"
@@ -93,6 +97,28 @@ CONTACT: dict[str, str] = {
     "url": "https://efscode.com",
     "github": "https://github.com/EdimarDeSa",
     "linkedin": "https://www.linkedin.com/in/edimar-freitas-de-sá/",
+}
+
+SWAGGER_UI_PARAMETERS = {
+    "docExpansion": "none",
+    "deepLinking": True,
+    "persistAuthorization": True,
+    "displayOperationId": False,
+    "displayRequestDuration": True,
+    "defaultModelsExpandDepth": 0,
+    "filter": True,
+    "operationsSorter": "method",
+    "requestSnippets": [
+        {"lang": "curl", "label": "cURL"},
+        {"lang": "python", "label": "Python Requests"},
+    ],
+    "requestTimeout": 5000,
+    "showExtensions": True,
+    "showCommonExtensions": True,
+    "syntaxHighlight": True,
+    "supportedSubmitMethods": ["get", "post", "put", "delete"],
+    "tryItOutEnabled": False,
+    "theme": "flattop",
 }
 
 

@@ -14,9 +14,9 @@ class ReportsQueryModel(BaseModel):
         description="Reports to be returned, check Reports<type>Enum above. Can be multiple. If not provided, all reports will be returned.",
         examples=[
             [
-                ReportsEnum.TOTAL_CONSUMPTION,
-                ReportsEnum.MEAN_CONSUMPTION_PER_DISTANCE,
-                ReportsEnum.MEAN_CONSUMPTION_PER_TRIP,
+                ReportsEnum.TOTAL_CONSUPTION,
+                ReportsEnum.MEAN_CONSUPTION_PER_DISTANCE,
+                ReportsEnum.MEAN_CONSUPTION_PER_TRIP,
             ]
         ],
     )

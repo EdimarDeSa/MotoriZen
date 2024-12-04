@@ -13,14 +13,16 @@ from ErrorHandler import MotoriZenError
 from Responses import Created, NoContent, Ok
 from Services.register_service import RegisterService
 from Utils.custom_types import CurrentActiveUser
+from Utils.Internacionalization import InternationalizationManager
 
 from .base_router import BaseRouter
 
 
 class RegisterRouter(BaseRouter):
-    def __init__(self) -> None:
+    def __init__(self, txt_manager: InternationalizationManager) -> None:
         super().__init__()
         self.create_logger(__name__)
+        self.txt_manager = txt_manager
         self.router = APIRouter(prefix="/register", tags=["Register"])
         self.register_service = RegisterService()
 
