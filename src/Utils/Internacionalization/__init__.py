@@ -1,5 +1,5 @@
-from .internacionalization_handler import InternationalizationManager
+from .text_handler import ModelsDescriptionTexts
 
 __all__ = [
-    "InternationalizationManager",
+    "ModelsDescriptionTexts",
 ]

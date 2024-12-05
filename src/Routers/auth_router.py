@@ -6,16 +6,14 @@ from ErrorHandler import MotoriZenError
 from Responses import NoContent
 from Services.auth_service import AuthService
 from Utils.custom_types import CurrentActiveUser, PasswordRequestForm
-from Utils.Internacionalization import InternationalizationManager
 
 from .base_router import BaseRouter
 
 
 class AuthRouter(BaseRouter):
-    def __init__(self, txt_manager: InternationalizationManager) -> None:
+    def __init__(self) -> None:
         super().__init__()
         self.create_logger(__name__)
-        self.txt_manager = txt_manager
         self.router = APIRouter(tags=["Auth"])
         self.auth_service = AuthService()
 

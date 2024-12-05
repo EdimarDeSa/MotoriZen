@@ -3,14 +3,11 @@ from abc import ABC, abstractmethod
 
 from fastapi import APIRouter
 
-from Utils.Internacionalization import InternationalizationManager
-
 
 class BaseRouter(ABC):
     def __init__(self) -> None:
         self.__router: APIRouter | None = None
         self.__logger: logging.Logger | None = None
-        self.__txt_manager: InternationalizationManager | None = None
 
     @property
     def router(self) -> APIRouter:
@@ -39,20 +36,6 @@ class BaseRouter(ABC):
         if not isinstance(value, logging.Logger):
             raise TypeError("Logger must be an instance of logging.Logger")
         self.__logger = value
-
-    @property
-    def txt_manager(self) -> InternationalizationManager:
-        if self.__txt_manager is None:
-            raise Warning(
-                "Initialize the internationalization manager first using self.txt_manager = InternationalizationManager()"
-            )
-        return self.__txt_manager
-
-    @txt_manager.setter
-    def txt_manager(self, value: InternationalizationManager) -> None:
-        if not isinstance(value, InternationalizationManager):
-            raise TypeError("Internationalization manager must be an instance of InternationalizationManager")
-        self.__txt_manager = value
 
     def create_logger(self, name: str) -> None:
         self.logger = logging.getLogger(name)

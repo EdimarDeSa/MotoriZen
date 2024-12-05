@@ -9,12 +9,8 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from Utils.Internacionalization import InternationalizationManager
-
 load_dotenv()
 
-from Enums import MotoriZenErrorEnum
-from ErrorHandler import MotoriZenError
 from Middlewares import ProcessTimeHeaderMiddleware
 from Routers import AuthRouter, CarsRouter, RegisterRouter, ReportsRouter, UserRouter
 from Routers.base_router import BaseRouter
@@ -39,9 +35,9 @@ ROUTERS: RoutersSequence = [
 ]
 
 
-def register_routers(app: FastAPI, txt_manager: InternationalizationManager) -> None:
+def register_routers(app: FastAPI) -> None:
     for router in ROUTERS:
-        r = router(txt_manager=txt_manager)
+        r = router()
 
         if not isinstance(r, BaseRouter):
             raise TypeError("Invalid router, must be an instance of Routers.base_router.BaseRouter")
@@ -55,7 +51,7 @@ def register_routers(app: FastAPI, txt_manager: InternationalizationManager) -> 
             logger.debug(f"Route => {path} => {tags}")
 
 
-REGISTER_ROUTERS: Callable[[FastAPI, InternationalizationManager], None] = register_routers
+REGISTER_ROUTERS: Callable[[FastAPI], None] = register_routers
 
 
 ### MIDDLEWARES ###
@@ -74,7 +70,7 @@ MIDDLEWARES: MiddlewareSequence = [
 ]
 
 
-def register_middlewares(app: FastAPI, txt_manager: InternationalizationManager) -> None:
+def register_middlewares(app: FastAPI) -> None:
     for middleware in MIDDLEWARES:
         logger.debug(f"Iniciando - {middleware['middleware_class'].__name__}")
 
@@ -85,7 +81,7 @@ def register_middlewares(app: FastAPI, txt_manager: InternationalizationManager)
         app.add_middleware(middleware["middleware_class"], **middleware["options"])
 
 
-REGISTER_MIDDLEWARES: Callable[[FastAPI, InternationalizationManager], None] = register_middlewares
+REGISTER_MIDDLEWARES: Callable[[FastAPI], None] = register_middlewares
 
 
 ### PROJECT INFO ###

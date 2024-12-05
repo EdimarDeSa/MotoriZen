@@ -3,13 +3,15 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
+from Utils.Internacionalization import ModelsDescriptionTexts
+
 
 class CarNewModel(BaseModel):
-    cd_brand: int = Field(description="Brand id")
-    renavam: Optional[str] = Field(default=None, max_length=11, description="Renavam of the car")
-    model: str = Field(max_length=100, description="Model of the car")
-    year: int = Field(lt=(datetime.now().year + 1), description="Year of the car")
-    color: str = Field(max_length=25, description="Color of the car")
-    license_plate: str = Field(max_length=10, description="License plate of the car")
-    odometer: Optional[float] = Field(default=0.0, description="Odometer of the car")
-    is_active: bool = Field(default=True, description="If the car is active")
+    cd_brand: int = Field(description=ModelsDescriptionTexts.CD_BRAND)
+    renavam: Optional[str] = Field(default=None, max_length=11, description=ModelsDescriptionTexts.RENAVAM)
+    model: str = Field(max_length=100, description=ModelsDescriptionTexts.CAR_MODEL)
+    year: int = Field(lt=(datetime.now().year + 1), description=ModelsDescriptionTexts.CAR_YEAR)
+    color: str = Field(max_length=25, description=ModelsDescriptionTexts.CAR_COLOR)
+    license_plate: str = Field(max_length=10, description=ModelsDescriptionTexts.LICENSE_PLATE)
+    odometer: Optional[float] = Field(default=0.0, description=ModelsDescriptionTexts.ODOMETER)
+    is_active: bool = Field(default=True, description=ModelsDescriptionTexts.IS_ACTIVE)

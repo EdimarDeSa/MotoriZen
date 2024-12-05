@@ -2,15 +2,16 @@ from pydantic import Field
 
 from DB.Models.base_metadata_model import BaseMetadataModel
 from Utils.custom_primitive_types import PerPageOptions, SortOrderOptions
+from Utils.Internacionalization import ModelsDescriptionTexts
 
 
 class BaseQueryMetadataModel(BaseMetadataModel):
-    sort_by: str = Field(description="Field to sort by")
-    sort_order: SortOrderOptions = Field(description="Order of sorting. asc for ascending and desc for descending")
+    sort_by: str = Field(description=ModelsDescriptionTexts.SORT_BY)
+    sort_order: SortOrderOptions = Field(description=ModelsDescriptionTexts.SORT_ORDER)
 
-    page: int = Field(description="Actual page number")
-    per_page: PerPageOptions = Field(description="Number of records per page")
-    total_pages: int = Field(description="Total pages")
+    page: int = Field(description=ModelsDescriptionTexts.PAGE)
+    per_page: PerPageOptions = Field(description=ModelsDescriptionTexts.PER_PAGE)
+    total_pages: int = Field(description=ModelsDescriptionTexts.TOTAL_PAGES)
 
-    first_index: int = Field(description="First index of the query")
-    last_index: int = Field(description="Last index of the query")
+    first_index: int = Field(description=ModelsDescriptionTexts.FIRST_INDEX)
+    last_index: int = Field(description=ModelsDescriptionTexts.LAST_INDEX)

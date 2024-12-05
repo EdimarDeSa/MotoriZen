@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 
 from configs import CONTACT, REGISTER_MIDDLEWARES, REGISTER_ROUTERS, SWAGGER_UI_PARAMETERS, TITLE, VERSION
-from Utils.Internacionalization import InternationalizationManager
 
 app = FastAPI(
     title=TITLE,
@@ -12,10 +11,9 @@ app = FastAPI(
     swagger_ui_parameters=SWAGGER_UI_PARAMETERS,
 )
 
-internacionalization_manager = InternationalizationManager()
 
-REGISTER_MIDDLEWARES(app, internacionalization_manager)
-REGISTER_ROUTERS(app, internacionalization_manager)
+REGISTER_MIDDLEWARES(app)
+REGISTER_ROUTERS(app)
 
 
 @app.get("/", summary="Home", tags=["Home"])

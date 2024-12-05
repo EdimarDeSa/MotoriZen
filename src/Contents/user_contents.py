@@ -1,14 +1,17 @@
+from pydantic import Field
+
+from Contents.base_content import BaseContent
 from DB.Models import UserModel, UserNewModel
-from Responses.base_response import BaseContent
+from Utils.Internacionalization import ModelsDescriptionTexts
 
 
 class UserMeContent(BaseContent):
-    data: UserModel
+    data: UserModel = Field(description=ModelsDescriptionTexts.BASE_DATA)
 
 
 class UserNewContent(BaseContent):
-    data: UserNewModel
+    data: UserNewModel = Field(description=ModelsDescriptionTexts.BASE_DATA)
 
 
 class UserUpdatedContent(BaseContent):
-    data: UserModel
+    data: UserModel = Field(description=ModelsDescriptionTexts.BASE_DATA)

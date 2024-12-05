@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Request
 
-from Contents.car_contents import CarContent, CarsContent
+from Contents.car_contents import CarContent
+from Contents.cars_content import CarsContent
 from DB.Models import CarModel, CarNewModel, CarQueryModel, CarUpdatesModel
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
@@ -8,14 +9,12 @@ from Responses import Created, NoContent, Ok
 from Routers.base_router import BaseRouter
 from Services.car_service import CarService
 from Utils.custom_types import CurrentActiveUser
-from Utils.Internacionalization import InternationalizationManager
 
 
 class CarsRouter(BaseRouter):
-    def __init__(self, txt_manager: InternationalizationManager) -> None:
+    def __init__(self) -> None:
         super().__init__()
         self.create_logger(__name__)
-        self.txt_manager = txt_manager
         self.router = APIRouter(prefix="/cars", tags=["Cars"])
         self.car_service = CarService()
         self._register_routes()

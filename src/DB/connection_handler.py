@@ -22,13 +22,6 @@ def get_db_url() -> str:
     return f"{db_dialect}://{db_user}:{db_password}@{db_ip}:{db_port}/{db_name}"
 
 
-def internacionalization_db_url() -> str:
-    """Constrói a URL de conexão internacionalizada para o banco de dados."""
-    db_path = Path(__file__).resolve().parent.parent / "DB" / "internacionalization_database.db"
-
-    return f"sqlite://{db_path}"
-
-
 class DBConnectionHandler:
     @staticmethod
     def create_session(*, db_url: Optional[str] = None, write: bool = False) -> scoped_session[Session]:
