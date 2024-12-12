@@ -1,5 +1,6 @@
 from curses import meta
 from typing import Any
+from uuid import UUID
 
 from sqlalchemy.orm import DeclarativeBase, declarative_base
 
@@ -45,5 +46,13 @@ class BaseSchema(Base):  # type: ignore
         return tuple(c.name for c in cls.__table__.c)
 
     @classmethod
-    def id_column(cls) -> Any:
+    def id_column(cls) -> int | UUID:
         return getattr(cls, "id_" + cls.__tablename__[3:])
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.name}({self.as_dict()!r})"
+
+    def __str__(self) -> str:
+        if hasattr(self, "name"):
+            return f"{self.id_column} - {self.name}"
+        return f"{self.id_column()} - {self.fields()}"
