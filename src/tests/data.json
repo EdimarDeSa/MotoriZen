@@ -8,6 +8,8 @@
       "color": "Dourado",
       "license_plate": "KDY-3939",
       "odometer": 0,
+      "cd_fuel_type": 4,
+      "fuel_capacity": 45,
       "is_active": true
     },
     {
@@ -17,16 +19,112 @@
       "year": 2004,
       "color": "Dourado",
       "license_plate": "LUI-2117",
+      "cd_fuel_type": 4,
+      "fuel_capacity": 45,
       "odometer": 0,
       "is_active": true
-    },
+    }
+    ,
+    {
+      "cd_brand": 104,
+      "renavam": "45121245659",
+      "model": "XC 60 T-6  R-DESIGN 2.0 306cv FWD 5p",
+      "year": 2015,
+      "color": "Vermelho",
+      "license_plate": "LWJ-9354",
+      "cd_fuel_type": 2,
+      "fuel_capacity": 45,
+      "odometer": 0,
+      "is_active": true
+    }
+    ,
     {
       "cd_brand": 66,
-      "renavam": "45121245659",
-      "model": "IS-250 F Sport 2.5 24V 208cv Aut.",
+      "renavam": "54488587670",
+      "model": "RX 300 3.0 V6 24V",
+      "year": 1999,
+      "color": "Amarelo",
+      "license_plate": "MXG-9607",
+      "cd_fuel_type": 4,
+      "fuel_capacity": 45,
+      "odometer": 0,
+      "is_active": true
+    }
+    ,
+    {
+      "cd_brand": 41,
+      "renavam": "89335819925",
+      "model": "Buggy Vip 1.8 8V",
+      "year": 2006,
+      "color": "Laranja",
+      "license_plate": "AKZ-7193",
+      "cd_fuel_type": 4,
+      "fuel_capacity": 45,
+      "odometer": 0,
+      "is_active": true
+    }
+    ,
+    {
+      "cd_brand": 58,
+      "model": "XKR Convers",
+      "year": 2007,
+      "renavam": "44157503242",
+      "license_plate": "NAF-2059",
+      "color": "Laranja",
+      "cd_fuel_type": 4,
+      "fuel_capacity": 45,
+      "odometer": 0,
+      "is_active": true
+    }
+    ,
+    {
+      "cd_brand": 23,
+      "model": "MINI STAR CD 1.0 8V 53cv (Pick-Up)",
+      "year": 2012,
+      "renavam": "68066178346",
+      "license_plate": "MYY-0613",
+      "color": "Marrom",
+      "cd_fuel_type": 4,
+      "fuel_capacity": 45,
+      "odometer": 0,
+      "is_active": true
+    }
+    ,
+    {
+      "cd_brand": 74,
+      "model": "B-2500 Pick-Up CD 4x4 2.5 Diesel",
+      "year": 1998,
+      "renavam": "57134483859",
+      "license_plate": "HPX-4983",
+      "color": "Prata",
+      "cd_fuel_type": 4,
+      "fuel_capacity": 45,
+      "odometer": 0,
+      "is_active": true
+    }
+    ,
+    {
+      "cd_brand": 7,
+      "model": "S3 Sedan 2.0 TFSI Quattro 286cv S-tronic",
       "year": 2014,
-      "color": "Vermelho",
-      "license_plate": "MNR-3590",
+      "renavam": "73354067155",
+      "license_plate": "JTD-9245",
+      "color": "Amarelo",
+      "cd_fuel_type": 4,
+      "fuel_capacity": 45,
+      "odometer": 0,
+      "is_active": true
+    }
+    ,
+    {
+      "cd_brand": 18,
+      "model": "DOLPHIN MINI GS 5EV",
+      "year": 2025,
+      "renavam": "47027525399",
+      "license_plate": "JYQ-1303",
+      "color": "Preto",
+      "cd_fuel_type": 2,
+      "fuel_capacity": 38,
       "odometer": 0,
       "is_active": true
     }

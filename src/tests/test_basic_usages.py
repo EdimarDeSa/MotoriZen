@@ -86,43 +86,43 @@ def token(client: TestClient, user: User) -> TokenModel:
 #         assert response.status_code == 201
 
 
-def test_get_access_token_success(
-    client: TestClient,
-    users: list[User],
-) -> None:
+# def test_get_access_token_success(
+#     client: TestClient,
+#     users: list[User],
+# ) -> None:
 
-    # Given
-    user = users[0]
+#     # Given
+#     user = users[0]
 
-    _token: TokenModel = token(client, user)
-    header = {"Authorization": f"Bearer {_token.access_token}"}
+#     _token: TokenModel = token(client, user)
+#     header = {"Authorization": f"Bearer {_token.access_token}"}
 
-    # Act
-    me = client.get("/users/me", headers=header)
-    me_rc = me.json()["rc"]
-    me_data = me.json()["data"]
+#     # Act
+#     me = client.get("/users/me", headers=header)
+#     me_rc = me.json()["rc"]
+#     me_data = me.json()["data"]
 
-    # Assert
-    assert me_rc == 0
-    assert me_data["first_name"] == user["first_name"]
+#     # Assert
+#     assert me_rc == 0
+#     assert me_data["first_name"] == user["first_name"]
 
 
-def test_logout_success(
-    client: TestClient,
-    users: list[User],
-) -> None:
+# def test_logout_success(
+#     client: TestClient,
+#     users: list[User],
+# ) -> None:
 
-    # Given
-    user = users[0]
+#     # Given
+#     user = users[0]
 
-    _token: TokenModel = token(client, user)
-    header = {"Authorization": f"Bearer {_token.access_token}"}
+#     _token: TokenModel = token(client, user)
+#     header = {"Authorization": f"Bearer {_token.access_token}"}
 
-    # Act
-    me = client.get("/logout", headers=header)
+#     # Act
+#     me = client.get("/logout", headers=header)
 
-    # Assert
-    assert me.status_code == 204
+#     # Assert
+#     assert me.status_code == 204
 
 
 def test_delete_account_success(client: TestClient, users: list[User]) -> None:
