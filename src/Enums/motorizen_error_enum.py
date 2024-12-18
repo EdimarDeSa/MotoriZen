@@ -26,6 +26,7 @@ class MotoriZenErrorEnum(Enum):
 
     INVALID_SORT_KEY = ErrorData(400, -800)
 
+    CONFIG_FILE_NOT_FOUND = ErrorData(500, -900)
     UNKNOWN_ERROR = ErrorData(500, -999)
 
     def __repr__(self) -> str:

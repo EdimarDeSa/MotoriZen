@@ -43,11 +43,11 @@ class ReportQuerys:
         return func.sum(RegisterSchema.total_value)
 
     @property
-    def mean_consumption_per_distance(self) -> Any:
+    def mean_consuption_per_distance(self) -> Any:
         return func.avg(self.fuel_comsumpted)
 
     @property
-    def mean_consumption_per_trip(self) -> Any:
+    def mean_consuption_per_trip(self) -> Any:
         return func.avg(self.consumption_per_trip)
 
     @property
@@ -63,11 +63,11 @@ class ReportQuerys:
         return func.extract("epoch", RegisterSchema.working_time) / 60
 
     @property
-    def mean_consumption_per_working_hour(self) -> Any:
+    def mean_consuption_per_working_hour(self) -> Any:
         return func.avg(self.fuel_comsumpted / self.working_time_hourly)
 
     @property
-    def mean_consumption_per_working_minute(self) -> Any:
+    def mean_consuption_per_working_minute(self) -> Any:
         return func.avg(self.fuel_comsumpted / self.working_time_minutely)
 
     @property

@@ -1,0 +1,106 @@
+{
+  "cars": [
+    {
+      "cd_brand": 85,
+      "renavam": "91766308905",
+      "model": "911 Carrera Cabriolet 3.4/ 3.6 Tiptronic",
+      "year": 1999,
+      "color": "Dourado",
+      "license_plate": "KDY-3939",
+      "odometer": 0,
+      "is_active": true
+    },
+    {
+      "cd_brand": 82,
+      "renavam": "48829233479",
+      "model": "307 Feline/Griff/Premi. 2.0 Flex 5p Aut",
+      "year": 2004,
+      "color": "Dourado",
+      "license_plate": "LUI-2117",
+      "odometer": 0,
+      "is_active": true
+    },
+    {
+      "cd_brand": 66,
+      "renavam": "45121245659",
+      "model": "IS-250 F Sport 2.5 24V 208cv Aut.",
+      "year": 2014,
+      "color": "Vermelho",
+      "license_plate": "MNR-3590",
+      "odometer": 0,
+      "is_active": true
+    }
+  ],
+  "users": [
+    {
+      "first_name": "Ana Júlia",
+      "last_name": "Marques",
+      "email": "almeidaisadora@example.com",
+      "birthdate": "1966-07-26",
+      "password": "P@s5W0rd"
+    },
+    {
+      "first_name": "Sabrina",
+      "last_name": "da Cruz",
+      "email": "ocasa-grande@example.org",
+      "birthdate": "1999-04-27",
+      "password": "P@s5W0rd"
+    },
+    {
+      "first_name": "Alexia",
+      "last_name": "Santos",
+      "email": "duartevalentim@example.net",
+      "birthdate": "1986-04-09",
+      "password": "P@s5W0rd"
+    },
+    {
+      "first_name": "Otto",
+      "last_name": "Moraes",
+      "email": "vargasdavi-miguel@example.net",
+      "birthdate": "1979-10-13",
+      "password": "P@s5W0rd"
+    },
+    {
+      "first_name": "Alícia",
+      "last_name": "Moreira",
+      "email": "oaraujo@example.com",
+      "birthdate": "1974-08-29",
+      "password": "P@s5W0rd"
+    },
+    {
+      "first_name": "Diego",
+      "last_name": "Aparecida",
+      "email": "ester25@example.org",
+      "birthdate": "1954-09-05",
+      "password": "P@s5W0rd"
+    },
+    {
+      "first_name": "Valentim",
+      "last_name": "Porto",
+      "email": "tsouza@example.org",
+      "birthdate": "1967-05-22",
+      "password": "P@s5W0rd"
+    },
+    {
+      "first_name": "Camila",
+      "last_name": "Silveira",
+      "email": "hmarques@example.com",
+      "birthdate": "1989-09-02",
+      "password": "P@s5W0rd"
+    },
+    {
+      "first_name": "Henrique",
+      "last_name": "Nascimento",
+      "email": "alveslivia@example.net",
+      "birthdate": "1946-08-26",
+      "password": "P@s5W0rd"
+    },
+    {
+      "first_name": "Isis",
+      "last_name": "Cavalcanti",
+      "email": "liamfernandes@example.com",
+      "birthdate": "1990-01-01",
+      "password": "P@s5W0rd"
+    }
+  ]
+}

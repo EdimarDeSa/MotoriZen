@@ -65,19 +65,19 @@ class ReportsRepository(BaseRepository):
                 _query = self._register_querys.total_working_time()
 
             ### Consumption reports ###
-            case ReportsEnum.MEAN_CONSUMPTION_PER_DISTANCE:
-                _query = self._register_querys.mean_consumption_per_distance()
+            case ReportsEnum.MEAN_CONSUPTION_PER_DISTANCE:
+                _query = self._register_querys.mean_consuption_per_distance()
 
-            case ReportsEnum.MEAN_CONSUMPTION_PER_TRIP:
-                _query = self._register_querys.mean_consumption_per_trip()
+            case ReportsEnum.MEAN_CONSUPTION_PER_TRIP:
+                _query = self._register_querys.mean_consuption_per_trip()
 
-            case ReportsEnum.MEAN_CONSUMPTION_PER_WORKING_HOUR:
-                _query = self._register_querys.mean_consumption_per_working_hour()
+            case ReportsEnum.MEAN_CONSUPTION_PER_WORKING_HOUR:
+                _query = self._register_querys.mean_consuption_per_working_hour()
 
-            case ReportsEnum.MEAN_CONSUMPTION_PER_WORKING_MINUTE:
-                _query = self._register_querys.mean_consumption_per_working_minute()
+            case ReportsEnum.MEAN_CONSUPTION_PER_WORKING_MINUTE:
+                _query = self._register_querys.mean_consuption_per_working_minute()
 
-            case ReportsEnum.TOTAL_CONSUMPTION:
+            case ReportsEnum.TOTAL_CONSUPTION:
                 _query = self._register_querys.total_consumption()
 
             case ReportsEnum.TOTAL_CONSUMPTION_PER_TRIP:

@@ -1,7 +1,8 @@
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, Field
+
+from Utils.Internacionalization import ModelsDescriptionTexts
 
 
 class BrandModel(BaseModel):
-
-    id_brand: int = Field(description="Id of the brand")
-    name: str = Field(description="Name of the brand")
+    id_brand: int = Field(description=ModelsDescriptionTexts.ID_BRAND)
+    name: str = Field(description=ModelsDescriptionTexts.BRAND_NAME)

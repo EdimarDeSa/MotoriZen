@@ -3,9 +3,9 @@ from typing import Generic, Optional
 from pydantic import BaseModel, Field
 
 from Utils.custom_primitive_types import T
+from Utils.Internacionalization import ModelsDescriptionTexts
 
 
 class RangeModel(BaseModel, Generic[T]):
-    start: Optional[T] = Field(default=None, description="Start of the range")
-    end: Optional[T] = Field(default=None, description="End of the range")
-    # step: Optional[T] = Field(default=None, description="Step of the range")
+    start: Optional[T] = Field(default=None, description=ModelsDescriptionTexts.RANGE_START)
+    end: Optional[T] = Field(default=None, description=ModelsDescriptionTexts.RANGE_END)
