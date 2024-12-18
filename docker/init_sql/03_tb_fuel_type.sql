@@ -3,7 +3,7 @@ SET search_path TO motorizen;
 CREATE TABLE IF NOT EXISTS "tb_fuel_type"
 (
     "id_fuel_type" SERIAL PRIMARY KEY NOT NULL,
-    "name" VARCHAR(10) NOT NULL UNIQUE
+    "name" VARCHAR(20) NOT NULL UNIQUE
 );
 
 
@@ -12,4 +12,5 @@ VALUES
     ('Alcohol'),
     ('Eletric'),
     ('Gasoline'),
-    ('Hybrid');
+    ('Hybrid - Alc/Gas'),
+    ('Hybrid - Gas/Elec');
