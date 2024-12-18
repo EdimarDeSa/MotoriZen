@@ -1,7 +1,6 @@
 import logging
 import os
 import time
-from pathlib import Path
 from typing import Optional
 
 from sqlalchemy import create_engine, text

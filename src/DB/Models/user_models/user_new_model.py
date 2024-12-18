@@ -19,7 +19,7 @@ class UserNewModel(NewBaseModelDb):
         max_length=255, min_length=3, examples=["email@domain.com"], description=ModelsDescriptionTexts.EMAIL
     )
     password: str = Field(examples=["P@s5W0rd"], description=ModelsDescriptionTexts.PASSWORD)
-    birthdate: date = Field(examples=["09-04-1995"], description=ModelsDescriptionTexts.BIRTHDATE)
+    birthdate: date = Field(examples=["1995-09-04"], description=ModelsDescriptionTexts.BIRTHDATE)
 
     @field_validator("birthdate", mode="after")
     @classmethod

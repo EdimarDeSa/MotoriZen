@@ -56,7 +56,7 @@ class UserRouter(BaseRouter):
             -d '{\\
                     "first_name": "Eduardo", \\
                     "last_name": "Eduardo", \\
-                    "email": "email@domain.com",\\
+                    "email": "email@domain.com", \\
                     "birthdate": "1990-05-15", \\
                     "password": "P@s5W0rd" \\
                 }' \\

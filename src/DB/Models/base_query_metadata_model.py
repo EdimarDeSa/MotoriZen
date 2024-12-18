@@ -15,3 +15,5 @@ class BaseQueryMetadataModel(BaseMetadataModel):
 
     first_index: int = Field(description=ModelsDescriptionTexts.FIRST_INDEX)
     last_index: int = Field(description=ModelsDescriptionTexts.LAST_INDEX)
+
+    total_results: int = Field(description=ModelsDescriptionTexts.TOTAL_RESULTS)

@@ -76,9 +76,11 @@ class CarService(BaseService):
                     metadata=dict(
                         sort_by=query_options.sort_by or "id_car",
                         sort_order=query_options.sort_order or ASC,
+                        #
                         page=query_options.page or 1,
                         per_page=query_options.per_page or 10,
                         total_pages=self.calculate_max_pages(count, query_options.per_page or 10),
+                        #
                         first_index=offset + 1,
                         last_index=offset + len(cars_schemas),
                         total_results=count,
