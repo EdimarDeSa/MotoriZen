@@ -2,10 +2,13 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-# from ErrorHandler import ErrorModel
+from Utils.Internacionalization import ModelsDescriptionTexts
 
 
 class BaseContent(BaseModel):
-    rc: int = Field(default=0, description="Return code, 0 means success")
-    data: Any = Field(default=None, description="Return data, if any")
+    rc: int = Field(
+        default=0,
+        description=ModelsDescriptionTexts.RESPONSE_CODE,
+    )
+    data: Any = Field(default=None, description=ModelsDescriptionTexts.BASE_DATA)
     # errors: list[ErrorModel] | None = Field(default=None, description="Return error, if any")

@@ -18,6 +18,7 @@ python-keycloak = "^4.6.2"
 fastapi = {extras = ["standard"], version = "^0.115.2"}
 uvicorn = {extras = ["standard"], version = "^0.31.1"}
 redis = "^5.1.1"
+tinydb = "^4.8.2"
 
 [tool.poetry.dev-dependencies]
 black = "^24.8.0"

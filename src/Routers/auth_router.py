@@ -12,6 +12,7 @@ from .base_router import BaseRouter
 
 class AuthRouter(BaseRouter):
     def __init__(self) -> None:
+        super().__init__()
         self.create_logger(__name__)
         self.router = APIRouter(tags=["Auth"])
         self.auth_service = AuthService()

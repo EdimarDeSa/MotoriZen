@@ -4,17 +4,18 @@ from pydantic import BaseModel, Field, model_validator
 
 from Enums.motorizen_error_enum import MotoriZenErrorEnum
 from ErrorHandler.motorizen_error import MotoriZenError
+from Utils.Internacionalization import ModelsDescriptionTexts
 
 
 class CarUpdatesDataModel(BaseModel):
-    cd_brand: Optional[int] = Field(default=None, description="Brand id")
-    renavam: Optional[str] = Field(default=None, max_length=11, description="Renavam of the car")
-    model: Optional[str] = Field(default=None, max_length=100, description="Model of the car")
-    year: Optional[int] = Field(default=None, description="Year of the car")
-    color: Optional[str] = Field(default=None, max_length=25, description="Color of the car")
-    license_plate: Optional[str] = Field(default=None, max_length=10, description="License plate of the car")
-    odometer: Optional[float] = Field(default=None, description="Odometer of the car")
-    is_active: Optional[bool] = Field(default=None, description="If the car is active")
+    cd_brand: Optional[int] = Field(default=None, description=ModelsDescriptionTexts.CD_BRAND)
+    renavam: Optional[str] = Field(default=None, max_length=11, description=ModelsDescriptionTexts.RENAVAM)
+    model: Optional[str] = Field(default=None, max_length=100, description=ModelsDescriptionTexts.CAR_MODEL)
+    year: Optional[int] = Field(default=None, description=ModelsDescriptionTexts.CAR_YEAR)
+    color: Optional[str] = Field(default=None, max_length=25, description=ModelsDescriptionTexts.CAR_COLOR)
+    license_plate: Optional[str] = Field(default=None, max_length=10, description=ModelsDescriptionTexts.LICENSE_PLATE)
+    odometer: Optional[float] = Field(default=None, description=ModelsDescriptionTexts.ODOMETER)
+    is_active: Optional[bool] = Field(default=None, description=ModelsDescriptionTexts.IS_ACTIVE)
 
     @model_validator(mode="after")
     def validate_updates_value(self) -> Self:
@@ -32,6 +33,6 @@ class CarUpdatesDataModel(BaseModel):
         ):
             raise MotoriZenError(
                 err=MotoriZenErrorEnum.INVALID_UPDATES_DATA,
-                detail="Invalid updates data. Please, provide at least one value to update.",
+                detail=ModelsDescriptionTexts.INVALID_UPDATES_DATA,
             )
         return self

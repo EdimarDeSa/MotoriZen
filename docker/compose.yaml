@@ -25,13 +25,14 @@ services:
     env_file:
       - ../.env
     volumes:
-      - keycloak_data:/opt/keycloak/data
+    - keycloak_data:/opt/keycloak/data
+    - keycloak_conf:/opt/keycloak/conf
     command: ["start-dev"]
     ports:
       - "8080:8080"
     networks:
       - db_network
-    shm_size: 512mb
+    shm_size: 256mb
 
   redis:
     image: redis:alpine
@@ -47,6 +48,7 @@ services:
 volumes:
   db_data:
   keycloak_data:
+  keycloak_conf:
 
 
 networks:

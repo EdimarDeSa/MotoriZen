@@ -11,6 +11,8 @@ CREATE TABLE IF NOT EXISTS "tb_car"
     "year" SMALLINT NOT NULL,
     "color" VARCHAR(25) NOT NULL,
     "license_plate" VARCHAR(10) UNIQUE DEFAULT '0000000000',
+    "cd_fuel_type" INTEGER NOT NULL REFERENCES "tb_fuel_type" ("id_fuel_type") ON DELETE SET NULL,
+    "fuel_capacity" INTEGER NOT NULL DEFAULT '00000000',
     "odometer" FLOAT NOT NULL,
     "is_active" BOOLEAN DEFAULT TRUE NOT NULL,
     "last_update" TIMESTAMP,

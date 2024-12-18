@@ -1,13 +1,10 @@
-from typing import Any, Literal
-
 from fastapi import APIRouter, Request
 
 from Contents.user_contents import UserMeContent, UserUpdatedContent
-from DB.Models import UserModel, UserNewModel, UserUpdatesModel
+from DB.Models import UserNewModel, UserUpdatesModel
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
 from Responses import Created, NoContent, Ok
-from Services.auth_service import AuthService
 from Services.user_service import UserService
 from Utils.custom_types import CurrentActiveUser
 
@@ -59,7 +56,7 @@ class UserRouter(BaseRouter):
             -d '{\\
                     "first_name": "Eduardo", \\
                     "last_name": "Eduardo", \\
-                    "email": "email@domain.com",\\
+                    "email": "email@domain.com", \\
                     "birthdate": "1990-05-15", \\
                     "password": "P@s5W0rd" \\
                 }' \\

@@ -11,8 +11,6 @@ from starlette.middleware.cors import CORSMiddleware
 
 load_dotenv()
 
-from Enums import MotoriZenErrorEnum
-from ErrorHandler import MotoriZenError
 from Middlewares import ProcessTimeHeaderMiddleware
 from Routers import AuthRouter, CarsRouter, RegisterRouter, ReportsRouter, UserRouter
 from Routers.base_router import BaseRouter
@@ -21,6 +19,7 @@ from Utils.custom_types import MiddlewareSequence, RoutersSequence
 __all__ = [
     "REGISTER_ROUTERS",
     "REGISTER_MIDDLEWARES",
+    "SWAGGER_UI_PARAMETERS",
     "CONTACT",
     "TITLE",
 ]
@@ -84,6 +83,7 @@ def register_middlewares(app: FastAPI) -> None:
 
 REGISTER_MIDDLEWARES: Callable[[FastAPI], None] = register_middlewares
 
+
 ### PROJECT INFO ###
 TITLE: str = "MotoriZen – Controle de Ganhos, KM e Consumo para Motoristas"
 
@@ -93,6 +93,28 @@ CONTACT: dict[str, str] = {
     "url": "https://efscode.com",
     "github": "https://github.com/EdimarDeSa",
     "linkedin": "https://www.linkedin.com/in/edimar-freitas-de-sá/",
+}
+
+SWAGGER_UI_PARAMETERS = {
+    "docExpansion": "none",
+    "deepLinking": True,
+    "persistAuthorization": True,
+    "displayOperationId": False,
+    "displayRequestDuration": True,
+    "defaultModelsExpandDepth": 0,
+    "filter": True,
+    "operationsSorter": "method",
+    "requestSnippets": [
+        {"lang": "curl", "label": "cURL"},
+        {"lang": "python", "label": "Python Requests"},
+    ],
+    "requestTimeout": 5000,
+    "showExtensions": True,
+    "showCommonExtensions": True,
+    "syntaxHighlight": True,
+    "supportedSubmitMethods": ["get", "post", "put", "delete"],
+    "tryItOutEnabled": False,
+    "theme": "flattop",
 }
 
 

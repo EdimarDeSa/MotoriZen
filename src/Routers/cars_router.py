@@ -1,9 +1,8 @@
 from fastapi import APIRouter, Request
 
-from Contents.brand_content import BrandContent
-from Contents.car_contents import CarContent, CarsContent
-from DB.Models import BrandModel, CarModel, CarNewModel, CarQueryModel, CarQueryResponseModel, CarUpdatesModel
-from DB.Models.car_models.car_metadata_model import CarsMetadataModel
+from Contents.car_contents import CarContent
+from Contents.cars_content import CarsContent
+from DB.Models import CarModel, CarNewModel, CarQueryModel, CarUpdatesModel
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
 from Responses import Created, NoContent, Ok
