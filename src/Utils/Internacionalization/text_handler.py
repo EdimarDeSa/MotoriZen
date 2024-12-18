@@ -67,3 +67,5 @@ class ModelsDescriptionTexts(StrEnum):
     FIRST_INDEX = "First index in this page."
     LAST_INDEX = "Last index in this page."
     METADATA = "Metadata for this page and query."
+    CD_FUEL_TYPE = "Id of the fuel type."
+    FUEL_CAPACITY = "Capacity of the fuel. Must be greater than zero. If not specified the default is 1."

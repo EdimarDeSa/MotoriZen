@@ -19,7 +19,9 @@ class CarSchema(BaseSchema):
     year: MappedColumn[int] = mapped_column(Integer(), nullable=False)
     color: MappedColumn[str] = mapped_column(String(25), nullable=False)
     license_plate: MappedColumn[str] = mapped_column(String(10), nullable=False, unique=True)
-    cd_fuel_type: MappedColumn[int] = mapped_column(Integer(), ForeignKey("cd_fuel_type"), nullable=False, index=False)
+    cd_fuel_type: MappedColumn[int] = mapped_column(
+        Integer(), ForeignKey("tb_fuel_type.id_fuel_type"), nullable=False, index=False
+    )
     fuel_capacity: MappedColumn[int] = mapped_column(Integer(), nullable=False, default=0)
     odometer: MappedColumn[float] = mapped_column(Float(precision=2), nullable=False, default=0.0)
     is_active: MappedColumn[bool] = mapped_column(Boolean(), nullable=False, default=True)

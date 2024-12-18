@@ -62,14 +62,18 @@ class RegisterService(BaseService):
 
                 result_data = dict(
                     results=registers_data,
-                    sort_by=query_options.sort_by or "id_register",
-                    sort_order=query_options.sort_order or "asc",
-                    page=query_options.page or 1,
-                    per_page=query_options.per_page or 10,
-                    total_pages=total_pages,
-                    first_index=offset + 1,
-                    last_index=offset + len(registers_schemas),
-                    total_results=total_registers,
+                    metadata=dict(
+                        sort_by=query_options.sort_by or "id_register",
+                        sort_order=query_options.sort_order or "asc",
+                        #
+                        page=query_options.page or 1,
+                        per_page=query_options.per_page or 10,
+                        total_pages=total_pages,
+                        #
+                        first_index=offset + 1,
+                        last_index=offset + len(registers_schemas),
+                        total_results=total_registers,
+                    ),
                 )
 
                 self.insert_user_cache_data(RedisDbsEnum.REGISTERS, id_user, b64_key, result_data)
