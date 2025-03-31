@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
 from configs import CONTACT, REGISTER_MIDDLEWARES, REGISTER_ROUTERS, SWAGGER_UI_PARAMETERS, TITLE, VERSION
+from Enums.motorizen_error_enum import MotoriZenErrorEnum
 
 app = FastAPI(
     title=TITLE,
@@ -30,3 +31,11 @@ def version() -> dict[str, str]:
     Return the version of the API
     """
     return {"version": VERSION}
+
+
+@app.get("/response-codes", summary="Response codes returned", tags=["Utils"])
+def response_codes() -> dict[str, dict[str, int]]:
+    """
+    Returns a list of response codes and their meanings
+    """
+    return MotoriZenErrorEnum.response_codes_as_dict()
