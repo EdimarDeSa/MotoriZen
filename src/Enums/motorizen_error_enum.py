@@ -22,7 +22,11 @@ class MotoriZenErrorEnum(Enum):
     BRAND_NOT_FOUND = ErrorData(404, -301)
     REGISTER_NOT_FOUND = ErrorData(404, -302)
     INVALID_UPDATES_DATA = ErrorData(400, -310)
-    INVALID_REGISTER_DATA = ErrorData(400, -311)
+    INVALID_REGISTER_DATE = ErrorData(400, -311)
+    INVALID_PASSWORD = ErrorData(400, -312)
+
+    MISSING_CSRF_TOKEN = ErrorData(400, -400)
+    INVALID_CSRF_TOKEN = ErrorData(403, -401)
 
     INVALID_SORT_KEY = ErrorData(400, -800)
 
@@ -31,3 +35,7 @@ class MotoriZenErrorEnum(Enum):
 
     def __repr__(self) -> str:
         return super().__repr__()
+
+    @classmethod
+    def response_codes_as_dict(cls) -> dict[str, dict[str, int]]:
+        return {error.name: error.value.__dict__ for error in cls}
