@@ -3,14 +3,18 @@ import os
 import sys
 from logging import Handler, Logger
 from pathlib import Path
-from typing import Any, Callable, Sequence
+from typing import Callable, Sequence
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
-from starlette.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
+from redis import Redis
+from starlette_sessions.middleware import SessionMiddleware
+from starlette_sessions.redis.backend import RedisSessionBackend
 
 load_dotenv()
 
+from Enums.redis_dbs_enum import RedisDbsEnum
 from Middlewares import ProcessTimeHeaderMiddleware
 from Routers import AuthRouter, CarsRouter, RegisterRouter, ReportsRouter, UserRouter
 from Routers.base_router import BaseRouter
@@ -23,6 +27,32 @@ __all__ = [
     "CONTACT",
     "TITLE",
 ]
+
+### LOGGER ###
+logger: Logger = logging.getLogger(__name__)
+
+DEBUG_MODE: bool = bool(int(os.getenv("DEBUG_MODE", 0)))
+
+if DEBUG_MODE:
+    log_format: str = (
+        "%(asctime)s [%(processName)s: %(process)d] [%(threadName)s: %(thread)d] [%(levelname)s] %(name)s: %(message)s"
+    )
+
+    console_handler: Handler = logging.StreamHandler(stream=sys.stdout)
+
+    log_file: Path = Path(__file__).resolve().parent / "logs" / "app.log"
+    # rotating_handler: RotatingFileHandler = RotatingFileHandler(log_file, maxBytes=2000, backupCount=5)
+
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format=log_format,
+        encoding="utf-8",
+        handlers=[console_handler],
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
+
+    logger = logging.getLogger(__name__)
+    logger.info("Logger activated!")
 
 
 ### ROUTERS ###
@@ -55,18 +85,45 @@ REGISTER_ROUTERS: Callable[[FastAPI], None] = register_routers
 
 
 ### MIDDLEWARES ###
-ORIGINS: list[str] = ["*"]
+PRODUCTION_ORIGINS = [
+    "http://127.0.0.1:5173",
+    "http://localhost:5173",
+]
+
+DEVELOPMENT_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
+ORIGINS = PRODUCTION_ORIGINS if not DEBUG_MODE else DEVELOPMENT_ORIGINS
+
 MIDDLEWARES: MiddlewareSequence = [
     {
         "middleware_class": CORSMiddleware,
         "options": {
             "allow_origins": ORIGINS,
             "allow_credentials": True,
-            "allow_methods": ["*"],
-            "allow_headers": ["*"],
+            "allow_methods": ["GET", "POST", "PUT", "DELETE"],
+            "allow_headers": ["Content-Type", "Authorization"],
         },
     },
     {"middleware_class": ProcessTimeHeaderMiddleware, "options": {}},
+    {
+        "middleware_class": SessionMiddleware,
+        "options": {
+            "backend": RedisSessionBackend(
+                redis=Redis(
+                    host=os.getenv("REDIS_HOST"),
+                    port=os.getenv("REDIS_PORT"),
+                    db=RedisDbsEnum.SESSIONS.value,
+                ),
+                ttl=600,
+            ),
+            "cookie_name": "session_cookie",
+            "same_site": "lax",
+            "https_only": False,
+        },
+    },
 ]
 
 
@@ -116,33 +173,6 @@ SWAGGER_UI_PARAMETERS = {
     "tryItOutEnabled": False,
     "theme": "flattop",
 }
-
-
-### LOGGER ###
-logger: Logger = logging.getLogger(__name__)
-
-DEBUG_MODE: bool = bool(int(os.getenv("DEBUG_MODE", 0)))
-
-if DEBUG_MODE:
-    log_format: str = (
-        "%(asctime)s [%(processName)s: %(process)d] [%(threadName)s: %(thread)d] [%(levelname)s] %(name)s: %(message)s"
-    )
-
-    console_handler: Handler = logging.StreamHandler(stream=sys.stdout)
-
-    log_file: Path = Path(__file__).resolve().parent / "logs" / "app.log"
-    # rotating_handler: RotatingFileHandler = RotatingFileHandler(log_file, maxBytes=2000, backupCount=5)
-
-    logging.basicConfig(
-        level=logging.DEBUG,
-        format=log_format,
-        encoding="utf-8",
-        handlers=[console_handler],
-        datefmt="%Y-%m-%d %H:%M:%S",
-    )
-
-    logger = logging.getLogger(__name__)
-    logger.info("Logger activated!")
 
 
 ### VERSION ###

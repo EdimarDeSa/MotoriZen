@@ -4,6 +4,7 @@ from fastapi import Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette.middleware.base import BaseHTTPMiddleware
+from starlette_sessions.middleware import SessionMiddleware
 
 from DB.Models import UserModel
 from Routers.base_router import BaseRouter
@@ -14,7 +15,7 @@ CurrentActiveUser = Annotated[UserModel, Depends(AuthService().get_current_activ
 
 
 class MiddlewareRegister(TypedDict):
-    middleware_class: type[BaseHTTPMiddleware | CORSMiddleware]
+    middleware_class: type[BaseHTTPMiddleware | CORSMiddleware | SessionMiddleware]
     options: dict[str, Any]
 
 
