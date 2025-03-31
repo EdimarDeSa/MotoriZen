@@ -12,3 +12,4 @@ class RedisDbsEnum(IntEnum):
     REGISTERS = 3
     BRANDS = 4
     REPORTS = 5
+    SESSIONS = 6

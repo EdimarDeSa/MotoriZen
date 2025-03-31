@@ -1,6 +1,8 @@
+from venv import logger
+
 from fastapi import APIRouter, Request
 
-from DB.Models import RefreshTokenModel, TokenModel
+from DB.Models import CsrfToken, RefreshTokenModel, TokenModel
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
 from Responses import NoContent
@@ -8,6 +10,8 @@ from Services.auth_service import AuthService
 from Utils.custom_types import CurrentActiveUser, PasswordRequestForm
 
 from .base_router import BaseRouter
+
+X_CSRF_TOKEN = "X-CSRF-Token"
 
 
 class AuthRouter(BaseRouter):
@@ -22,8 +26,9 @@ class AuthRouter(BaseRouter):
     def _register_routes(self) -> None:
         # POST
         self.router.add_api_route("/token", self.login, response_model=TokenModel, methods=["POST"])
-        self.router.add_api_route("/refresh", self.refresh_token, methods=["POST"])
-        self.router.add_api_route("/logout", self.logout, methods=["GET"])
+        self.router.add_api_route("/token/refresh", self.refresh_token, methods=["POST"])
+        self.router.add_api_route("/token/logout", self.logout, methods=["GET"])
+        self.router.add_api_route("/get-csrf-token", self.get_csrf_token, methods=["GET"])
 
     async def login(
         self,
@@ -47,6 +52,15 @@ class AuthRouter(BaseRouter):
         """
         self.logger.info("Starting login")
 
+        header_token = request.session.get(X_CSRF_TOKEN, None)
+        form = await request.form()
+        form_token: str = form.get("csrf_token", None)  # type: ignore
+
+        logger.debug(f"Header token: {header_token}")
+        logger.debug(f"Form token: {form_token}")
+
+        self.auth_service.validate_csrf_token(header_token, form_token)
+
         user_email = form_data.username
         password = form_data.password
 
@@ -65,7 +79,11 @@ class AuthRouter(BaseRouter):
 
             raise e.as_http_response()
 
-    async def refresh_token(self, request: Request, refresh_token_model: RefreshTokenModel) -> TokenModel:
+    async def refresh_token(
+        self,
+        request: Request,
+        refresh_token_model: RefreshTokenModel,
+    ) -> TokenModel:
         """
         Refresh a token for the user.
 
@@ -77,7 +95,6 @@ class AuthRouter(BaseRouter):
 
             $ curl -X POST \\
             --url http://localhost:8000/refresh \\
-            --header 'Authorization: Bearer acess_token'
         """
         self.logger.info("Starting refresh_token")
 
@@ -114,4 +131,21 @@ class AuthRouter(BaseRouter):
             self.logger.error(e)
             raise MotoriZenError(
                 err=MotoriZenErrorEnum.LOGOUT_ERROR, detail=str(e), headers={"WWW-Authenticate": "Bearer"}
+            ).as_http_response()
+
+    async def get_csrf_token(self, request: Request) -> CsrfToken:
+        self.logger.info("Starting get_csrf_token")
+        try:
+            token = self.auth_service.generate_csrf_token()
+
+            self.logger.debug(f"Generated token: {token}")
+            request.session[X_CSRF_TOKEN] = token
+            self.logger.debug(f"Request session: {request.session.__dict__}")
+
+            return CsrfToken(csrf_token=token)
+
+        except Exception as e:
+            self.logger.error(e)
+            raise MotoriZenError(
+                err=MotoriZenErrorEnum.UNKNOWN_ERROR, detail=str(e), headers={X_CSRF_TOKEN: ""}
             ).as_http_response()
