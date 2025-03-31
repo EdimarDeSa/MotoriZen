@@ -126,7 +126,7 @@ class RegisterService(BaseService):
 
             if odometer_old >= odometer_new:
                 raise MotoriZenError(
-                    err=MotoriZenErrorEnum.INVALID_REGISTER_DATA,
+                    err=MotoriZenErrorEnum.INVALID_REGISTER_DATE,
                     detail="Odometer cannot be lower than the last odometer.",
                 )
 
@@ -137,7 +137,7 @@ class RegisterService(BaseService):
 
             if (odometer_old + distance) > odometer_new:
                 raise MotoriZenError(
-                    err=MotoriZenErrorEnum.INVALID_REGISTER_DATA,
+                    err=MotoriZenErrorEnum.INVALID_REGISTER_DATE,
                     detail="Last odometer + distance cannot be lower than the new odometer.",
                 )
 
