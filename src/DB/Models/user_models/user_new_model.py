@@ -13,7 +13,7 @@ class UserNewModel(NewBaseModelDb):
         max_length=50, min_length=3, examples=["Eduardo"], description=ModelsDescriptionTexts.FIRST_NAME
     )
     last_name: str = Field(
-        max_length=100, min_length=3, examples=["Eduardo"], description=ModelsDescriptionTexts.LAST_NAME
+        max_length=100, min_length=3, examples=["Arruda"], description=ModelsDescriptionTexts.LAST_NAME
     )
     email: EmailStr = Field(
         max_length=255, min_length=3, examples=["email@domain.com"], description=ModelsDescriptionTexts.EMAIL
@@ -26,7 +26,7 @@ class UserNewModel(NewBaseModelDb):
     def validate_birthdate(cls, value: date) -> date:
         if value >= date.today():
             raise MotoriZenError(
-                err=MotoriZenErrorEnum.INVALID_REGISTER_DATA, detail="Birthdate cannot be in the future"
+                err=MotoriZenErrorEnum.INVALID_REGISTER_DATE, detail="Birthdate cannot be in the future"
             ).as_http_response()
         return value
 
@@ -53,8 +53,6 @@ class UserNewModel(NewBaseModelDb):
             errors.append("Password must contain at least one special character")
 
         if errors:
-            raise MotoriZenError(
-                err=MotoriZenErrorEnum.INVALID_REGISTER_DATA, detail="; \n".join(errors)
-            ).as_http_response()
+            raise MotoriZenError(err=MotoriZenErrorEnum.INVALID_PASSWORD, detail="; \n".join(errors)).as_http_response()
 
         return value

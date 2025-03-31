@@ -30,7 +30,7 @@ class RegisterNewModel(BaseModel):
     def validate_distance_and_odometer(self) -> Self:
         if not self.distance and not self.odometer:
             raise MotoriZenError(
-                err=MotoriZenErrorEnum.INVALID_REGISTER_DATA,
+                err=MotoriZenErrorEnum.INVALID_REGISTER_DATE,
                 detail=ModelsDescriptionTexts.INVALID_REGISTER_DATA,
             )
 
