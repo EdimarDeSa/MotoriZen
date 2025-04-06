@@ -54,17 +54,18 @@ class AuthRouter(BaseRouter):
 
         header_token = request.session.get(X_CSRF_TOKEN, None)
         form = await request.form()
-        form_token: str = form.get("csrf_token", None)  # type: ignore
+        form_csrf_token: str = form.get("csrf_token", None)  # type: ignore
 
         logger.debug(f"Header token: {header_token}")
-        logger.debug(f"Form token: {form_token}")
-
-        self.auth_service.validate_csrf_token(header_token, form_token)
-
-        user_email = form_data.username
-        password = form_data.password
+        logger.debug(f"Form token: {form_csrf_token}")
 
         try:
+
+            self.auth_service.validate_csrf_token(header_token, form_csrf_token)
+
+            user_email = form_data.username
+            password = form_data.password
+
             self.logger.debug(f"Try login with <Email: {user_email}>")
             token_: TokenModel = self.auth_service.authenticate_user(user_email, password)
             self.logger.info(f"Success login - token created - <token: {token_.access_token}>")

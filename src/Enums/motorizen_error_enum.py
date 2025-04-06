@@ -17,6 +17,7 @@ class MotoriZenErrorEnum(Enum):
 
     LOGIN_ERROR = ErrorData(401, -200)
     LOGOUT_ERROR = ErrorData(401, -201)
+    INVALID_CREDENTIALS = ErrorData(401, -202)
 
     CAR_NOT_FOUND = ErrorData(404, -300)
     BRAND_NOT_FOUND = ErrorData(404, -301)

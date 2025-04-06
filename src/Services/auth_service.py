@@ -39,7 +39,10 @@ class AuthService(BaseService):
         self.logger.info("Starting authenticate_user")
 
         try:
-            token_dict = self._get_token_from_cache(email)
+            # FIXME: Depois que o usuário logou a primeira vez, enquanto o token estiver guardado no cache,
+            #  mesmo com a senha errada ele pode solicitar o token novamente, pois só é validado o e-mail
+            # token_dict = self._get_token_from_cache(email)
+            token_dict = None
             self.logger.debug(f"Token from cache service: {token_dict}")
 
             if token_dict is None:
@@ -48,12 +51,19 @@ class AuthService(BaseService):
                 token_dict = self._auth_handler.token(email, password)
                 self.logger.debug(f"User authenticated - <TokenData: {token_dict}>")
 
-                self._save_token_to_cache(email, token_dict)
+                # self._save_token_to_cache(email, token_dict)
 
             return TokenModel.model_validate(token_dict, from_attributes=True)
 
         except Exception as e:
             self.logger.error(e)
+            self.logger.debug(e.__dict__)
+
+            if e.__dict__.get("response_code") == 401:
+                raise MotoriZenError(err=MotoriZenErrorEnum.INVALID_CREDENTIALS, detail=str(e))
+            if e.__dict__.get("response_code") == 404:
+                raise MotoriZenError(err=MotoriZenErrorEnum.USER_NOT_FOUND, detail=str(e))
+
             raise e
 
     def _get_token_from_cache(self, email: str) -> dict[str, Any] | None:
