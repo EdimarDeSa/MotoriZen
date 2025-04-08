@@ -16,6 +16,7 @@ class BrandService(BaseService):
         db_session = self.create_session(write=False)
 
         try:
+            self.logger.debug("Geting all brands")
             hash_data = {"get_brands": "all_brands"}
             hash_key = self.create_hash_key(hash_data)
 
@@ -42,8 +43,18 @@ class BrandService(BaseService):
         db_session = self.create_session(write=False)
 
         try:
-            self.logger.debug("Geting all brands")
-            brand_schema: BrandSchema = self._brand_repository.select_brand(db_session, id_brand)
+            self.logger.debug(f"Geting brand with id: {id_brand}")
+
+            hash_data = {"get_brand": id_brand}
+            hash_key = self.create_hash_key(hash_data)
+
+            brand_schema = self.cache_handler.get_data(RedisDbsEnum.BRANDS, hash_key)
+
+            if brand_schema is None:
+                self.logger.debug("Geting brand")
+                brand_schema = self._brand_repository.select_brand(db_session, id_brand)
+
+                self.cache_handler.set_data(RedisDbsEnum.BRANDS, hash_key, brand_schema)
 
             return BrandModel.model_validate(brand_schema, from_attributes=True)
 

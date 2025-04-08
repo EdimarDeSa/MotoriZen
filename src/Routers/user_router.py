@@ -62,6 +62,10 @@ class UserRouter(BaseRouter):
                 }' \\
             http://localhost:8000/users/new-user
         """
+
+        # TODO: Adicionar validação de csrf token
+        # self.auth_service = AuthService()
+        # self.auth_service.validate_csrf_token(request)
         self.logger.debug("Starting new_user")
 
         try:

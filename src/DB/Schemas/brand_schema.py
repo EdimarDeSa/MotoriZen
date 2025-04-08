@@ -9,7 +9,7 @@ from DB.Schemas.base_schema import BaseSchema
 class BrandSchema(BaseSchema):
     __tablename__ = "tb_brand"
 
-    id_brand: MappedColumn[uuid.UUID] = mapped_column(INTEGER(), primary_key=True, autoincrement="auto")
+    id_brand: MappedColumn[int] = mapped_column(INTEGER(), primary_key=True, autoincrement="auto")
     name: MappedColumn[str] = mapped_column(String(100), nullable=False, unique=True)
 
     def __repr__(self) -> str:

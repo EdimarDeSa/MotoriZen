@@ -14,14 +14,12 @@ class BrandsRouter(BaseRouter):
     def __init__(self) -> None:
         super().__init__()
         self.create_logger(__name__)
-        self.router = APIRouter(prefix="/brand", tags=["Brands"])
+        self.router = APIRouter(prefix="/brands", tags=["Brands"])
         self.brand_service = BrandService()
         self._register_routes()
 
     def _register_routes(self) -> None:
-        self.router.add_api_route(
-            "/get-brand/{id_brand}", self.get_brand, response_model=BrandContent, methods=["POST"]
-        )
+        self.router.add_api_route("/get-brand/{id_brand}", self.get_brand, response_model=BrandContent, methods=["GET"])
         self.router.add_api_route("/get-brands", self.get_brands, response_model=BrandContent, methods=["POST"])
 
     def get_brand(self, request: Request, user_data: CurrentActiveUser, id_brand: int) -> Ok:
