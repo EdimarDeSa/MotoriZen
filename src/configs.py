@@ -34,9 +34,10 @@ logger: Logger = logging.getLogger(__name__)
 DEBUG_MODE: bool = bool(int(os.getenv("DEBUG_MODE", 0)))
 
 if DEBUG_MODE:
-    log_format: str = (
-        "%(asctime)s [%(processName)s: %(process)d] [%(threadName)s: %(thread)d] [%(levelname)s] %(name)s: %(message)s"
-    )
+    # log_format: str = (
+    #     "%(asctime)s [%(processName)s: %(process)d] [%(threadName)s: %(thread)d] [%(levelname)s] %(name)s: %(message)s"
+    # )
+    log_format: str = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
 
     console_handler: Handler = logging.StreamHandler(stream=sys.stdout)
 

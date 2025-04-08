@@ -27,6 +27,10 @@ class AuthRouter(BaseRouter):
         self.router.add_api_route("/token/logout", self.logout, methods=["GET"])
         self.router.add_api_route("/get-csrf-token", self.get_csrf_token, methods=["GET"])
 
+    def _is_swagger_request(self, request: Request) -> bool:
+        origin = request.headers.get("origin", "")
+        return origin == "http://localhost:8000"
+
     async def login(
         self,
         request: Request,
@@ -48,15 +52,18 @@ class AuthRouter(BaseRouter):
         """
         self.logger.info("Starting login")
 
-        header_token = request.session.get(X_CSRF_TOKEN, None)
-        form = await request.form()
-        form_csrf_token: str = form.get("csrf_token", None)
-
-        self.logger.debug(f"Header token: {header_token}")
-        self.logger.debug(f"Form token: {form_csrf_token}")
-
         try:
-            self.auth_service.validate_csrf_token(header_token, form_csrf_token)
+
+            if self._is_swagger_request(request):
+                self.logger.info("Request from Swagger UI")
+            else:
+                session_token = request.session.pop(X_CSRF_TOKEN)
+                self.logger.debug(f"Session token: {session_token}")
+
+                header_token = request.headers.get(X_CSRF_TOKEN, None)
+                self.logger.debug(f"Header token: {header_token}")
+
+                self.auth_service.validate_csrf_token(header_token, session_token)
 
             user_email = form_data.username
             password = form_data.password
