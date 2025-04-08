@@ -18,15 +18,15 @@ services:
     networks:
       - db_network
     shm_size: 128mb
-  
+
   keycloak:
     container_name: motorizen_keycloak
     image: quay.io/keycloak/keycloak:25.0.6
     env_file:
       - ../.env
     volumes:
-    - keycloak_data:/opt/keycloak/data
-    - keycloak_conf:/opt/keycloak/conf
+      - keycloak_data:/opt/keycloak/data
+      - keycloak_conf:/opt/keycloak/conf
     command: ["start-dev"]
     ports:
       - "8080:8080"
@@ -43,13 +43,23 @@ services:
     networks:
       - db_network
     shm_size: 128mb
-    
+
+  motorizen_api:
+    container_name: motorizen_api
+    image: motorizen:prod
+    networks:
+      - db_network
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+      - keycloak
 
 volumes:
   db_data:
   keycloak_data:
   keycloak_conf:
-
 
 networks:
   db_network:
