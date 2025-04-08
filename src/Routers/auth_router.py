@@ -1,7 +1,4 @@
-from venv import logger
-
 from fastapi import APIRouter, Request
-
 from DB.Models import CsrfToken, RefreshTokenModel, TokenModel
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
@@ -36,14 +33,13 @@ class AuthRouter(BaseRouter):
         form_data: PasswordRequestForm,
     ) -> TokenModel:
         """
-        Create a new token for the user.
+        Create a new token for the user with CSRF protection.
 
         Attributes:
 
             form_data (PasswordRequestForm): As credenciais fornecidas pelo usuário.
 
         Example:
-
             $ curl -X POST \\
             --url http://localhost:8000/token \\
             --header 'Content-Type: multipart/form-data' \\
@@ -54,13 +50,12 @@ class AuthRouter(BaseRouter):
 
         header_token = request.session.get(X_CSRF_TOKEN, None)
         form = await request.form()
-        form_csrf_token: str = form.get("csrf_token", None)  # type: ignore
+        form_csrf_token: str = form.get("csrf_token", None)
 
-        logger.debug(f"Header token: {header_token}")
-        logger.debug(f"Form token: {form_csrf_token}")
+        self.logger.debug(f"Header token: {header_token}")
+        self.logger.debug(f"Form token: {form_csrf_token}")
 
         try:
-
             self.auth_service.validate_csrf_token(header_token, form_csrf_token)
 
             user_email = form_data.username
@@ -74,10 +69,8 @@ class AuthRouter(BaseRouter):
 
         except Exception as e:
             self.logger.error(e)
-
             if not isinstance(e, MotoriZenError):
                 e = MotoriZenError(err=MotoriZenErrorEnum.UNKNOWN_ERROR, detail=str(e))
-
             raise e.as_http_response()
 
     async def refresh_token(

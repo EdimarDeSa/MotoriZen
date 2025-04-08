@@ -106,7 +106,7 @@ MIDDLEWARES: MiddlewareSequence = [
             "allow_origins": ORIGINS,
             "allow_credentials": True,
             "allow_methods": ["GET", "POST", "PUT", "DELETE"],
-            "allow_headers": ["Content-Type", "Authorization"],
+            "allow_headers": ["Content-Type", "Authorization", "X-CSRF-Token"],
         },
     },
     {"middleware_class": ProcessTimeHeaderMiddleware, "options": {}},
