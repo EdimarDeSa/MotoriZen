@@ -15,6 +15,8 @@ class CarModel(BaseModelDb):
     model: str = Field(description=ModelsDescriptionTexts.CAR_MODEL)
     year: int = Field(description=ModelsDescriptionTexts.CAR_YEAR)
     color: str = Field(description=ModelsDescriptionTexts.CAR_COLOR)
+    cd_fuel_type: int = Field(description=ModelsDescriptionTexts.CD_FUEL_TYPE)
+    fuel_capacity: float = Field(description=ModelsDescriptionTexts.FUEL_CAPACITY)
     license_plate: str = Field(description=ModelsDescriptionTexts.LICENSE_PLATE)
     odometer: float = Field(description=ModelsDescriptionTexts.ODOMETER)
     is_active: bool = Field(description=ModelsDescriptionTexts.IS_ACTIVE)

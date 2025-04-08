@@ -69,3 +69,5 @@ class ModelsDescriptionTexts(StrEnum):
     METADATA = "Metadata for this page and query."
     CD_FUEL_TYPE = "Id of the fuel type."
     FUEL_CAPACITY = "Capacity of the fuel. Must be greater than zero. If not specified the default is 1."
+    ID_FUEL_TYPE = "Unique identifier for the fuel type."
+    FUEL_TYPE_NAME = "Name of the fuel type."

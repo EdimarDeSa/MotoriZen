@@ -16,7 +16,7 @@ load_dotenv()
 
 from Enums.redis_dbs_enum import RedisDbsEnum
 from Middlewares import ProcessTimeHeaderMiddleware
-from Routers import AuthRouter, CarsRouter, RegisterRouter, ReportsRouter, UserRouter
+from Routers import AuthRouter, CarsRouter, RegisterRouter, ReportsRouter, UserRouter, BrandsRouter, FuelTypesRouter
 from Routers.base_router import BaseRouter
 from Utils.custom_types import MiddlewareSequence, RoutersSequence
 
@@ -62,6 +62,8 @@ ROUTERS: RoutersSequence = [
     CarsRouter,
     RegisterRouter,
     ReportsRouter,
+    BrandsRouter,
+    FuelTypesRouter,
 ]
 
 

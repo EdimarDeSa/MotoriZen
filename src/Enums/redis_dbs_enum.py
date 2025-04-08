@@ -13,3 +13,4 @@ class RedisDbsEnum(IntEnum):
     BRANDS = 4
     REPORTS = 5
     SESSIONS = 6
+    FUEL_TYPES = 7

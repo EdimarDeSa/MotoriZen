@@ -22,6 +22,8 @@ from .token_model import TokenModel
 from .user_models.user_model import UserModel
 from .user_models.user_new_model import UserNewModel
 from .user_models.user_updates_model import UserUpdatesModel
+from .fuel_type_model import FuelTypeModel
+
 
 __all__ = [
     "BrandModel",
@@ -34,6 +36,7 @@ __all__ = [
     "CarUpdatesDataModel",
     "CarUpdatesModel",
     "CsrfToken",
+    "FuelTypeModel",
     "RefreshTokenModel",
     "RegisterModel",
     "RegisterNewModel",

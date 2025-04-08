@@ -9,7 +9,7 @@ from DB.Schemas.base_schema import BaseSchema
 class FuelTypeSchema(BaseSchema):
     __tablename__ = "tb_fuel_type"
 
-    id_fuel_type: MappedColumn[uuid.UUID] = mapped_column(INTEGER(), primary_key=True, autoincrement="auto")
+    id_fuel_type: MappedColumn[int] = mapped_column(INTEGER(), primary_key=True, autoincrement="auto")
     name: MappedColumn[str] = mapped_column(String(20), nullable=False, unique=True)
 
     def __repr__(self) -> str:
