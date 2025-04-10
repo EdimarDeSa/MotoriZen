@@ -9,6 +9,7 @@ from starlette_sessions.middleware import SessionMiddleware
 from db.Models import UserModel
 from Routers.base_router import BaseRouter
 from Services.auth_service import AuthService
+from Utils.custom_primitive_types import HealthStatusType
 
 PasswordRequestForm = Annotated[OAuth2PasswordRequestForm, Depends()]
 CurrentActiveUser = Annotated[UserModel, Depends(AuthService().get_current_active_user)]
@@ -22,3 +23,8 @@ class MiddlewareRegister(TypedDict):
 MiddlewareSequence = Sequence[MiddlewareRegister]
 
 RoutersSequence = Sequence[type[BaseRouter]]
+
+
+class HealthStatus(TypedDict):
+    status: HealthStatusType
+    message: str | None

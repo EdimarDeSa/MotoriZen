@@ -29,9 +29,9 @@ class KeycloakHandler:
 
         return user_id
 
-    def check_health(self) -> dict[str, str]:
+    def check_health(self) -> None:
         try:
             self._open_id.well_known()
-            return {"well_known": "ok"}
+            self._admin.get_users()
         except Exception as e:
             raise e

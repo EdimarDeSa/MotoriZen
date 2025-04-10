@@ -1,14 +1,7 @@
-from typing import Literal
-
 from pydantic import BaseModel
-from typing_extensions import TypedDict
 
-HealthStatusType = Literal["Ok", "Error"]
-
-
-class HealthStatus(TypedDict):
-    status: HealthStatusType
-    message: str | dict[str, str] | None
+from Utils.custom_primitive_types import HealthStatusType
+from Utils.custom_types import HealthStatus
 
 
 class HealthModel(BaseModel):

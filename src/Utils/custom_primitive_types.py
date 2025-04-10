@@ -16,3 +16,5 @@ Table = type["BaseSchema"]  # type: ignore
 T = TypeVar("T")
 
 DataFrameType = dict[uuid.UUID | Literal["-1"], dict[str, Any]]
+
+HealthStatusType = Literal["Ok", "Error"]

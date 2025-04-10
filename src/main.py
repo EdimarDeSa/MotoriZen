@@ -1,7 +1,6 @@
 import gc
 import os
 from datetime import datetime
-from typing import cast
 
 from fastapi import FastAPI
 from redis import Redis
@@ -9,9 +8,11 @@ from redis import Redis
 from configs import CONTACT, REGISTER_MIDDLEWARES, REGISTER_ROUTERS, SWAGGER_UI_PARAMETERS, TITLE, VERSION
 from Contents.health_content import HealthContent
 from db.connection_handler import DBConnectionHandler
-from db.Models.health_model import HealthModel, HealthStatus, HealthStatusType
+from db.Models import HealthModel
 from Enums.motorizen_error_enum import MotoriZenErrorEnum
 from Responses.ok import Ok
+from Utils.custom_primitive_types import HealthStatusType
+from Utils.custom_types import HealthStatus
 from Utils.keycloak_handler import KeycloakHandler
 
 app = FastAPI(
@@ -86,13 +87,14 @@ def health() -> Ok:
     try:
         # Check if Keycloak is reachable
         keycloak_handler = KeycloakHandler()
-        kc_status = keycloak_handler.check_health()
-        auth_provider_status: HealthStatus = {"status": "Ok", "message": kc_status}
+        keycloak_handler.check_health()
+        auth_provider_status: HealthStatus = {"status": "Ok", "message": None}
     except Exception as e:
         auth_provider_status = {"status": "Error", "message": str(e)}
         status = "Error"
 
     gc.collect()
+
     content = HealthContent(
         rc=0 if status == "Ok" else -999,
         data=HealthModel(
