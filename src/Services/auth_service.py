@@ -92,15 +92,7 @@ class AuthService(BaseService):
         user_service = UserService()
 
         try:
-            token_data = self._auth_handler.introspect(token)
-
-            self.logger.debug(f"Token decoded: {token_data}")
-
-            if not token_data.get("active", False):
-                raise MotoriZenError(
-                    err=MotoriZenErrorEnum.TOKEN_EXPIRED,
-                    detail="The user is not active",
-                )
+            token_data = self._introspect_token(token)
 
             cd_auth = token_data.get("sub", None)
             self.logger.debug(f"Token decoded: <cd_auth: {cd_auth}>")
@@ -135,7 +127,15 @@ class AuthService(BaseService):
     def _introspect_token(self, token: str) -> dict[str, Any]:
         try:
             self.logger.debug(f"Decoding <token: {token}>")
-            return self._auth_handler.introspect(token)
+            token_data = self._auth_handler.introspect(token)
+
+            if not token_data.get("active", False):
+                raise MotoriZenError(
+                    err=MotoriZenErrorEnum.TOKEN_EXPIRED,
+                    detail="The user is not active",
+                )
+
+            return token_data
 
         except Exception as e:
             if isinstance(e, JWTExpired):
