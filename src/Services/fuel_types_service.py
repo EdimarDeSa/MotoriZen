@@ -1,5 +1,5 @@
-from DB.Models import FuelTypeModel
-from DB.Schemas import FuelTypeSchema
+from db.Models import FuelTypeModel
+from db.Schemas import FuelTypeSchema
 from Enums import RedisDbsEnum
 from Repositories.fuel_type_repository import FuelTypeRepository
 

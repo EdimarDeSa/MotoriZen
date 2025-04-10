@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Request
-from Routers.base_router import BaseRouter
-from Responses import Ok
+
 from Contents.fuel_types_content import FuelTypeContent
-from DB.Models import FuelTypeModel
+from db.Models import FuelTypeModel
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
+from Responses import Ok
+from Routers.base_router import BaseRouter
 from Services.fuel_types_service import FuelTypesService
 from Utils.custom_types import CurrentActiveUser
 

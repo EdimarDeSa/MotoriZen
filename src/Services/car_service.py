@@ -1,6 +1,6 @@
 import uuid
 
-from DB.Models import (
+from db.Models import (
     CarModel,
     CarNewModel,
     CarQueryFiltersModel,
@@ -8,7 +8,7 @@ from DB.Models import (
     CarQueryResponseModel,
     CarUpdatesDataModel,
 )
-from DB.Schemas import CarSchema
+from db.Schemas import CarSchema
 from Enums import RedisDbsEnum
 from Repositories.car_repository import CarRepository
 from Utils.constants import ASC

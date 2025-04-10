@@ -10,9 +10,9 @@ from fastapi.encoders import jsonable_encoder
 from sqlalchemy import Label, Null, RowMapping, null
 from sqlalchemy.orm import Session, scoped_session
 
-from DB.Models.range_model import RangeModel
-from DB.Querys import RegisterQueryManager
-from DB.Querys.user_query_manager import UserQueryManager
+from db.Models.range_model import RangeModel
+from db.Querys import RegisterQueryManager
+from db.Querys.user_query_manager import UserQueryManager
 from Enums import AggregationIntervalEnum
 from Enums.report_enum import ReportsEnum
 from Utils.constants import *

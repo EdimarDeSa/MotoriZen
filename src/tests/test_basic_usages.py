@@ -6,7 +6,7 @@ from faker import Faker
 from pytest import fixture
 from starlette.testclient import TestClient
 
-from DB.Models.token_model import TokenModel
+from db.Models.token_model import TokenModel
 
 PASSWORD: str = "P@s5W0rd"
 

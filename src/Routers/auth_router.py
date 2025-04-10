@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Request
-from DB.Models import CsrfToken, RefreshTokenModel, TokenModel
+
+from db.Models import CsrfToken, RefreshTokenModel, TokenModel
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
 from Responses import NoContent

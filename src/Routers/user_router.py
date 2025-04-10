@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request
 
 from Contents.user_contents import UserMeContent, UserUpdatedContent
-from DB.Models import UserNewModel, UserUpdatesModel
+from db.Models import UserNewModel, UserUpdatesModel
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
 from Responses import Created, NoContent, Ok

@@ -3,10 +3,10 @@ from typing import Any
 
 from sqlalchemy.orm import Session, scoped_session
 
-from DB.Models import CarNewModel, CarQueryFiltersModel, CarQueryOptionsModel, CarUpdatesDataModel
-from DB.Querys import CarQueryManager
-from DB.Querys.user_query_manager import UserQueryManager
-from DB.Schemas import BrandSchema, CarSchema
+from db.Models import CarNewModel, CarQueryFiltersModel, CarQueryOptionsModel, CarUpdatesDataModel
+from db.Querys import CarQueryManager
+from db.Querys.user_query_manager import UserQueryManager
+from db.Schemas import BrandSchema, CarSchema
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
 

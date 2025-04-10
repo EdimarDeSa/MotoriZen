@@ -4,10 +4,10 @@ from typing import Any, Sequence
 
 from sqlalchemy import Label
 
-from DB.Models import ReportsQueryModel
-from DB.Models.range_model import RangeModel
-from DB.Models.report_reponse_metadata_model import ReportResponseMetadataModel
-from DB.Models.report_response_model import ReportResponseModel
+from db.Models import ReportsQueryModel
+from db.Models.range_model import RangeModel
+from db.Models.report_reponse_metadata_model import ReportResponseMetadataModel
+from db.Models.report_response_model import ReportResponseModel
 from Enums.report_enum import ReportsEnum
 from Repositories.reports_repository import ReportsRepository
 from Utils.custom_primitive_types import DataFrameType

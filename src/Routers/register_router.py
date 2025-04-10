@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request
 
 from Contents.register_content import RegisterContent, RegisterNewContent, RegistersContent
-from DB.Models import (
+from db.Models import (
     RegisterModel,
     RegisterNewModel,
     RegisterQueryResponseModel,

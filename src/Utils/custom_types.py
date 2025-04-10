@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette_sessions.middleware import SessionMiddleware
 
-from DB.Models import UserModel
+from db.Models import UserModel
 from Routers.base_router import BaseRouter
 from Services.auth_service import AuthService
 

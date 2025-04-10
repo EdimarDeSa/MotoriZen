@@ -1,7 +1,7 @@
 from pydantic import Field
 
 from Contents.base_content import BaseContent
-from DB.Models import BrandModel
+from db.Models import BrandModel
 from Utils.Internacionalization import ModelsDescriptionTexts
 
 

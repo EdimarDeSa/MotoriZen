@@ -117,10 +117,12 @@ MIDDLEWARES: MiddlewareSequence = [
             "backend": RedisSessionBackend(
                 redis=Redis(
                     host=os.getenv("REDIS_HOST"),
-                    port=os.getenv("REDIS_PORT"),
+                    port=int(os.getenv("REDIS_PORT")),
                     db=RedisDbsEnum.SESSIONS.value,
+                    password=os.getenv("REDIS_PASSWORD"),
+                    health_check_interval=int(os.getenv("REDIS_HEALTH_CHECK_INTERVAL")),
                 ),
-                ttl=600,
+                ttl=int(os.getenv("REDIS_TTL")),
             ),
             "cookie_name": "session_cookie",
             "same_site": "lax",

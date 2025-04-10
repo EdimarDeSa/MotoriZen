@@ -28,3 +28,10 @@ class KeycloakHandler:
         )
 
         return user_id
+
+    def check_health(self) -> dict[str, str]:
+        try:
+            self._open_id.well_known()
+            return {"well_known": "ok"}
+        except Exception as e:
+            raise e

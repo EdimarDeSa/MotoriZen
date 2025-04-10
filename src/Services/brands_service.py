@@ -1,5 +1,5 @@
-from DB.Models import BrandModel
-from DB.Schemas import BrandSchema
+from db.Models import BrandModel
+from db.Schemas import BrandSchema
 from Enums import RedisDbsEnum
 from Repositories.brand_repository import BrandRepository
 

@@ -1,22 +1,33 @@
+
+volumes:
+  db_data:
+  keycloak_data:
+  keycloak_conf:
+  redis_data:
+
+networks:
+  postgres_network:
+    driver: bridge
+  keycloak_network:
+    driver: bridge
+  redis_network:
+    driver: bridge
+
+
 services:
   postgres:
     container_name: motorizen_db
     image: postgres:16
     env_file:
       - ../.env
-    environment:
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
-      - PGUSER=${DB_USER}
-      - PGPASSWORD=${DB_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
       - ./init_sql:/docker-entrypoint-initdb.d/
     networks:
-      - db_network
+      - postgres_network
+    hostname: motorizen_db
     shm_size: 128mb
 
   keycloak:
@@ -31,36 +42,38 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - db_network
+      - keycloak_network
+    hostname: motorizen_keycloak
     shm_size: 256mb
 
   redis:
-    image: redis:alpine
+    container_name: motorizen_redis
+    image: motorizen:redis
+    env_file:
+      - redis_config/redis.env
+    user: "redis:redis"
     ports:
       - "6379:6379"
     volumes:
-      - ./redis_config:/etc/redis/
+      - redis_data:/data
     networks:
-      - db_network
+      - redis_network
     shm_size: 128mb
+    hostname: motorizen_redis
 
   motorizen_api:
     container_name: motorizen_api
-    image: motorizen:prod
+    image: motorizen:api
+    env_file:
+      - api_config/api.env
     networks:
-      - db_network
+      - postgres_network
+      - keycloak_network
+      - redis_network
+    user: "app:app"
     ports:
       - "8000:8000"
     depends_on:
       - postgres
       - redis
       - keycloak
-
-volumes:
-  db_data:
-  keycloak_data:
-  keycloak_conf:
-
-networks:
-  db_network:
-    driver: bridge

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request
 
 from Contents.reports_content import ReportsContent
-from DB.Models import ReportsQueryModel
+from db.Models import ReportsQueryModel
 from Enums.motorizen_error_enum import MotoriZenErrorEnum
 from ErrorHandler.motorizen_error import MotoriZenError
 from Responses import Ok

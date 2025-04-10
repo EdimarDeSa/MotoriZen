@@ -40,5 +40,5 @@ class MotoriZenErrorEnum(Enum):
         return super().__repr__()
 
     @classmethod
-    def response_codes_as_dict(cls) -> dict[str, dict[str, int]]:
+    def as_dict(cls) -> dict[str, dict[str, int]]:
         return {error.name: error.value.__dict__ for error in cls}

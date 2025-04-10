@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session, scoped_session
 
-from DB.Querys import FuelTypeQueryManager
-from DB.Schemas import FuelTypeSchema
+from db.Querys import FuelTypeQueryManager
+from db.Schemas import FuelTypeSchema
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
 

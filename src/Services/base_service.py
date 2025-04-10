@@ -10,8 +10,8 @@ from typing import Any, Sequence, Union
 
 from sqlalchemy.orm import Session, scoped_session
 
-from DB.connection_handler import DBConnectionHandler
-from DB.Schemas.base_schema import BaseSchema
+from db.connection_handler import DBConnectionHandler
+from db.Schemas.base_schema import BaseSchema
 from Enums.redis_dbs_enum import RedisDbsEnum
 from Utils.redis_handler import RedisHandler
 

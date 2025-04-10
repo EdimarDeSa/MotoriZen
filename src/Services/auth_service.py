@@ -5,7 +5,7 @@ from typing import Any, Optional
 from jwcrypto.jwt import JWTExpired
 from keycloak import KeycloakOpenID
 
-from DB.Models import TokenModel, UserModel
+from db.Models import TokenModel, UserModel
 from Enums.motorizen_error_enum import MotoriZenErrorEnum
 from Enums.redis_dbs_enum import RedisDbsEnum
 from ErrorHandler.motorizen_error import MotoriZenError

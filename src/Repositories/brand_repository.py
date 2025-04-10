@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session, scoped_session
 
-from DB.Querys import BrandQueryManager
-from DB.Schemas import BrandSchema
+from db.Querys import BrandQueryManager
+from db.Schemas import BrandSchema
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
 

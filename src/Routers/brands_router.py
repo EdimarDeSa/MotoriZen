@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request
 
 from Contents.brand_content import BrandContent
-from DB.Models import BrandModel
+from db.Models import BrandModel
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
 from Responses import Ok

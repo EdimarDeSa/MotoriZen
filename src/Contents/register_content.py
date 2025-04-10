@@ -1,7 +1,7 @@
 from pydantic import Field
 
 from Contents.base_content import BaseContent
-from DB.Models import CarModel, RegisterModel, RegisterQueryResponseModel
+from db.Models import CarModel, RegisterModel, RegisterQueryResponseModel
 from Utils.Internacionalization import ModelsDescriptionTexts
 
 
