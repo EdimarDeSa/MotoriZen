@@ -24,6 +24,7 @@
 
 ### dotenv ###
 .env
+*.env
 
 ### pydev ###
 .pydevproject
