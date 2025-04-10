@@ -7,9 +7,11 @@ class KeycloakHandler:
     def __init__(self) -> None:
         self._admin = KeycloakAdmin(
             server_url=os.getenv("KC_URL"),
-            realm_name=os.getenv("KC_REALM"),
+            username=os.getenv("KC_USER"),
+            password=os.getenv("KC_PASSWORD"),
             client_id=os.getenv("KC_CLIENT_ID"),
-            client_secret_key=os.getenv("KC_CLIENT_SECRET"),
+            client_secret_key=os.getenv("KC_CLIENT_SECRET_KEY"),
+            realm_name=os.getenv("KC_REALM"),
         )
 
         self._open_id = KeycloakOpenID(
@@ -32,6 +34,7 @@ class KeycloakHandler:
     def check_health(self) -> None:
         try:
             self._open_id.well_known()
-            self._admin.get_users()
+            users = self._admin.get_users()
+            print(f"Keycloak health check passed. Users: {users}")
         except Exception as e:
             raise e

@@ -8,7 +8,7 @@ from redis import Redis
 from configs import CONTACT, REGISTER_MIDDLEWARES, REGISTER_ROUTERS, SWAGGER_UI_PARAMETERS, TITLE, VERSION
 from Contents.health_content import HealthContent
 from db.connection_handler import DBConnectionHandler
-from db.Models import HealthModel
+from db.Models.health_model import HealthModel
 from Enums.motorizen_error_enum import MotoriZenErrorEnum
 from Responses.ok import Ok
 from Utils.custom_primitive_types import HealthStatusType
