@@ -1,10 +1,11 @@
-from typing import Annotated, Any, Sequence, TypedDict
+from typing import Annotated, Any, Sequence
 
 from fastapi import Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette_sessions.middleware import SessionMiddleware
+from typing_extensions import TypedDict
 
 from db.Models import UserModel
 from Routers.base_router import BaseRouter

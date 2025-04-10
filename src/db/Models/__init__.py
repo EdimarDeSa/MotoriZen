@@ -9,7 +9,6 @@ from .car_models.car_updates_data_model import CarUpdatesDataModel
 from .car_models.car_updates_model import CarUpdatesModel
 from .csrf_token_model import CsrfToken
 from .fuel_type_model import FuelTypeModel
-from .health_model import HealthModel
 from .refresh_token_model import RefreshTokenModel
 from .register_models.register_model import RegisterModel
 from .register_models.register_new_model import RegisterNewModel
@@ -37,7 +36,6 @@ __all__ = [
     "CarUpdatesModel",
     "CsrfToken",
     "FuelTypeModel",
-    "HealthModel",
     "RefreshTokenModel",
     "RegisterModel",
     "RegisterNewModel",
