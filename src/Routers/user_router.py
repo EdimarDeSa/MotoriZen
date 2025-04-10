@@ -38,8 +38,17 @@ class UserRouter(BaseRouter):
         self.logger.debug("Starting me")
 
         self.logger.debug(f"User: {user_data.email}")
+        try:
 
-        return Ok(content=UserMeContent(data=user_data))
+            return Ok(content=UserMeContent(data=user_data))
+
+        except Exception as e:
+            self.logger.exception(e)
+
+            if not isinstance(e, MotoriZenError):
+                e = MotoriZenError(err=MotoriZenErrorEnum.UNKNOWN_ERROR, detail="")
+
+            raise e.as_http_response()
 
     def new_user(self, request: Request, new_user: UserNewModel) -> Created:
         """

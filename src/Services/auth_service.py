@@ -11,7 +11,7 @@ from Enums.redis_dbs_enum import RedisDbsEnum
 from ErrorHandler.motorizen_error import MotoriZenError
 from Services.base_service import BaseService
 from Services.user_service import UserService
-from Utils.oauth_service import TokenSelector
+from Utils.oauth_service import AuthorizationToken
 from Utils.redis_handler import RedisHandler
 
 
@@ -87,12 +87,20 @@ class AuthService(BaseService):
         except Exception as e:
             raise e
 
-    async def get_current_active_user(self, token: TokenSelector) -> UserModel:
+    async def get_current_active_user(self, token: AuthorizationToken) -> UserModel:
         self.logger.debug("Starting get_current_active_user")
         user_service = UserService()
 
         try:
-            token_data = self._decode_token(token)
+            token_data = self._auth_handler.introspect(token)
+
+            self.logger.debug(f"Token decoded: {token_data}")
+
+            if not token_data.get("active", False):
+                raise MotoriZenError(
+                    err=MotoriZenErrorEnum.TOKEN_EXPIRED,
+                    detail="The user is not active",
+                )
 
             cd_auth = token_data.get("sub", None)
             self.logger.debug(f"Token decoded: <cd_auth: {cd_auth}>")
@@ -122,12 +130,12 @@ class AuthService(BaseService):
             if not isinstance(e, MotoriZenError):
                 raise MotoriZenError(err=MotoriZenErrorEnum.LOGIN_ERROR, detail=str(e))
 
-            raise e
+            raise e.as_http_response()
 
-    def _decode_token(self, token: str) -> dict[str, Any]:
+    def _introspect_token(self, token: str) -> dict[str, Any]:
         try:
             self.logger.debug(f"Decoding <token: {token}>")
-            return self._auth_handler.decode_token(token, validate=True)
+            return self._auth_handler.introspect(token)
 
         except Exception as e:
             if isinstance(e, JWTExpired):
