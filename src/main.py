@@ -1,8 +1,7 @@
 import gc
 import os
 from datetime import datetime
-from email import message
-from typing import Literal
+from typing import cast
 
 from fastapi import FastAPI
 from redis import Redis
@@ -69,7 +68,7 @@ def health() -> Ok:
         )
         redis_client.ping()
         cache_status: HealthStatus = {"status": "Ok", "message": None}
-        redis_client.close()
+        redis_client.close()  # type: ignore[no-untyped-call]
     except Exception as e:
         cache_status = {"status": "Error", "message": str(e)}
         status = "Error"
