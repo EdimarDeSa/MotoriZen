@@ -1,7 +1,7 @@
 # syntax = docker/dockerfile:1.4
 
 # Build stage
-FROM python:3.11-slim AS builder
+FROM python:3.11-alpine AS builder
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
@@ -17,6 +17,10 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         gcc \
         python3-dev \
+        musl-dev \
+        libffi-dev \
+        openssl-dev \
+        build-base \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy poetry files
@@ -28,7 +32,7 @@ RUN pip install --no-cache-dir poetry==1.7.1 \
     && poetry install --no-dev --no-interaction --no-ansi
 
 # Production stage
-FROM python:3.11-slim
+FROM python:3.11-alpine
 
 LABEL maintainer="suporte@efscode.com.br"
 
@@ -38,7 +42,7 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONPATH=/app/src
 
 # Create non-root user
-RUN addgroup --system app && adduser --system --group app
+RUN addgroup -S app && adduser -S -G app
 
 # Set working directory
 WORKDIR /app
@@ -49,11 +53,6 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 
 # Copy application code
 COPY src/ src/
-
-# Verify the files are in place
-RUN ls -la /app/src && \
-    echo "Contents of /app/src:" && \
-    ls -la /app/src/configs.py
 
 # Change ownership to non-root user
 RUN chown -R app:app /app
