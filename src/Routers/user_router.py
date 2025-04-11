@@ -2,6 +2,7 @@ from fastapi import APIRouter, Request
 
 from Contents.user_contents import UserMeContent, UserUpdatedContent
 from db.Models import UserNewModel, UserUpdatesModel
+from db.Models.user_models.user_model import UserModel
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
 from Responses import Created, NoContent, Ok
@@ -40,7 +41,9 @@ class UserRouter(BaseRouter):
         self.logger.debug(f"User: {user_data.email}")
         try:
 
-            return Ok(content=UserMeContent(data=user_data))
+            user_model = UserModel.model_validate(user_data)
+
+            return Ok(content=UserMeContent(data=user_model))
 
         except Exception as e:
             self.logger.exception(e)

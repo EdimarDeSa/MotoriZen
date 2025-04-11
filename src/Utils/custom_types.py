@@ -1,6 +1,6 @@
 from typing import Annotated, Any, Sequence
 
-from fastapi import Depends
+from fastapi import Depends, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -14,6 +14,10 @@ from Utils.custom_primitive_types import HealthStatusType
 
 PasswordRequestForm = Annotated[OAuth2PasswordRequestForm, Depends()]
 CurrentActiveUser = Annotated[UserAuthModel, Depends(AuthService().get_current_active_user)]
+XCsrfTokenHeader = Annotated[
+    str | None,
+    Header(alias="X-CSRF-Token", description="Apesar de não falar, é obrigatório. Utilize a rota /get-csrf-token."),
+]
 
 
 class MiddlewareRegister(TypedDict):

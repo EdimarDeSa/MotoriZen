@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Header, Request
 
 from db.Models import CsrfToken, RefreshTokenModel, TokenModel
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
 from Responses import NoContent
 from Services.auth_service import AuthService
-from Utils.custom_types import CurrentActiveUser, PasswordRequestForm
+from Utils.custom_types import CurrentActiveUser, PasswordRequestForm, XCsrfTokenHeader
 
 from .base_router import BaseRouter
 
@@ -36,6 +36,7 @@ class AuthRouter(BaseRouter):
         self,
         request: Request,
         form_data: PasswordRequestForm,
+        header_csrf_token: XCsrfTokenHeader = None,
     ) -> TokenModel:
         """
         Create a new token for the user with CSRF protection.
@@ -55,16 +56,13 @@ class AuthRouter(BaseRouter):
 
         try:
 
-            if self._is_swagger_request(request):
+            if self._is_swagger_request(request) and header_csrf_token is None:
                 self.logger.info("Request from Swagger UI")
             else:
                 session_token = request.session.pop(X_CSRF_TOKEN)
                 self.logger.debug(f"Session token: {session_token}")
 
-                header_token = request.headers.get(X_CSRF_TOKEN, None)
-                self.logger.debug(f"Header token: {header_token}")
-
-                self.auth_service.validate_csrf_token(header_token, session_token)
+                self.auth_service.validate_csrf_token(header_csrf_token, session_token)
 
             user_email = form_data.username
             password = form_data.password

@@ -9,7 +9,6 @@ from Utils.Internacionalization import ModelsDescriptionTexts
 
 class CarModel(BaseModelDb):
     id_car: uuid.UUID = Field(description=ModelsDescriptionTexts.CAR_ID)
-    cd_user: uuid.UUID = Field(description=ModelsDescriptionTexts.USER_CD)
     cd_brand: int = Field(description=ModelsDescriptionTexts.CD_BRAND)
     renavam: Optional[str] = Field(description=ModelsDescriptionTexts.RENAVAM)
     model: str = Field(description=ModelsDescriptionTexts.CAR_MODEL)
