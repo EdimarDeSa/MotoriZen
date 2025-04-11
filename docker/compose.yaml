@@ -1,79 +1,90 @@
+version: "3"
 
 volumes:
-  db_data:
   keycloak_data:
+    name: keycloak_data
   keycloak_conf:
+    name: keycloak_conf
+  motorizen_db:
+    name: motorizen_db
   redis_data:
+    name: redis_data
 
 networks:
-  postgres_network:
-    driver: bridge
   keycloak_network:
+    driver: bridge
+  postgres_network:
     driver: bridge
   redis_network:
     driver: bridge
 
-
 services:
-  postgres:
-    container_name: motorizen_db
-    image: postgres:16
-    env_file:
-      - ../.env
-    ports:
-      - "5432:5432"
-    volumes:
-      - db_data:/var/lib/postgresql/data
-      - ./init_sql:/docker-entrypoint-initdb.d/
-    networks:
-      - postgres_network
-    hostname: motorizen_db
-    shm_size: 128mb
-
   keycloak:
     container_name: motorizen_keycloak
-    image: quay.io/keycloak/keycloak:25.0.6
+    build: keycloak_config/keycloak.dockerfile
+    image: motorizen:keycloak
     env_file:
-      - ../.env
+      - keycloak_config/keycloak.env
+    command: ["start-dev"]
     volumes:
       - keycloak_data:/opt/keycloak/data
       - keycloak_conf:/opt/keycloak/conf
-    command: ["start-dev"]
-    ports:
-      - "8080:8080"
+    hostname: motorizen_keycloak
     networks:
       - keycloak_network
-    hostname: motorizen_keycloak
+    ports:
+      - "8080:8080"
     shm_size: 256mb
+    restart: unless-stopped
+
+  postgres:
+    container_name: motorizen_db
+    build: db_config/db.dockerfile
+    image: motorizen:db
+    env_file:
+      - db_config/db.env
+    volumes:
+      - motorizen_db:/var/lib/postgresql/data
+    hostname: motorizen_db
+    networks:
+      - postgres_network
+    ports:
+      - "5432:5432"
+    shm_size: 128mb
+    restart: unless-stopped
 
   redis:
     container_name: motorizen_redis
+    build: redis_config/redis.dockerfile
     image: motorizen:redis
     env_file:
       - redis_config/redis.env
-    user: "redis:redis"
-    ports:
-      - "6379:6379"
     volumes:
       - redis_data:/data
+    hostname: motorizen_redis
     networks:
       - redis_network
+    ports:
+      - "6379:6379"
     shm_size: 128mb
-    hostname: motorizen_redis
+    restart: unless-stopped
 
   motorizen_api:
     container_name: motorizen_api
+    build: api_config/api.dockerfile
     image: motorizen:api
     env_file:
       - api_config/api.env
+    hostname: motorizen_api
     networks:
-      - postgres_network
       - keycloak_network
+      - postgres_network
       - redis_network
-    user: "app:app"
     ports:
       - "8000:8000"
     depends_on:
+      - keycloak
       - postgres
       - redis
-      - keycloak
+    shm_size: 256mb
+    restart: unless-stopped
