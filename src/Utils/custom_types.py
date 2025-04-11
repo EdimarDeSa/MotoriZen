@@ -16,7 +16,7 @@ PasswordRequestForm = Annotated[OAuth2PasswordRequestForm, Depends()]
 CurrentActiveUser = Annotated[UserAuthModel, Depends(AuthService().get_current_active_user)]
 XCsrfTokenHeader = Annotated[
     str | None,
-    Header(alias="X-CSRF-Token", description="Apesar de não falar, é obrigatório. Utilize a rota /get-csrf-token."),
+    Header(alias="X-CSRF-Token", description="Obrigatório. Utilize a rota /get-csrf-token."),
 ]
 
 

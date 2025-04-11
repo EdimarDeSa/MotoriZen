@@ -7,7 +7,7 @@ from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
 from Responses import Created, NoContent, Ok
 from Services.user_service import UserService
-from Utils.custom_types import CurrentActiveUser
+from Utils.custom_types import CurrentActiveUser, XCsrfTokenHeader
 
 from .base_router import BaseRouter
 
@@ -53,7 +53,12 @@ class UserRouter(BaseRouter):
 
             raise e.as_http_response()
 
-    def new_user(self, request: Request, new_user: UserNewModel) -> Created:
+    def new_user(
+        self,
+        request: Request,
+        new_user: UserNewModel,
+        header_csrf_token: XCsrfTokenHeader,
+    ) -> Created:
         """
         Creates a new user.
 
