@@ -25,13 +25,13 @@ class AuthService(BaseService):
         )
         self.create_logger(__name__)
 
-    def validate_csrf_token(self, header_token: Optional[str], form_token: Optional[str]) -> None:
+    def validate_csrf_token(self, header_token: Optional[str], session_token: Optional[str]) -> None:
         self.logger.info("Starting validate_csrf_token")
 
-        if header_token is None or form_token is None:
+        if header_token is None or session_token is None:
             raise MotoriZenError(err=MotoriZenErrorEnum.MISSING_CSRF_TOKEN, detail="Missing CSRF token")
 
-        if header_token != form_token:
+        if header_token != session_token:
             raise MotoriZenError(err=MotoriZenErrorEnum.INVALID_CSRF_TOKEN, detail="Invalid CSRF token")
 
     def authenticate_user(self, email: str, password: str) -> TokenModel:

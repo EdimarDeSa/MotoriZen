@@ -6,6 +6,8 @@ from db.Models.user_models.user_model import UserModel
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
 from Responses import Created, NoContent, Ok
+from Routers.auth_router import X_CSRF_TOKEN
+from Services.auth_service import AuthService
 from Services.user_service import UserService
 from Utils.custom_types import CurrentActiveUser, XCsrfTokenHeader
 
@@ -18,6 +20,7 @@ class UserRouter(BaseRouter):
         self.create_logger(__name__)
         self.router = APIRouter(prefix="/users", tags=["Users"])
         self.user_service = UserService()
+        self.auth_service = AuthService()
         self._register_routes()
 
     def _register_routes(self) -> None:
@@ -86,6 +89,11 @@ class UserRouter(BaseRouter):
         self.logger.debug("Starting new_user")
 
         try:
+            session_token = request.session.pop(X_CSRF_TOKEN)
+            self.logger.debug(f"Session token: {session_token}")
+
+            self.auth_service.validate_csrf_token(header_csrf_token, session_token)
+
             self.user_service.create_user(new_user)
 
             return Created()
