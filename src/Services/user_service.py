@@ -3,7 +3,7 @@ import uuid
 
 from keycloak import KeycloakAdmin, KeycloakError
 
-from db.Models import UserModel, UserNewModel, UserUpdatesModel
+from db.Models import UserAuthModel, UserModel, UserNewModel, UserUpdatesModel
 from db.Schemas import UserSchema
 from Enums import MotoriZenErrorEnum, RedisDbsEnum
 from ErrorHandler import MotoriZenError
@@ -27,7 +27,7 @@ class UserService(BaseService):
         self._cache_handler = RedisHandler()
         self.create_logger(__name__)
 
-    def get_user_by_cd_auth(self, cd_auth: str) -> UserModel:
+    def get_user_by_cd_auth(self, cd_auth: str) -> UserAuthModel:
         self.logger.debug("Starting select_user_by_cd_auth")
         db_session = self.create_session(write=False)
 
@@ -35,7 +35,7 @@ class UserService(BaseService):
             self.logger.debug("Getting user by cd_auth")
             user_data: UserSchema = self._user_repository.select_user_by_cd_auth(db_session, cd_auth)
 
-            return UserModel.model_validate(user_data, from_attributes=True)
+            return UserAuthModel.model_validate(user_data, from_attributes=True)
 
         except Exception as e:
             self.logger.exception(e)

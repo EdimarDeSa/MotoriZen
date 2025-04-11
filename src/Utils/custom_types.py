@@ -7,13 +7,13 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette_sessions.middleware import SessionMiddleware
 from typing_extensions import TypedDict
 
-from db.Models import UserModel
+from db.Models import UserAuthModel
 from Routers.base_router import BaseRouter
 from Services.auth_service import AuthService
 from Utils.custom_primitive_types import HealthStatusType
 
 PasswordRequestForm = Annotated[OAuth2PasswordRequestForm, Depends()]
-CurrentActiveUser = Annotated[UserModel, Depends(AuthService().get_current_active_user)]
+CurrentActiveUser = Annotated[UserAuthModel, Depends(AuthService().get_current_active_user)]
 
 
 class MiddlewareRegister(TypedDict):

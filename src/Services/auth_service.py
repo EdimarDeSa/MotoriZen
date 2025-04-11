@@ -5,14 +5,13 @@ from typing import Any, Optional
 from jwcrypto.jwt import JWTExpired
 from keycloak import KeycloakOpenID
 
-from db.Models import TokenModel, UserModel
+from db.Models import TokenModel, UserAuthModel, UserModel
 from Enums.motorizen_error_enum import MotoriZenErrorEnum
 from Enums.redis_dbs_enum import RedisDbsEnum
 from ErrorHandler.motorizen_error import MotoriZenError
 from Services.base_service import BaseService
 from Services.user_service import UserService
 from Utils.oauth_service import AuthorizationToken
-from Utils.redis_handler import RedisHandler
 
 
 class AuthService(BaseService):
@@ -87,7 +86,7 @@ class AuthService(BaseService):
         except Exception as e:
             raise e
 
-    async def get_current_active_user(self, token: AuthorizationToken) -> UserModel:
+    async def get_current_active_user(self, token: AuthorizationToken) -> UserAuthModel:
         self.logger.debug("Starting get_current_active_user")
         user_service = UserService()
 
@@ -114,7 +113,7 @@ class AuthService(BaseService):
             self._check_user_active(user_data)
 
             if user_model is None:
-                user_model = UserModel.model_validate(user_data, from_attributes=True)
+                user_model = UserAuthModel.model_validate(user_data, from_attributes=True)
 
             return user_model
 

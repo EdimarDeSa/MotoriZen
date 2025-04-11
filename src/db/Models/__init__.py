@@ -20,6 +20,7 @@ from .register_models.register_update_data_model import RegisterUpdateDataModel
 from .register_models.register_updates_model import RegisterUpdatesModel
 from .reports_query_model import ReportsQueryModel
 from .token_model import TokenModel
+from .user_models.user_auth_model import UserAuthModel
 from .user_models.user_model import UserModel
 from .user_models.user_new_model import UserNewModel
 from .user_models.user_updates_model import UserUpdatesModel
@@ -47,6 +48,7 @@ __all__ = [
     "RegisterUpdatesModel",
     "ReportsQueryModel",
     "TokenModel",
+    "UserAuthModel",
     "UserModel",
     "UserNewModel",
     "UserUpdatesModel",
