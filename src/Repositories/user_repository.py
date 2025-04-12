@@ -20,7 +20,7 @@ class UserRepository(BaseRepository):
         self.logger.debug("Starting select_user_by_id")
 
         try:
-            query: Select[tuple[UserSchema]] = self._user_querys.select_user_by_id(id_user)
+            query: Select[UserSchema] = self._user_querys.select_user_by_id(id_user)
 
             self.logger.debug("Getting user by id")
             user_data: UserSchema | None = db_session.execute(query).scalar()
@@ -37,7 +37,7 @@ class UserRepository(BaseRepository):
         self.logger.debug("Starting select_user_by_cd_auth")
 
         try:
-            query: Select[tuple[UserSchema]] = self._user_querys.select_user_by_cd_auth(cd_auth)
+            query: Select[UserSchema] = self._user_querys.select_user_by_cd_auth(cd_auth)
 
             self.logger.debug("Getting user by cd_auth")
             user_data: UserSchema | None = db_session.execute(query).scalar()

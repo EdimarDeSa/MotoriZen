@@ -12,13 +12,13 @@ class BrandRepository(BaseRepository):
     def __init__(self) -> None:
         super().__init__()
         self.create_logger(__name__)
-        self._car_querys = BrandQueryManager()
+        self._brand_querys = BrandQueryManager()
 
     def select_brands(self, db_session: scoped_session[Session]) -> list[BrandSchema]:
         self.logger.debug("Starting select_brand")
 
         try:
-            query = self._car_querys.select_brands()
+            query = self._brand_querys.select_brands()
 
             self.logger.debug(f"Selecting all brands on table <Table: {BrandSchema.__tablename__}>")
             brand_schema: list[BrandSchema] | None = list(db_session.execute(query).scalars().all())
@@ -37,7 +37,7 @@ class BrandRepository(BaseRepository):
         self.logger.debug("Starting select_brand")
 
         try:
-            query = self._car_querys.select_brand(id_brand)
+            query = self._brand_querys.select_brand(id_brand)
 
             self.logger.debug(f"Selecting brand <id_brand: {id_brand}> on table <Table: {BrandSchema.__tablename__}>")
             brand_schema: BrandSchema | None = db_session.execute(query).scalar()

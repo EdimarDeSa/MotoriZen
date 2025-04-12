@@ -14,3 +14,5 @@ class RedisDbsEnum(IntEnum):
     REPORTS = 5
     SESSIONS = 6
     FUEL_TYPES = 7
+    SYNC_INITIAL = 8
+    SYNC_UPDATES = 9
