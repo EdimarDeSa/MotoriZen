@@ -1,7 +1,7 @@
 # syntax = docker/dockerfile:1.4
 
 # Build stage
-FROM python:3.11-alpine AS builder
+FROM python:3.13-alpine AS builder
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
@@ -33,7 +33,7 @@ RUN pip install --no-cache-dir poetry==1.7.1 \
     && poetry install --no-dev --no-interaction --no-ansi
 
 # Production stage
-FROM python:3.11-alpine
+FROM python:3.13-alpine
 
 LABEL maintainer="suporte@efscode.com.br"
 
@@ -53,7 +53,7 @@ RUN addgroup -S app && \
 WORKDIR /app
 
 # Copy only necessary files from builder
-COPY --from=builder --chown=app:app /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=builder --chown=app:app /usr/local/lib/python3.13/site-packages /usr/local/lib/python3.13/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
 
 # Copy application code
