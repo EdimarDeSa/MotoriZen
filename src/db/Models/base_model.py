@@ -12,4 +12,4 @@ class NewBaseModelDb(BaseModel):
 class BaseModelDb(NewBaseModelDb):
     updated_at: datetime = Field(description=ModelsDescriptionTexts.UPDATED_AT)
     created_at: datetime = Field(description=ModelsDescriptionTexts.CREATED_AT)
-    deleted_at: datetime = Field(description=ModelsDescriptionTexts.DELETED_AT)
+    deleted_at: datetime | None = Field(description=ModelsDescriptionTexts.DELETED_AT)
