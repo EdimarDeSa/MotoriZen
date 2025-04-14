@@ -4,9 +4,16 @@ SET search_path TO motorizen;
 CREATE TABLE IF NOT EXISTS "tb_brand"
 (
     "id_brand" SERIAL PRIMARY KEY,
-    "name" VARCHAR(100) NOT NULL UNIQUE
+    "name" VARCHAR(50) NOT NULL UNIQUE,
+    "updated_at" TIMESTAMP,
+    "created_at" TIMESTAMP,
+    "deleted_at" TIMESTAMP
 );
 
+CREATE TRIGGER set_brand_timestamps
+BEFORE INSERT OR UPDATE OR DELETE ON "tb_brand"
+FOR EACH ROW
+EXECUTE FUNCTION set_timestamp();
 
 INSERT INTO "tb_brand" ("name")
 VALUES
@@ -124,3 +131,5 @@ VALUES
     ('Zenvo'),
     ('Zotye'),
     ('ZX');
+
+COMMENT ON TABLE "tb_brand" IS 'Tabela de marcas de vehiculos mapeada.';

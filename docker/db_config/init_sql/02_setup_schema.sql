@@ -6,46 +6,47 @@ CREATE SCHEMA IF NOT EXISTS motorizen;
 
 SET search_path TO motorizen;
 
+
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
--- Função que previne a modificação manual do campo creation
-CREATE OR REPLACE FUNCTION prevent_manually_creation()
+-- Função que previne a modificação manual do campo created_at
+-- TODO: Finalizar testes de otmimzação do código e melhorar robustez do bloqueio
+CREATE OR REPLACE FUNCTION set_timestamp()
 RETURNS TRIGGER AS $$
 BEGIN
-    -- Preventing manually set creation
-    IF NEW.creation IS DISTINCT FROM OLD.creation THEN
-        RAISE EXCEPTION 'Cannot modify the creation timestamp manually';
+    IF NEW.created_at IS NOT NULL THEN
+        RAISE EXCEPTION 'Cannot set created_at timestamp manually';
     END IF;
-    
-    IF OLD.creation IS NULL THEN
-    NEW.creation = CURRENT_TIMESTAMP;
+
+    IF NEW.updated_at IS NOT NULL THEN
+        RAISE EXCEPTION 'Cannot set updated_at timestamp manually';
+    END IF;
+
+    IF NEW.deleted_at IS NOT NULL THEN
+        RAISE EXCEPTION 'Cannot set deleted_at timestamp manually';
+    END IF;
+
+    IF TG_OP = 'INSERT' THEN
+        NEW.created_at = CURRENT_TIMESTAMP;
+        NEW.updated_at = CURRENT_TIMESTAMP;
+
+    ELSEIF TG_OP = 'UPDATE' THEN
+        NEW.updated_at = CURRENT_TIMESTAMP;
+
+    ELSEIF TG_OP = 'DELETE' THEN
+        NEW.updated_at = CURRENT_TIMESTAMP;
+        NEW.deleted_at = CURRENT_TIMESTAMP;
     END IF;
 
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
--- Função que previne a modificação manual dos campos creation e last_update
-CREATE OR REPLACE FUNCTION check_manually_changes_on_timestamp_fields()
-RETURNS TRIGGER AS $$
-BEGIN
-    -- Preventing manually set creation
-    IF NEW.creation IS DISTINCT FROM OLD.creation THEN
-        RAISE EXCEPTION 'Cannot modify the creation timestamp.';
-    END IF;
 
-    IF OLD.creation IS NULL THEN
-        NEW.creation = CURRENT_TIMESTAMP;
-    END IF;
-
-    -- Preventing manually set last_update
-    IF NEW.last_update IS DISTINCT FROM OLD.last_update THEN
-        RAISE EXCEPTION 'Cannot modify the last_update timestamp.';
-    END IF;
-
-    NEW.last_update = CURRENT_TIMESTAMP;
-
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
+/* How to use:
+CREATE TRIGGER {set_brand}_timestamps
+BEFORE INSERT OR UPDATE OR DELETE ON "{tb_register}"
+FOR EACH ROW
+EXECUTE FUNCTION set_timestamp();
+*/
+ 
