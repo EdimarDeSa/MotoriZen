@@ -3,40 +3,30 @@ version: "3"
 volumes:
   keycloak_data:
     name: keycloak_data
+    external: true
   keycloak_conf:
     name: keycloak_conf
+    external: true
   motorizen_db:
     name: motorizen_db
+    external: true
   redis_data:
     name: redis_data
+    external: true
 
 networks:
   keycloak_network:
     driver: bridge
+    name: keycloak_network
   postgres_network:
     driver: bridge
+    name: postgres_network
+    external: true
   redis_network:
     driver: bridge
+    name: redis_network
 
 services:
-  keycloak:
-    container_name: motorizen_keycloak
-    build: keycloak_config/keycloak.dockerfile
-    image: motorizen:keycloak
-    env_file:
-      - keycloak_config/keycloak.env
-    command: ["start-dev"]
-    volumes:
-      - keycloak_data:/opt/keycloak/data
-      - keycloak_conf:/opt/keycloak/conf
-    hostname: motorizen_keycloak
-    networks:
-      - keycloak_network
-    ports:
-      - "8080:8080"
-    shm_size: 256mb
-    restart: unless-stopped
-
   postgres:
     container_name: motorizen_db
     build: db_config/db.dockerfile
@@ -52,6 +42,11 @@ services:
       - "5432:5432"
     shm_size: 128mb
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   redis:
     container_name: motorizen_redis
@@ -68,6 +63,36 @@ services:
       - "6379:6379"
     shm_size: 128mb
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "PING"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  keycloak:
+    container_name: motorizen_keycloak
+    build: keycloak_config/keycloak.dockerfile
+    image: motorizen:keycloak
+    env_file:
+      - keycloak_config/keycloak.env
+    command: ["start-dev"]
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+      - keycloak_conf:/opt/keycloak/conf
+    hostname: motorizen_keycloak
+    networks:
+      - keycloak_network
+      - postgres_network
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+      - "9000:9000"
+    shm_size: 256mb
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        required: true
+        condition: service_healthy
 
   motorizen_api:
     container_name: motorizen_api
@@ -83,8 +108,13 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - keycloak
-      - postgres
-      - redis
+      keycloak:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+        required: true
+      redis:
+        condition: service_healthy
+        required: true
     shm_size: 256mb
     restart: unless-stopped
