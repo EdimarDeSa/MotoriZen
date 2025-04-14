@@ -1,8 +1,8 @@
 from .brand_query_manager import BrandQueryManager
-from .car_query_manager import CarQueryManager
+from .fuel_type_query_manager import FuelTypeQueryManager
 from .register_query_manager import RegisterQueryManager
 from .user_query_manager import UserQueryManager
-from .fuel_type_query_manager import FuelTypeQueryManager
+from .vehicle_query_manager import CarQueryManager
 
 __all__ = [
     "RegisterQueryManager",

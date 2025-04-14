@@ -7,7 +7,7 @@ from sqlalchemy import Label, Null, Select, func, null, select, true
 
 from db.Models.range_model import RangeModel
 from Enums import AggregationIntervalEnum
-from Utils.constants import ASCENDANT, CAR_LABEL, PERIODE_START_DATE
+from Utils.constants import ASCENDANT, PERIODE_START_DATE, VEHICLE_LABEL
 from Utils.custom_primitive_types import Table
 
 from ..Schemas import RegisterSchema
@@ -42,7 +42,7 @@ class BaseQueryManager:
         cls, id_user: str, vehicle_ids: Sequence[uuid.UUID], date_: RangeModel[date], report_query: list[Label[Any]]
     ) -> Select[tuple[uuid.UUID, Any]]:
         return (
-            select(RegisterSchema.cd_vehicle.label(CAR_LABEL), *report_query)
+            select(RegisterSchema.cd_vehicle.label(VEHICLE_LABEL), *report_query)
             .where(
                 RegisterSchema.cd_user == id_user,
                 RegisterSchema.cd_vehicle.in_(vehicle_ids) if vehicle_ids else true(),
@@ -61,7 +61,7 @@ class BaseQueryManager:
     ) -> Select[tuple[uuid.UUID, Any]]:
         return (
             select(
-                RegisterSchema.cd_vehicle.label(CAR_LABEL),
+                RegisterSchema.cd_vehicle.label(VEHICLE_LABEL),
                 func.date_trunc(aggregation_interval, RegisterSchema.register_date).label(PERIODE_START_DATE),
                 *report_list,
             )
