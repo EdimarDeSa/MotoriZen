@@ -1,7 +1,7 @@
 import uuid
-from datetime import date, time
+from datetime import date, datetime, time
 
-from sqlalchemy import TIMESTAMP, UUID, Date, Float, ForeignKey, Integer, Time
+from sqlalchemy import UUID, Date, DateTime, Float, ForeignKey, Integer, Time
 from sqlalchemy.orm import MappedColumn, mapped_column
 
 from db.Schemas.base_schema import BaseSchema
@@ -21,9 +21,9 @@ class RegisterSchema(BaseSchema):
     number_of_trips: MappedColumn[int] = mapped_column(Integer(), nullable=False, default=1)
     total_value: MappedColumn[float] = mapped_column(Float(precision=2), nullable=False, default=0.0)
     register_date: MappedColumn[date] = mapped_column(Date(), nullable=False, default=date.today, index=True)
-    updated_at: MappedColumn[TIMESTAMP] = mapped_column(TIMESTAMP, nullable=True)
-    created_at: MappedColumn[TIMESTAMP] = mapped_column(TIMESTAMP, nullable=True)
-    deleted_at: MappedColumn[TIMESTAMP] = mapped_column(TIMESTAMP, nullable=True)
+    updated_at: MappedColumn[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: MappedColumn[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    deleted_at: MappedColumn[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
 
     def __str__(self) -> str:
         return (

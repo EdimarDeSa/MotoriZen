@@ -24,12 +24,12 @@ class UserRouter(BaseRouter):
         self._register_routes()
 
     def _register_routes(self) -> None:
-        self.router.add_api_route("/me", self.me, response_model=UserMeContent, methods=["GET"])
+        self.router.add_api_route("/me", self.get_me, response_model=UserMeContent, methods=["GET"])
         self.router.add_api_route("/new-user", self.new_user, methods=["POST"])
         self.router.add_api_route("/update-user", self.update_user, response_model=UserUpdatedContent, methods=["PUT"])
         self.router.add_api_route("/delete-user", self.delete_user, response_model=None, methods=["DELETE"])
 
-    def me(self, user_data: CurrentActiveUser, request: Request) -> Ok:
+    def get_me(self, user_data: CurrentActiveUser, request: Request) -> Ok:
         """
         Get the current user
 

@@ -1,6 +1,7 @@
 import uuid
+from datetime import datetime
 
-from sqlalchemy import TIMESTAMP, UUID, Boolean, Float, ForeignKey, Integer, String
+from sqlalchemy import UUID, Boolean, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import MappedColumn, mapped_column
 
 from db.Schemas.base_schema import BaseSchema
@@ -23,9 +24,9 @@ class VehicleSchema(BaseSchema):
     fuel_capacity: MappedColumn[float] = mapped_column(Float(precision=2), nullable=False, default=0.0)
     odometer: MappedColumn[float] = mapped_column(Float(precision=2), nullable=False, default=0.0)
     is_active: MappedColumn[bool] = mapped_column(Boolean(), nullable=False, default=True)
-    updated_at: MappedColumn[TIMESTAMP] = mapped_column(TIMESTAMP, nullable=True)
-    created_at: MappedColumn[TIMESTAMP] = mapped_column(TIMESTAMP, nullable=True)
-    deleted_at: MappedColumn[TIMESTAMP] = mapped_column(TIMESTAMP, nullable=True)
+    updated_at: MappedColumn[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: MappedColumn[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    deleted_at: MappedColumn[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
 
     def __str__(self) -> str:
         return f"{self.__class__.name}(id={self.id_vehicle!r}, cd_user={self.cd_user!r}, odometer={self.odometer!r})"

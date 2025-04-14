@@ -1,7 +1,7 @@
 import uuid
-from datetime import date
+from datetime import date, datetime
 
-from sqlalchemy import TIMESTAMP, UUID, Boolean, Date, String
+from sqlalchemy import UUID, Boolean, Date, DateTime, String
 from sqlalchemy.orm import MappedColumn, mapped_column
 
 from db.Schemas.base_schema import BaseSchema
@@ -17,9 +17,9 @@ class UserSchema(BaseSchema):
     birthdate: MappedColumn[date] = mapped_column(Date(), nullable=False)
     cd_auth: MappedColumn[uuid.UUID] = mapped_column(UUID(), nullable=False)
     is_active: MappedColumn[bool] = mapped_column(Boolean(), nullable=False, default=True)
-    updated_at: MappedColumn[TIMESTAMP] = mapped_column(TIMESTAMP, nullable=True)
-    created_at: MappedColumn[TIMESTAMP] = mapped_column(TIMESTAMP, nullable=True)
-    deleted_at: MappedColumn[TIMESTAMP] = mapped_column(TIMESTAMP, nullable=True)
+    updated_at: MappedColumn[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: MappedColumn[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    deleted_at: MappedColumn[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
 
     @property
     def full_name(self) -> str:

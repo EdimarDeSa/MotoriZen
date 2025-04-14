@@ -30,7 +30,7 @@ class AuthRouter(BaseRouter):
 
     def _is_swagger_request(self, request: Request) -> bool:
         origin = request.headers.get("origin", "")
-        return origin == "http://localhost:8000"
+        return origin in ["http://localhost:8000", "http://localhost:8001"]
 
     async def login(
         self,
