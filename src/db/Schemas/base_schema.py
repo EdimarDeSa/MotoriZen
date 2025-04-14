@@ -2,6 +2,8 @@ from curses import meta
 from typing import Any
 from uuid import UUID
 
+from sqlalchemy import event
+from sqlalchemy.engine import Engine
 from sqlalchemy.orm import DeclarativeBase, declarative_base
 
 from Utils.custom_primitive_types import TableDict
@@ -13,7 +15,7 @@ class BaseSchema(Base):  # type: ignore
     __abstract__ = True
     __table_args__ = {"schema": "motorizen"}
 
-    def as_dict(self, *, exclude_none: bool = False) -> TableDict:
+    def as_dict(self, *, exclude_none: bool = False, exclude: set[str] | None = None) -> TableDict:
         """
         Returns a dictionary representation of the schema
 
@@ -31,9 +33,15 @@ class BaseSchema(Base):  # type: ignore
             >>> user_schema.as_dict(exclude_none=True)
             {'first_name': 'Eduard', 'last_name': 'Hernandez', 'email': 'eduard.hernandez@example.com', 'birthdate': '1990-01-01'}
         """
+        exclude = exclude or set()
+
         if exclude_none:
-            return {c.name: getattr(self, c.name) for c in self.__table__.c if getattr(self, c.name) is not None}
-        return {c.name: getattr(self, c.name) for c in self.__table__.c}
+            return {
+                c.name: getattr(self, c.name)
+                for c in self.__table__.c
+                if getattr(self, c.name) is not None and c.name not in exclude
+            }
+        return {c.name: getattr(self, c.name) for c in self.__table__.c if c.name not in exclude}
 
     @classmethod
     def fields(cls) -> tuple[str]:
@@ -50,7 +58,7 @@ class BaseSchema(Base):  # type: ignore
         return getattr(cls, "id_" + cls.__tablename__[3:])
 
     def __repr__(self) -> str:
-        return f"{self.__class__.name}({self.as_dict()!r})"
+        return f"{self.__class__.__name__}({self.as_dict()!r})"
 
     def __str__(self) -> str:
         if hasattr(self, "name"):
