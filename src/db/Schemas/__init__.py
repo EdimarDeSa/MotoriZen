@@ -1,12 +1,12 @@
 from .brand_schema import BrandSchema
-from .car_schema import CarSchema
+from .fuel_type_schema import FuelTypeSchema
 from .register_schema import RegisterSchema
 from .user_schema import UserSchema
-from .fuel_type_schema import FuelTypeSchema
+from .vehicle_schema import VehicleSchema
 
 __all__ = [
     "BrandSchema",
-    "CarSchema",
+    "VehicleSchema",
     "FuelTypeSchema",
     "RegisterSchema",
     "UserSchema",

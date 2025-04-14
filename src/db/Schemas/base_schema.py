@@ -29,7 +29,7 @@ class BaseSchema(Base):  # type: ignore
             >>> from db.Schemas.user_schema import UserSchema
             >>> user_schema = UserSchema()
             >>> user_schema.as_dict()
-            {'id_user': None, 'first_name': 'Eduard', 'last_name': 'Hernandez', 'email': 'eduard.hernandez@example.com', 'birthdate': '1990-01-01', 'cd_auth': None, 'is_active': None, 'last_update': None, 'creation': None}
+            {'id_user': None, 'first_name': 'Eduard', 'last_name': 'Hernandez', 'email': 'eduard.hernandez@example.com', 'birthdate': '1990-01-01', 'cd_auth': None, 'is_active': None, 'updated_at': None, 'created_at': None}
             >>> user_schema.as_dict(exclude_none=True)
             {'first_name': 'Eduard', 'last_name': 'Hernandez', 'email': 'eduard.hernandez@example.com', 'birthdate': '1990-01-01'}
         """
@@ -58,7 +58,7 @@ class BaseSchema(Base):  # type: ignore
         return getattr(cls, "id_" + cls.__tablename__[3:])
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.as_dict()!r})"
+        return f"{self.__class__.name}({self.as_dict()!r})"
 
     def __str__(self) -> str:
         if hasattr(self, "name"):
