@@ -6,11 +6,9 @@ CREATE SCHEMA IF NOT EXISTS motorizen;
 
 SET search_path TO motorizen;
 
-
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
--- Função que previne a modificação manual do campo created_at
--- TODO: Finalizar testes de otmimzação do código e melhorar robustez do bloqueio
+-- Função que previne a modificação manual dos campos de timestap críticos
 CREATE OR REPLACE FUNCTION set_timestamp()
 RETURNS TRIGGER AS $$
 BEGIN

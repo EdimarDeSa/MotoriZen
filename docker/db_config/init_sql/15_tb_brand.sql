@@ -1,21 +1,25 @@
-SET ROLE motorizen;
-SET search_path TO motorizen;
+SET
+    ROLE motorizen;
 
-CREATE TABLE IF NOT EXISTS "tb_brand"
-(
-    "id_brand" SERIAL PRIMARY KEY,
-    "name" VARCHAR(50) NOT NULL UNIQUE,
-    "updated_at" TIMESTAMP,
-    "created_at" TIMESTAMP,
-    "deleted_at" TIMESTAMP
-);
+SET
+    search_path TO motorizen;
 
-CREATE TRIGGER set_brand_timestamps
-BEFORE INSERT OR UPDATE OR DELETE ON "tb_brand"
-FOR EACH ROW
-EXECUTE FUNCTION set_timestamp();
+CREATE TABLE
+    IF NOT EXISTS "tb_brand" (
+        "id_brand" SERIAL PRIMARY KEY,
+        "name" VARCHAR(50) NOT NULL UNIQUE,
+        "updated_at" TIMESTAMP,
+        "created_at" TIMESTAMP,
+        "deleted_at" TIMESTAMP
+    );
 
-INSERT INTO "tb_brand" ("name")
+CREATE TRIGGER set_brand_timestamps BEFORE INSERT
+OR
+UPDATE
+OR DELETE ON "tb_brand" FOR EACH ROW EXECUTE FUNCTION set_timestamp ();
+
+INSERT INTO
+    "tb_brand" ("name")
 VALUES
     ('Acura'),
     ('Agrale'),
