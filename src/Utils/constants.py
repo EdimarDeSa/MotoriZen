@@ -1,6 +1,6 @@
 from typing import Literal
 
-CAR_LABEL = "id_car"
+VEHICLE_LABEL = "id_vehicle"
 
 PERIODE_START_DATE = "periode_start_date"
 
@@ -16,9 +16,9 @@ MONTHLY: Literal["month"] = "month"
 
 YEARLY: Literal["year"] = "year"
 
-ID_CAR = "id_car"
+ID_VEHICLE = "id_vehicle"
 
-CD_CAR = "cd_car"
+CD_VEHICLE = "cd_vehicle"
 
 RESULT = "result"
 
