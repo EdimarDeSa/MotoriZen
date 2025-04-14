@@ -8,16 +8,16 @@ from Utils.custom_primitive_types import DataFrameType
 class DataFrame(DataFrameType):
 
     def insert_reports(self, other: DataFrameType) -> None:
-        for id_car, reports in other.items():
+        for id_vehicle, reports in other.items():
 
-            if not self.check_car_existence(id_car):
-                self[id_car] = dict()
+            if not self.check_car_existence(id_vehicle):
+                self[id_vehicle] = dict()
 
             for report, data in reports.items():
-                self[id_car][report] = data
+                self[id_vehicle][report] = data
 
-    def check_car_existence(self, id_car: UUID | Literal["-1"]) -> bool:
-        return id_car in self.keys()
+    def check_car_existence(self, id_vehicle: UUID | Literal["-1"]) -> bool:
+        return id_vehicle in self.keys()
 
     @property
     def total_cars(self) -> int:
