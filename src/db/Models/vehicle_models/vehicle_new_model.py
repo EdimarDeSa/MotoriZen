@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 from Utils.Internacionalization import ModelsDescriptionTexts
 
 
-class CarNewModel(BaseModel):
+class VehicleNewModel(BaseModel):
     cd_brand: int = Field(description=ModelsDescriptionTexts.CD_BRAND)
     renavam: Optional[str] = Field(default=None, max_length=11, description=ModelsDescriptionTexts.RENAVAM)
     model: str = Field(max_length=100, description=ModelsDescriptionTexts.VEHICLE_MODEL)

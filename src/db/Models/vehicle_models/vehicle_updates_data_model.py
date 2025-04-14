@@ -7,7 +7,7 @@ from ErrorHandler.motorizen_error import MotoriZenError
 from Utils.Internacionalization import ModelsDescriptionTexts
 
 
-class CarUpdatesDataModel(BaseModel):
+class VehicleUpdatesDataModel(BaseModel):
     cd_brand: Optional[int] = Field(default=None, description=ModelsDescriptionTexts.CD_BRAND)
     renavam: Optional[str] = Field(default=None, max_length=11, description=ModelsDescriptionTexts.RENAVAM)
     model: Optional[str] = Field(default=None, max_length=100, description=ModelsDescriptionTexts.VEHICLE_MODEL)

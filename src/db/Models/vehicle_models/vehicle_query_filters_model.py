@@ -7,7 +7,7 @@ from db.Models.range_model import RangeModel
 from Utils.Internacionalization import ModelsDescriptionTexts
 
 
-class CarQueryFiltersModel(BaseModel):
+class VehicleQueryFiltersModel(BaseModel):
     id_vehicle: Optional[uuid.UUID] = Field(default=None, description=ModelsDescriptionTexts.VEHICLE_CD)
     cd_brand: Optional[int] = Field(default=None, description=ModelsDescriptionTexts.CD_BRAND)
     renavam: Optional[str] = Field(default=None, max_length=11, description=ModelsDescriptionTexts.RENAVAM)

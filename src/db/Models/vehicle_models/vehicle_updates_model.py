@@ -2,10 +2,10 @@ import uuid
 
 from pydantic import BaseModel, Field
 
-from db.Models import CarUpdatesDataModel
+from db.Models import VehicleUpdatesDataModel
 from Utils.Internacionalization import ModelsDescriptionTexts
 
 
-class CarUpdatesModel(BaseModel):
+class VehicleUpdatesModel(BaseModel):
     id_vehicle: uuid.UUID = Field(description=ModelsDescriptionTexts.VEHICLE_ID)
-    updates: CarUpdatesDataModel = Field(description=ModelsDescriptionTexts.UPDATES)
+    updates: VehicleUpdatesDataModel = Field(description=ModelsDescriptionTexts.UPDATES)

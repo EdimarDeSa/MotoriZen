@@ -6,7 +6,7 @@ from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
 
 
-class CarQueryOptionsModel(BaseQueryOptionsModel):
+class VehicleQueryOptionsModel(BaseQueryOptionsModel):
     @field_validator("sort_by", mode="after")
     def validate_sort_by(cls, value: str) -> str:
         if value is None:
