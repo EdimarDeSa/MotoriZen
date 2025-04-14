@@ -7,13 +7,13 @@ from db.Models.base_model import BaseModelDb
 from Utils.Internacionalization import ModelsDescriptionTexts
 
 
-class CarModel(BaseModelDb):
-    id_car: uuid.UUID = Field(description=ModelsDescriptionTexts.CAR_ID)
+class VehicleModel(BaseModelDb):
+    id_vehicle: uuid.UUID = Field(description=ModelsDescriptionTexts.VEHICLE_ID)
     cd_brand: int = Field(description=ModelsDescriptionTexts.CD_BRAND)
     renavam: Optional[str] = Field(description=ModelsDescriptionTexts.RENAVAM)
-    model: str = Field(description=ModelsDescriptionTexts.CAR_MODEL)
-    year: int = Field(description=ModelsDescriptionTexts.CAR_YEAR)
-    color: str = Field(description=ModelsDescriptionTexts.CAR_COLOR)
+    model: str = Field(description=ModelsDescriptionTexts.VEHICLE_MODEL)
+    year: int = Field(description=ModelsDescriptionTexts.VEHICLE_YEAR)
+    color: str = Field(description=ModelsDescriptionTexts.VEHICLE_COLOR)
     cd_fuel_type: int = Field(description=ModelsDescriptionTexts.CD_FUEL_TYPE)
     fuel_capacity: float = Field(description=ModelsDescriptionTexts.FUEL_CAPACITY)
     license_plate: str = Field(description=ModelsDescriptionTexts.LICENSE_PLATE)

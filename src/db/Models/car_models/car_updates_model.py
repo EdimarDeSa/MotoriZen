@@ -7,5 +7,5 @@ from Utils.Internacionalization import ModelsDescriptionTexts
 
 
 class CarUpdatesModel(BaseModel):
-    id_car: uuid.UUID = Field(description=ModelsDescriptionTexts.CAR_ID)
+    id_vehicle: uuid.UUID = Field(description=ModelsDescriptionTexts.VEHICLE_ID)
     updates: CarUpdatesDataModel = Field(description=ModelsDescriptionTexts.UPDATES)

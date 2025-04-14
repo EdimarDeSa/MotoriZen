@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 
-from db.Models.car_models.car_query_filters_model import CarQueryFiltersModel
-from db.Models.car_models.car_query_options import CarQueryOptionsModel
+from db.Models.VEHICLE_MODELs.car_query_filters_model import CarQueryFiltersModel
+from db.Models.VEHICLE_MODELs.car_query_options import CarQueryOptionsModel
 from Utils.Internacionalization import ModelsDescriptionTexts
 
 

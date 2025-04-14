@@ -10,5 +10,6 @@ class NewBaseModelDb(BaseModel):
 
 
 class BaseModelDb(NewBaseModelDb):
-    last_update: datetime = Field(description=ModelsDescriptionTexts.LAST_UPDATE)
-    creation: datetime = Field(description=ModelsDescriptionTexts.CREATION)
+    updated_at: datetime = Field(description=ModelsDescriptionTexts.updated_at)
+    created_at: datetime = Field(description=ModelsDescriptionTexts.created_at)
+    deleted_at: datetime = Field(description=ModelsDescriptionTexts.deleted_at)
