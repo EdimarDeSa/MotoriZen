@@ -16,7 +16,7 @@ load_dotenv()
 
 from Enums.redis_dbs_enum import RedisDbsEnum
 from Middlewares import ProcessTimeHeaderMiddleware
-from Routers import AuthRouter, CarsRouter, RegisterRouter, ReportsRouter, UserRouter, BrandsRouter, FuelTypesRouter
+from Routers import AuthRouter, BrandsRouter, FuelTypesRouter, RegisterRouter, ReportsRouter, UserRouter, VehiclesRouter
 from Routers.base_router import BaseRouter
 from Utils.custom_types import MiddlewareSequence, RoutersSequence
 
@@ -34,9 +34,6 @@ logger: Logger = logging.getLogger(__name__)
 DEBUG_MODE: bool = bool(int(os.getenv("DEBUG_MODE", 0)))
 
 if DEBUG_MODE:
-    # log_format: str = (
-    #     "%(asctime)s [%(processName)s: %(process)d] [%(threadName)s: %(thread)d] [%(levelname)s] %(name)s: %(message)s"
-    # )
     log_format: str = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
 
     console_handler: Handler = logging.StreamHandler(stream=sys.stdout)
@@ -60,7 +57,7 @@ if DEBUG_MODE:
 ROUTERS: RoutersSequence = [
     AuthRouter,
     UserRouter,
-    CarsRouter,
+    VehiclesRouter,
     RegisterRouter,
     ReportsRouter,
     BrandsRouter,
@@ -117,12 +114,12 @@ MIDDLEWARES: MiddlewareSequence = [
             "backend": RedisSessionBackend(
                 redis=Redis(
                     host=os.getenv("REDIS_HOST"),
-                    port=int(os.getenv("REDIS_PORT")),
+                    port=int(os.getenv("REDIS_PORT", 6379)),
                     db=RedisDbsEnum.SESSIONS.value,
                     password=os.getenv("REDIS_PASSWORD"),
-                    health_check_interval=int(os.getenv("REDIS_HEALTH_CHECK_INTERVAL")),
+                    health_check_interval=int(os.getenv("REDIS_HEALTH_CHECK_INTERVAL", 60)),
                 ),
-                ttl=int(os.getenv("REDIS_TTL")),
+                ttl=int(os.getenv("REDIS_TTL", 86400)),
             ),
             "cookie_name": "session_cookie",
             "same_site": "lax",

@@ -13,6 +13,6 @@ class SyncInitialModel(BaseModel):
     user_data: UserModel
     brands: list[BrandModel]
     fuel_types: list[FuelTypeModel]
-    cars: list[VehicleModel]
+    vehicles: list[VehicleModel]
     registers: list[RegisterModel]
     last_pulled_at: datetime

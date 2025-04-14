@@ -19,7 +19,7 @@ class User(TypedDict):
     password: str
 
 
-class Car(TypedDict):
+class Vehicle(TypedDict):
     cd_brand: int
     renavam: str
     model: str
@@ -31,7 +31,7 @@ class Car(TypedDict):
 
 class Data(TypedDict):
     users: list[User]
-    cars: list[Car]
+    vehicles: list[Vehicle]
 
 
 @fixture(scope="session")
@@ -64,8 +64,8 @@ def users(_data: Data) -> list[User]:
 
 
 @fixture(scope="session")
-def cars(_data: Data) -> list[Car]:
-    return _data["cars"]
+def vehicles(_data: Data) -> list[Vehicle]:
+    return _data["vehicles"]
 
 
 def token(client: TestClient, user: User) -> TokenModel:

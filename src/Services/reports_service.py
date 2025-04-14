@@ -35,7 +35,7 @@ class ReportsService(BaseService):
             reports = reports_query.reports or self.__list_default_reports()
             time_frame = reports_query.time_frame or self.__default_time_frame()
             aggregation_interval = reports_query.aggregation_interval
-            car_ids = reports_query.car_ids or self.__default_cars()
+            vehicle_ids = reports_query.vehicle_ids or self.__default_vehicles()
             data_frame = DataFrame()
 
             self.logger.debug("Filtering and mounting reports")
@@ -48,10 +48,10 @@ class ReportsService(BaseService):
 
             if report_querys:
                 report_data = (
-                    self._reports_reporitosy.select_reports(db_session, id_user, time_frame, car_ids, report_querys)
+                    self._reports_reporitosy.select_reports(db_session, id_user, time_frame, vehicle_ids, report_querys)
                     if aggregation_interval is None
                     else self._reports_reporitosy.select_aggregated_reports(
-                        db_session, id_user, time_frame, car_ids, aggregation_interval, report_querys
+                        db_session, id_user, time_frame, vehicle_ids, aggregation_interval, report_querys
                     )
                 )
 
@@ -61,7 +61,7 @@ class ReportsService(BaseService):
             report_response = ReportResponseModel(
                 results=data_frame,
                 metadata=ReportResponseMetadataModel(
-                    total_cars=data_frame.total_cars,
+                    total_vehicles=data_frame.total_vehicles,
                     total_results=data_frame.total_results,
                     total_reports_selected=reports_query.reports.__len__() if reports_query.reports else 0,
                     total_bytes=data_frame.nbytes,
@@ -73,7 +73,7 @@ class ReportsService(BaseService):
         except Exception as e:
             raise e
 
-    def _count_total_cars(self, data_frame: DataFrame) -> int:
+    def _count_total_vehicles(self, data_frame: DataFrame) -> int:
         return len(data_frame.keys())
 
     def __default_time_frame(self) -> RangeModel[date]:
@@ -82,5 +82,5 @@ class ReportsService(BaseService):
     def __list_default_reports(self) -> Sequence[ReportsEnum]:
         return list(ReportsEnum)
 
-    def __default_cars(self) -> Sequence[uuid.UUID]:
+    def __default_vehicles(self) -> Sequence[uuid.UUID]:
         return []

@@ -121,7 +121,7 @@ class BaseService(ABC):
         self.logger.debug("Resetting cache")
 
         dbs = [
-            RedisDbsEnum.CARS,
+            RedisDbsEnum.VEHICLES,
             RedisDbsEnum.REGISTERS,
             RedisDbsEnum.REPORTS,
         ]

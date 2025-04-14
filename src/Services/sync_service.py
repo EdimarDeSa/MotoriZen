@@ -1,24 +1,23 @@
 from datetime import UTC, datetime
 
 from db.Models.brand_models.brand_model import BrandModel
-from db.Models.car_models.car_model import CarModel
-from db.Models.car_models.car_query_filters_model import CarQueryFiltersModel
-from db.Models.car_models.car_query_options import CarQueryOptionsModel
 from db.Models.fuel_type_model import FuelTypeModel
 from db.Models.register_models.register_model import RegisterModel
 from db.Models.register_models.register_query_filters_model import RegisterQueryFiltersModel
 from db.Models.register_models.register_query_options import RegisterQueryOptionsModel
 from db.Models.sync_models.sync_initial_model import SyncInitialModel
 from db.Models.user_models.user_model import UserModel
+from db.Models.vehicle_models.vehicle_query_filters_model import VehicleQueryFiltersModel
+from db.Models.vehicle_models.vehicle_query_options import VehicleQueryOptionsModel
 from Enums.motorizen_error_enum import MotoriZenErrorEnum
 from Enums.redis_dbs_enum import RedisDbsEnum
 from ErrorHandler.motorizen_error import MotoriZenError
 from Repositories.brand_repository import BrandRepository
-from Repositories.car_repository import CarRepository
 from Repositories.fuel_type_repository import FuelTypeRepository
 from Repositories.register_repository import RegisterRepository
 from Repositories.sync_repository import SyncRepository
 from Repositories.user_repository import UserRepository
+from Repositories.vehicle_repository import VehicleRepository
 from Services.base_service import BaseService
 from Utils.redis_handler import RedisHandler
 
@@ -31,7 +30,7 @@ class SyncService(BaseService):
         self._user_repository = UserRepository()
         self._brand_repository = BrandRepository()
         self._fuel_type_repository = FuelTypeRepository()
-        self._car_repository = CarRepository()
+        self._vehicle_repository = VehicleRepository()
         self._register_repository = RegisterRepository()
         self._cache_handler = RedisHandler()
         self.create_logger(__name__)
@@ -48,8 +47,8 @@ class SyncService(BaseService):
 
             if sync_data is None:
 
-                car_qf = CarQueryFiltersModel()
-                car_qo = CarQueryOptionsModel(per_page=1000)
+                vehicle_qf = VehicleQueryFiltersModel()
+                vehicle_qo = VehicleQueryOptionsModel(per_page=1000)
 
                 reg_qf = RegisterQueryFiltersModel()
                 reg_qo = RegisterQueryOptionsModel(per_page=1000)
@@ -58,7 +57,7 @@ class SyncService(BaseService):
                     "user_data": self._user_repository.select_user_by_id(db_session, id_user),
                     "brands": self._brand_repository.select_brands(db_session),
                     "fuel_types": self._fuel_type_repository.select_fuel_types(db_session),
-                    "cars": self._car_repository.select_cars(db_session, id_user, car_qf, car_qo),
+                    "vehicles": self._vehicle_repository.select_vehicles(db_session, id_user, vehicle_qf, vehicle_qo),
                     "registers": self._register_repository.select_registers(db_session, id_user, reg_qf, reg_qo),
                     "last_pulled_at": datetime.now(UTC),
                 }

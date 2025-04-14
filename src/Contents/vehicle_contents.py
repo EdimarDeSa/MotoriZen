@@ -5,5 +5,5 @@ from db.Models import VehicleModel
 from Utils.Internacionalization import ModelsDescriptionTexts
 
 
-class CarContent(BaseContent):
+class VehicleContent(BaseContent):
     data: VehicleModel = Field(description=ModelsDescriptionTexts.BASE_DATA)

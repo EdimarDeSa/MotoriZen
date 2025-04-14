@@ -10,17 +10,17 @@ class DataFrame(DataFrameType):
     def insert_reports(self, other: DataFrameType) -> None:
         for id_vehicle, reports in other.items():
 
-            if not self.check_car_existence(id_vehicle):
+            if not self.check_vehicle_existence(id_vehicle):
                 self[id_vehicle] = dict()
 
             for report, data in reports.items():
                 self[id_vehicle][report] = data
 
-    def check_car_existence(self, id_vehicle: UUID | Literal["-1"]) -> bool:
+    def check_vehicle_existence(self, id_vehicle: UUID | Literal["-1"]) -> bool:
         return id_vehicle in self.keys()
 
     @property
-    def total_cars(self) -> int:
+    def total_vehicles(self) -> int:
         return len(self.keys())
 
     @property

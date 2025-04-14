@@ -3,21 +3,21 @@ from typing import Any
 from pydantic import InstanceOf
 
 from db.Models import (
-    CarModel,
     RegisterModel,
     RegisterNewModel,
     RegisterQueryFiltersModel,
     RegisterQueryOptionsModel,
     RegisterQueryResponseModel,
     RegisterUpdateDataModel,
+    VehicleModel,
 )
 from db.Models.base_model import BaseModelDb
 from db.Schemas import RegisterSchema
 from Enums import MotoriZenErrorEnum
 from Enums.redis_dbs_enum import RedisDbsEnum
 from ErrorHandler import MotoriZenError
-from Repositories.car_repository import CarRepository
 from Repositories.register_repository import RegisterRepository
+from Repositories.vehicle_repository import VehicleRepository
 from Services.base_service import BaseService
 
 
@@ -25,7 +25,7 @@ class RegisterService(BaseService):
     def __init__(self) -> None:
         self.create_logger(__name__)
         self._register_repository = RegisterRepository()
-        self._car_repository = CarRepository()
+        self._vehicle_repository = VehicleRepository()
 
     def get_registers(
         self, id_user: str, query_filters: RegisterQueryFiltersModel, query_options: RegisterQueryOptionsModel
@@ -117,7 +117,7 @@ class RegisterService(BaseService):
             new_register_data = new_register.model_dump()
 
             odometer_new = new_register_data.pop("odometer")
-            odometer_old = self._car_repository.get_last_odometer(db_session, id_user, str(new_register.cd_car))
+            odometer_old = self._vehicle_repository.get_last_odometer(db_session, id_user, str(new_register.cd_vehicle))
             distance: float = new_register_data.get("distance", 0.0)
 
             if odometer_new is None and distance:
@@ -141,7 +141,9 @@ class RegisterService(BaseService):
                     detail="Last odometer + distance cannot be lower than the new odometer.",
                 )
 
-            self._car_repository.update_car_odometer(db_session, id_user, str(new_register.cd_car), odometer_new)
+            self._vehicle_repository.update_vehicle_odometer(
+                db_session, id_user, str(new_register.cd_vehicle), odometer_new
+            )
 
             new_register_schema: RegisterSchema = RegisterSchema(
                 cd_user=id_user,
@@ -155,13 +157,15 @@ class RegisterService(BaseService):
             self.reset_cache(id_user)
 
             register_model = self.get_register(id_user, id_register)
-            car_schema = self._car_repository.select_car_by_id(db_session, id_user, str(new_register.cd_car))
+            vehicle_schema = self._vehicle_repository.select_vehicle_by_id(
+                db_session, id_user, str(new_register.cd_vehicle)
+            )
 
-            car_model = CarModel.model_validate(car_schema, from_attributes=True)
+            VEHICLE_MODEL = VehicleModel.model_validate(vehicle_schema, from_attributes=True)
 
             response_data = {
                 "register_data": register_model,
-                "car_data": car_model,
+                "vehicle_data": VEHICLE_MODEL,
             }
 
             return response_data

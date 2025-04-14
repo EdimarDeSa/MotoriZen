@@ -2,8 +2,8 @@ from enum import StrEnum
 
 
 class MessagesEnum(StrEnum):
-    LAST_UPDATE = "last_update"
-    CREATION = "creation"
+    UPDATED_AT = "updated_at"
+    CREATED_AT = "created_at"
     PAGE = "page"
     PER_PAGE = "per_page"
     SORT_BY = "sort_by"
@@ -13,8 +13,8 @@ class MessagesEnum(StrEnum):
     ID_BRAND = "id_brand"
     CD_BRAND = "cd_brand"
     BRAND_NAME = "brand_name"
-    ID_CAR = "id_car"
-    CD_CAR = "cd_car"
+    ID_VEHICLE = "id_vehicle"
+    CD_VEHICLE = "cd_vehicle"
     CD_USER = "cd_user"
     RENAVAM = "renavam"
     MODEL = "model"

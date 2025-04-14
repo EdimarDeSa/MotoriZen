@@ -19,8 +19,8 @@ class SyncDeletedFuelTypesModel(BaseModel):
     last_pulled_at: datetime
 
 
-class SyncDeletedCarsModel(BaseModel):
-    cars: list[VehicleModel]
+class SyncDeletedVehiclesModel(BaseModel):
+    vehicles: list[VehicleModel]
     last_pulled_at: datetime
 
 
@@ -33,5 +33,5 @@ class SyncDeletedModel(BaseModel):
     user_data: UserModel
     brands: SyncDeletedBrandModel
     fuel_types: SyncDeletedFuelTypesModel
-    cars: SyncDeletedCarsModel
+    vehicles: SyncDeletedVehiclesModel
     registers: SyncUpdatesRegistersModel

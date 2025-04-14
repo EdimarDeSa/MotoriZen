@@ -5,5 +5,5 @@ from Utils.Internacionalization import ModelsDescriptionTexts
 
 
 class ReportResponseMetadataModel(BaseMetadataModel):
-    total_cars: int = Field(description=ModelsDescriptionTexts.TOTAL_CARS)
+    total_vehicles: int = Field(description=ModelsDescriptionTexts.TOTAL_VEHICLES)
     total_reports_selected: int = Field(description=ModelsDescriptionTexts.TOTAL_RESULTS)

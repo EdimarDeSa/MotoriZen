@@ -13,10 +13,10 @@ from ..Schemas import UserSchema
 
 class UserQueryManager(BaseQueryManager):
     def select_user_by_id(self, id_user: str) -> Select[UserSchema]:
-        return select(UserSchema).where(UserSchema.id_user == id_user).limit(1)
+        return select(UserSchema).where(UserSchema.id_user == id_user).limit(1)  # type: ignore
 
     def select_user_by_cd_auth(self, cd_auth: str) -> Select[UserSchema]:
-        return select(UserSchema).where(UserSchema.cd_auth == cd_auth).limit(1)
+        return select(UserSchema).where(UserSchema.cd_auth == cd_auth).limit(1)  # type: ignore
 
     def delete_user(self, email: str) -> Delete:
         return delete(UserSchema).where(UserSchema.email == email)
