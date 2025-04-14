@@ -29,6 +29,7 @@ COPY pyproject.toml poetry.lock ./
 
 # Install poetry and dependencies
 RUN pip install --no-cache-dir poetry==1.7.1 \
+    && apk add --no-cache curl \
     && poetry config virtualenvs.create false \
     && poetry install --no-dev --no-interaction --no-ansi
 
