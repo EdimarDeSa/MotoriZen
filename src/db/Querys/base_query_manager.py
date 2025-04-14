@@ -39,38 +39,38 @@ class BaseQueryManager:
         return null()
 
     def select_reports(
-        cls, id_user: str, car_ids: Sequence[uuid.UUID], date_: RangeModel[date], report_query: list[Label[Any]]
+        cls, id_user: str, vehicle_ids: Sequence[uuid.UUID], date_: RangeModel[date], report_query: list[Label[Any]]
     ) -> Select[tuple[uuid.UUID, Any]]:
         return (
-            select(RegisterSchema.cd_car.label(CAR_LABEL), *report_query)
+            select(RegisterSchema.cd_vehicle.label(CAR_LABEL), *report_query)
             .where(
                 RegisterSchema.cd_user == id_user,
-                RegisterSchema.cd_car.in_(car_ids) if car_ids else true(),
+                RegisterSchema.cd_vehicle.in_(vehicle_ids) if vehicle_ids else true(),
                 RegisterSchema.register_date.between(date_.start, date_.end),
             )
-            .group_by(RegisterSchema.cd_car)
+            .group_by(RegisterSchema.cd_vehicle)
         )
 
     def select_periodicaly_report(
         self,
         id_user: str,
-        car_ids: Sequence[uuid.UUID],
+        vehicle_ids: Sequence[uuid.UUID],
         date_: RangeModel[date],
         aggregation_interval: AggregationIntervalEnum,
         report_list: list[Label[Any]],
     ) -> Select[tuple[uuid.UUID, Any]]:
         return (
             select(
-                RegisterSchema.cd_car.label(CAR_LABEL),
+                RegisterSchema.cd_vehicle.label(CAR_LABEL),
                 func.date_trunc(aggregation_interval, RegisterSchema.register_date).label(PERIODE_START_DATE),
                 *report_list,
             )
             .where(
                 RegisterSchema.cd_user == id_user,
-                RegisterSchema.cd_car.in_(car_ids) if car_ids else true(),
+                RegisterSchema.cd_vehicle.in_(vehicle_ids) if vehicle_ids else true(),
                 RegisterSchema.register_date.between(date_.start, date_.end),
             )
-            .group_by(RegisterSchema.cd_car, func.date_trunc(aggregation_interval, RegisterSchema.register_date))
+            .group_by(RegisterSchema.cd_vehicle, func.date_trunc(aggregation_interval, RegisterSchema.register_date))
             .order_by(PERIODE_START_DATE)
         )
 
