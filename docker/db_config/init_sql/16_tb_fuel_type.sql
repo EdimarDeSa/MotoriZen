@@ -1,4 +1,6 @@
+SET ROLE motorizen;
 SET search_path TO motorizen;
+
 
 CREATE TABLE IF NOT EXISTS "tb_fuel_type"
 (
