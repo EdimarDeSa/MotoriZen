@@ -9,7 +9,7 @@ from Utils.Internacionalization import ModelsDescriptionTexts
 
 class RegisterModel(BaseModelDb):
     id_register: uuid.UUID = Field(description=ModelsDescriptionTexts.REGISTER_ID)
-    cd_car: uuid.UUID = Field(description=ModelsDescriptionTexts.CAR_CD)
+    cd_vehicle: uuid.UUID = Field(description=ModelsDescriptionTexts.VEHICLE_CD)
     distance: float = Field(description=ModelsDescriptionTexts.DISTANCE)
     working_time: time = Field(description=ModelsDescriptionTexts.WORKING_TIME)
     mean_consuption: float = Field(description=ModelsDescriptionTexts.MEAN_CONSUMPTION)

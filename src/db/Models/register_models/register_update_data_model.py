@@ -11,7 +11,7 @@ from Utils.Internacionalization import ModelsDescriptionTexts
 
 
 class RegisterUpdateDataModel(BaseModelDb):
-    cd_car: Optional[uuid.UUID] = Field(description=ModelsDescriptionTexts.CAR_CD)
+    cd_vehicle: Optional[uuid.UUID] = Field(description=ModelsDescriptionTexts.VEHICLE_CD)
     distance: Optional[float] = Field(description=ModelsDescriptionTexts.DISTANCE)
     working_time: Optional[time] = Field(description=ModelsDescriptionTexts.WORKING_TIME)
     mean_consuption: Optional[float] = Field(description=ModelsDescriptionTexts.MEAN_CONSUMPTION)

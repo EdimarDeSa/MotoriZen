@@ -10,7 +10,7 @@ from Utils.Internacionalization import ModelsDescriptionTexts
 
 class RegisterQueryFiltersModel(BaseModel):
     id_register: Optional[uuid.UUID] = Field(default=None, description=ModelsDescriptionTexts.REGISTER_ID)
-    cd_car: Optional[uuid.UUID] = Field(default=None, description=ModelsDescriptionTexts.CAR_CD)
+    cd_vehicle: Optional[uuid.UUID] = Field(default=None, description=ModelsDescriptionTexts.VEHICLE_CD)
     distance: Optional[RangeModel[float]] = Field(default=None, description=ModelsDescriptionTexts.DISTANCE)
     working_time: Optional[RangeModel[time]] = Field(default=None, description=ModelsDescriptionTexts.WORKING_TIME)
     mean_consuption: Optional[RangeModel[float]] = Field(

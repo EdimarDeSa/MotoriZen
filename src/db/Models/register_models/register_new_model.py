@@ -11,7 +11,7 @@ from Utils.Internacionalization import ModelsDescriptionTexts
 
 class RegisterNewModel(BaseModel):
 
-    cd_car: uuid.UUID = Field(description=ModelsDescriptionTexts.CAR_CD)
+    cd_vehicle: uuid.UUID = Field(description=ModelsDescriptionTexts.VEHICLE_CD)
     number_of_trips: int = Field(description=ModelsDescriptionTexts.NUMBER_OF_TRIPS)
     distance: Optional[float] = Field(
         default=None,
