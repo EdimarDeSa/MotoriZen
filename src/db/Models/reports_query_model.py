@@ -21,9 +21,9 @@ class ReportsQueryModel(BaseModel):
             ]
         ],
     )
-    car_ids: Optional[Sequence[uuid.UUID]] = Field(
+    vehicle_ids: Optional[Sequence[uuid.UUID]] = Field(
         default=None,
-        description=ModelsDescriptionTexts.CAR_IDS,
+        description=ModelsDescriptionTexts.VEHICLE_IDS,
     )
     time_frame: Optional[RangeModel[date]] = Field(
         default=None,
