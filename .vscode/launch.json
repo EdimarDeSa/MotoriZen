@@ -1,33 +1,29 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Launch Chrome for Keycloak",
-            "type": "chrome",
-            "request": "launch",
-            "url": "http://localhost:8080",
-            "webRoot": "${workspaceFolder}"
-        },
-        {
-            "name": "Launch Chrome for MotoriZen",
-            "type": "chrome",
-            "request": "launch",
-            "url": "http://localhost:8000",
-            "webRoot": "${workspaceFolder}"
-        },
-        {
-            "name": "Depurador do Python: FastAPI",
-            "type": "debugpy",
-            "request": "launch",
-            "module": "fastapi",
-            "cwd": "${workspaceFolder}/src",
-            "args": [
-                "dev",
-                "--host='0.0.0.0'",
-                "--port=8000",
-            ],
-            "preLaunchTask": "Launch Docker",
-            // "postDebugTask": "Stop Docker"
-        },
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Depurador do Python: FastAPI",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "fastapi",
+      "cwd": "${workspaceFolder}/src",
+      "args": ["dev", "--host=localhost", "--port=8001"],
+      "preLaunchTask": "Launch Docker"
+      // "postDebugTask": "Stop Docker"
+    },
+    {
+      "name": "Launch Chrome for Keycloak",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:8080",
+      "webRoot": "${workspaceFolder}"
+    },
+    {
+      "name": "Launch Chrome for MotoriZen",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:8000",
+      "webRoot": "${workspaceFolder}"
+    }
+  ]
 }
