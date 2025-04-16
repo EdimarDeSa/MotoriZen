@@ -1,4 +1,20 @@
 {
+    /*
+        vscode dependêncies:
+        - Python
+        - Black Formatter
+        - MyPy
+        - Isort
+        - Pylance
+
+        Recommendeds:
+        - DotEnv
+        - Docker
+        - Even Better TOML
+        - Python Poetry
+        - Markdown All in One
+        - Catppuccin Pack (makes the theme look nice, I prefer Macchiato)
+    */
     // PYTHON SETTINGS
     "[python]": {
         "diffEditor.ignoreTrimWhitespace": false,
