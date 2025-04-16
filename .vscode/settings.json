@@ -1,0 +1,79 @@
+{
+    // PYTHON SETTINGS
+    "[python]": {
+        "diffEditor.ignoreTrimWhitespace": false,
+        "editor.wordBasedSuggestions": "currentDocument",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit",
+            "source.fixAll": "always"
+        },
+        "editor.autoClosingBrackets": "always",
+        "editor.autoClosingComments": "always",
+        "editor.autoClosingDelete": "always",
+        "editor.autoClosingOvertype": "always",
+        "editor.autoClosingQuotes": "always",
+        "editor.minimap.autohide": true,
+        "diffEditor.useInlineViewWhenSpaceIsLimited": true,
+    },
+    "python.analysis.autoFormatStrings": true,
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.autoSearchPaths": true,
+
+    // MYPY TYPE CHECKER
+    "mypy-type-checker.args": [
+        // Tornar a checagem mais rigorosa
+        "--strict=true",
+    
+        // Exigir tipagem explícita de funções e métodos
+        "--disallow-untyped-calls=true",
+        "--disallow-untyped-defs=true",
+    
+        // Exigir tipagem de argumentos em funções lambdas
+        "--disallow-incomplete-defs=true",
+        "--disallow-untyped-decorators=true",
+    
+        // Exigir declarações de tipo em todas as variáveis locais
+        "--warn-unused-ignores=true",
+        "--warn-return-any=true",
+        "--warn-no-return=true",
+        "--ignore-missing-imports=true",
+    
+        // Mostrar erros em funções de terceiros que não estão tipadas
+        "--no-implicit-optional=true",
+    
+        // Mostrar erros em funções de terceiros que não estão tipadas
+        "--follow-imports=normal",
+    
+        // Ativar checagem de atributos não inicializados
+        "--check-untyped-defs=true",
+    
+        // Alertar sobre possíveis tipos None onde não esperado
+        "--strict-optional=true",
+    
+        // Define o diretório base como 'src'
+        "--mypy-path=src"
+      ],
+    "mypy-type-checker.cwd": "${workspaceFolder}",
+
+    // BLACK FORMATTER
+    "black-formatter.args": [
+        "--line-length=120",
+    ],
+    "black-formatter.cwd": "${workspaceFolder}",
+    "black-formatter.importStrategy": "fromEnvironment",
+
+    // ISORT FORMATTER
+    "isort.args": [
+        "--line_length=120",
+        "--profile=black"
+    ],
+
+    // AUTODOCSTRING
+    "autoDocstring.docstringFormat": "google",
+    "autoDocstring.generateDocstringOnEnter": true,
+    "autoDocstring.guessTypes": true,
+    "autoDocstring.includeName": true,
+    "autoDocstring.quoteStyle": "\"\"\"",
+    "autoDocstring.startOnNewLine": true,
+}
