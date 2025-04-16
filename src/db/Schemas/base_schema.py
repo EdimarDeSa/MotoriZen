@@ -1,9 +1,5 @@
-from curses import meta
-from typing import Any
 from uuid import UUID
 
-from sqlalchemy import event
-from sqlalchemy.engine import Engine
 from sqlalchemy.orm import DeclarativeBase, declarative_base
 
 from Utils.custom_primitive_types import TableDict
