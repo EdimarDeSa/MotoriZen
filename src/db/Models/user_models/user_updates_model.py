@@ -10,10 +10,14 @@ from Utils.Internacionalization import ModelsDescriptionTexts
 
 class UserUpdatesModel(BaseModel):
     first_name: Optional[str] = Field(
-        default=None, max_length=50, min_length=3, examples=["Eduardo"], description=ModelsDescriptionTexts.FIRST_NAME
+        default=None, max_length=50, min_length=3, examples=["Edimar"], description=ModelsDescriptionTexts.FIRST_NAME
     )
-    last_name: str = Field(
-        default=None, max_length=100, min_length=3, examples=["Eduardo"], description=ModelsDescriptionTexts.LAST_NAME
+    last_name: Optional[str] = Field(
+        default=None,
+        max_length=100,
+        min_length=3,
+        examples=["Freitas de Sa"],
+        description=ModelsDescriptionTexts.LAST_NAME,
     )
     birthdate: Optional[date] = Field(default=None, description=ModelsDescriptionTexts.BIRTHDATE)
 

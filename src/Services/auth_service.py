@@ -5,7 +5,7 @@ from typing import Any, Optional
 from jwcrypto.jwt import JWTExpired
 from keycloak import KeycloakOpenID
 
-from db.Models import TokenModel, UserAuthModel, UserModel
+from db.Models import TokenModel, UserAuthModel
 from Enums.motorizen_error_enum import MotoriZenErrorEnum
 from Enums.redis_dbs_enum import RedisDbsEnum
 from ErrorHandler.motorizen_error import MotoriZenError
@@ -38,9 +38,6 @@ class AuthService(BaseService):
         self.logger.info("Starting authenticate_user")
 
         try:
-            # FIXME: Depois que o usuário logou a primeira vez, enquanto o token estiver guardado no cache,
-            #  mesmo com a senha errada ele pode solicitar o token novamente, pois só é validado o e-mail
-            # token_dict = self._get_token_from_cache(email)
             token_dict = None
             self.logger.debug(f"Token from cache service: {token_dict}")
 
@@ -49,8 +46,6 @@ class AuthService(BaseService):
 
                 token_dict = self._auth_handler.token(email, password)
                 self.logger.debug(f"User authenticated - <TokenData: {token_dict}>")
-
-                # self._save_token_to_cache(email, token_dict)
 
             return TokenModel.model_validate(token_dict, from_attributes=True)
 
@@ -121,7 +116,7 @@ class AuthService(BaseService):
             if not isinstance(e, MotoriZenError):
                 raise MotoriZenError(err=MotoriZenErrorEnum.LOGIN_ERROR, detail=str(e))
 
-            raise e.as_http_response()
+            raise e
 
     def _introspect_token(self, token: str) -> dict[str, Any]:
         try:

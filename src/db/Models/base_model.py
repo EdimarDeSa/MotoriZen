@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -12,4 +13,4 @@ class NewBaseModelDb(BaseModel):
 class BaseModelDb(NewBaseModelDb):
     updated_at: datetime = Field(description=ModelsDescriptionTexts.UPDATED_AT)
     created_at: datetime = Field(description=ModelsDescriptionTexts.CREATED_AT)
-    deleted_at: datetime | None = Field(description=ModelsDescriptionTexts.DELETED_AT)
+    deleted_at: Optional[datetime] = Field(default=None, description=ModelsDescriptionTexts.DELETED_AT)

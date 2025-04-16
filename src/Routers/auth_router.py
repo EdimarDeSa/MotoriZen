@@ -77,6 +77,7 @@ class AuthRouter(BaseRouter):
             self.logger.error(e)
             if not isinstance(e, MotoriZenError):
                 e = MotoriZenError(err=MotoriZenErrorEnum.UNKNOWN_ERROR, detail=str(e))
+
             raise e.as_http_response()
 
     async def refresh_token(
