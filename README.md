@@ -9,8 +9,8 @@ MotoriZen é uma solução completa para motoristas de aplicativos como Uber e 9
 - Alertas e Lembretes: Notificações personalizáveis para troca de óleo, revisão ou controle de despesas.
 
 ## 🛠️ Tecnologias Utilizadas
-- Frontend: [HTML, CSS, JS, JQuery]
-- Backend: [Python, FastAPI, SqlAlchemy]
+<!-- - Frontend: [HTML, CSS, JS, JQuery] -->
+- Backend: [Python, FastAPI, SqlAlchemy, Keycloak]
 - Banco de Dados: [PostgreSQL, Redis]
 
 ## 🚀 Como Executar o Projeto
