@@ -16,7 +16,18 @@ def get_db_url() -> str:
     db_password: str = os.getenv("DB_PASSWORD", "postgres")
     db_ip: str = os.getenv("DB_IP", "localhost")
     db_port: str = os.getenv("DB_PORT", "5432")
-    db_name: str = os.getenv("DB_NAME", "postgres")
+    db_name: str = os.getenv("DB_MOTORIZEN", "postgres")
+
+    return f"{db_dialect}://{db_user}:{db_password}@{db_ip}:{db_port}/{db_name}"
+
+
+def get_db_url_backlog() -> str:
+    db_dialect: str = os.getenv("DB_DIALECT", "postgresql")
+    db_user: str = os.getenv("DB_USER", "postgres")
+    db_password: str = os.getenv("DB_PASSWORD", "postgres")
+    db_ip: str = os.getenv("DB_IP", "localhost")
+    db_port: str = os.getenv("DB_PORT", "5432")
+    db_name: str = os.getenv("DB_BACKLOG", "postgres")
 
     return f"{db_dialect}://{db_user}:{db_password}@{db_ip}:{db_port}/{db_name}"
 
@@ -38,11 +49,11 @@ class DBConnectionHandler:
 
     @staticmethod
     def test_connection(db_session: scoped_session[Session]) -> None:
-        retries, max_retries = 0, 2
+        retries, max_retries = 0, 5
         logger.debug("Testing database connection...")
         while retries < max_retries:
             try:
-                result: str = db_session.execute(text("SELECT 1"))  # type: ignore
+                result = db_session.execute(text("SELECT 1")).scalar()
                 logger.debug(f"Connection successful: {result}")
                 break
             except Exception as e:

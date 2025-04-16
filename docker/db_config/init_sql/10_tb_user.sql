@@ -31,6 +31,21 @@ CREATE INDEX idx_user_cd_auth ON "tb_user" USING btree ("cd_auth");
 
 CREATE INDEX idx_user_is_active ON "tb_user" USING btree ("is_active");
 
+INSERT ON TABLE "tb_user"
+VALUES
+    (
+        NULL,
+        'Motorizen',
+        'System',
+        'motorizen@efscode.com.br',
+        CURRENT_DATE,
+        gen_random_uuid (),
+        TRUE,
+        NULL,
+        NULL,
+        NULL
+    );
+
 COMMENT ON TABLE "tb_user" IS 'Tabela de usuários do sistema Motorizen';
 
 COMMENT ON COLUMN "tb_user"."cd_auth" IS 'Código de autenticação externo (ex: Keycloak)';
