@@ -1,43 +1,38 @@
 version: "3"
 
 volumes:
-  keycloak_data:
-    name: keycloak_data
-    external: true
-  keycloak_conf:
-    name: keycloak_conf
-    external: true
-  motorizen_db:
-    name: motorizen_db
-    external: true
-  redis_data:
-    name: redis_data
-    external: true
+  motorizen_keycloak_volume:
+    name: motorizen_keycloak_volume
+  motorizen_keycloak_conf_volume:
+    name: motorizen_keycloak_conf_volume
+  motorizen_postgres_volume:
+    name: motorizen_postgres_volume
+  motorizen_redis_volume:
+    name: motorizen_redis_volume
 
 networks:
-  keycloak_network:
+  motorizen_keycloak_network:
     driver: bridge
-    name: keycloak_network
-  postgres_network:
+    name: motorizen_keycloak_network
+  motorizen_postgres_network:
     driver: bridge
-    name: postgres_network
-    external: true
-  redis_network:
+    name: motorizen_postgres_network
+  motorizen_redis_network:
     driver: bridge
-    name: redis_network
+    name: motorizen_redis_network
 
 services:
   postgres:
-    container_name: motorizen_db
+    container_name: motorizen_postgres
     build: db_config/db.dockerfile
     image: motorizen:db
     env_file:
       - db_config/db.env
     volumes:
-      - motorizen_db:/var/lib/postgresql/data
-    hostname: motorizen_db
+      - motorizen_postgres_volume:/var/lib/postgresql/data
+    hostname: motorizen_postgres_volume
     networks:
-      - postgres_network
+      - motorizen_postgres_network
     ports:
       - "5432:5432"
     shm_size: 128mb
@@ -55,10 +50,10 @@ services:
     env_file:
       - redis_config/redis.env
     volumes:
-      - redis_data:/data
+      - motorizen_redis_volume:/data
     hostname: motorizen_redis
     networks:
-      - redis_network
+      - motorizen_redis_network
     ports:
       - "6379:6379"
     shm_size: 128mb
@@ -77,12 +72,12 @@ services:
       - keycloak_config/keycloak.env
     command: ["start-dev"]
     volumes:
-      - keycloak_data:/opt/keycloak/data
-      - keycloak_conf:/opt/keycloak/conf
+      - motorizen_keycloak_volume:/opt/keycloak/data
+      - motorizen_keycloak_conf_volume:/opt/keycloak/conf
     hostname: motorizen_keycloak
     networks:
-      - keycloak_network
-      - postgres_network
+      - motorizen_keycloak_network
+      - motorizen_postgres_network
     ports:
       - "8080:8080"
       - "8443:8443"
@@ -102,9 +97,9 @@ services:
       - api_config/api.env
     hostname: motorizen_api
     networks:
-      - keycloak_network
-      - postgres_network
-      - redis_network
+      - motorizen_keycloak_network
+      - motorizen_postgres_network
+      - motorizen_redis_network
     ports:
       - "8000:8000"
     depends_on:
