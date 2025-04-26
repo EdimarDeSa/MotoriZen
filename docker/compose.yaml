@@ -1,5 +1,3 @@
-version: "3"
-
 volumes:
   motorizen_keycloak_volume:
     name: motorizen_keycloak_volume
@@ -24,13 +22,13 @@ networks:
 services:
   postgres:
     container_name: motorizen_postgres
-    build: db_config/db.dockerfile
-    image: motorizen:db
+    image: postgres:17.4-alpine
     env_file:
-      - db_config/db.env
+      - postgres/postgres.env
     volumes:
+      - ./postgres/init_sql:/docker-entrypoint-initdb.d
       - motorizen_postgres_volume:/var/lib/postgresql/data
-    hostname: motorizen_postgres_volume
+    hostname: motorizen_postgres
     networks:
       - motorizen_postgres_network
     ports:
@@ -45,10 +43,9 @@ services:
 
   redis:
     container_name: motorizen_redis
-    build: redis_config/redis.dockerfile
-    image: motorizen:redis
+    image: redis:8.0-rc1-alpine3.21
     env_file:
-      - redis_config/redis.env
+      - redis/redis.env
     volumes:
       - motorizen_redis_volume:/data
     hostname: motorizen_redis
@@ -58,18 +55,13 @@ services:
       - "6379:6379"
     shm_size: 128mb
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "redis-cli", "PING"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
 
   keycloak:
     container_name: motorizen_keycloak
-    build: keycloak_config/keycloak.dockerfile
+    build: keycloak/keycloak.dockerfile
     image: motorizen:keycloak
     env_file:
-      - keycloak_config/keycloak.env
+      - keycloak/keycloak.env
     command: ["start-dev"]
     volumes:
       - motorizen_keycloak_volume:/opt/keycloak/data
@@ -91,10 +83,10 @@ services:
 
   motorizen_api:
     container_name: motorizen_api
-    build: api_config/api.dockerfile
+    build: api/api.dockerfile
     image: motorizen:api
     env_file:
-      - api_config/api.env
+      - api/api.env
     hostname: motorizen_api
     networks:
       - motorizen_keycloak_network
