@@ -1,6 +1,6 @@
 # syntax = docker/dockerfile:1.4
 
-FROM redis:alpine
+FROM redis:8.0-rc1-alpine3.21
 
 # Set environment variables
 ENV REDIS_PORT=6379

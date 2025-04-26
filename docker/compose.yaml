@@ -48,11 +48,13 @@ services:
       - redis/redis.env
     volumes:
       - motorizen_redis_volume:/data
+      - ./redis/entrypoint.sh:/entrypoint.sh
     hostname: motorizen_redis
     networks:
       - motorizen_redis_network
     ports:
       - "6379:6379"
+    entrypoint: ["/entrypoint.sh"]
     shm_size: 128mb
     restart: unless-stopped
 
