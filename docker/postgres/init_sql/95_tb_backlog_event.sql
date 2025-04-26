@@ -1,8 +1,14 @@
+SET
+    ROLE motorizen;
+
+SET
+    search_path TO motorizen_backlog;
+
 CREATE TABLE
     IF NOT EXISTS "tb_backlog_event" (
         "id_backlog_event" SERIAL PRIMARY KEY NOT NULL,
         "cd_backlog_event_type" INTEGER NOT NULL REFERENCES "tb_backlog_event_type" ("id_backlog_event_type"),
-        "cd_user" UUID NOT NULL REFERENCES "tb_user" ("id_user"),
+        "cd_user" UUID NOT NULL REFERENCES "motorizen_schema"."tb_user" ("id_user"),
         "comment" TEXT CHECK (
             "comment" IS NULL
             OR TRIM("comment") <> ''

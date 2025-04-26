@@ -5,8 +5,7 @@
 : "${KC_DB_USER:?KC_DB_USER não definido}"
 : "${KC_DB_PASS:?KC_DB_PASS não definido}"
 
-# Gera um SQL com os valores do .env (que são passados no container)
-cat <<EOF > /docker-entrypoint-initdb.d/01_setup_users.sql
+psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" <<-EOSQL
 DO
 \$BODY\$
 BEGIN
@@ -16,6 +15,7 @@ BEGIN
 
       CREATE ROLE $MOTORIZEN_USER WITH LOGIN PASSWORD '${MOTORIZEN_PASS}';
       ALTER ROLE $MOTORIZEN_USER CREATEDB;
+      GRANT ALL PRIVILEGES ON DATABASE $MOTORIZEN_DB TO $MOTORIZEN_USER;
    END IF;
 
    IF NOT EXISTS (
@@ -26,6 +26,4 @@ BEGIN
    END IF;
 END
 \$BODY\$;
-EOF
-
-psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -f /docker-entrypoint-initdb.d/01_setup_users.sql
+EOSQL

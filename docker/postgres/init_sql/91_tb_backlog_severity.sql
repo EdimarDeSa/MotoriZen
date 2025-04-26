@@ -2,7 +2,7 @@ SET
     ROLE motorizen;
 
 SET
-    search_path TO backlog;
+    search_path TO motorizen_backlog;
 
 CREATE TABLE
     IF NOT EXISTS "tb_backlog_severity" (
@@ -13,7 +13,7 @@ CREATE TABLE
 INSERT INTO
     "tb_backlog_severity" ("id_backlog_severity", "description")
 VALUES
-    (1, "INFO"),
-    (2, "ERROR"),
-    (3, "WARNING"),
-    (4, "CRITICAL");
+    (1, 'INFO'),
+    (2, 'ERROR'),
+    (3, 'WARNING'),
+    (4, 'CRITICAL');

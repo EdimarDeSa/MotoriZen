@@ -2,7 +2,7 @@ SET
     ROLE motorizen;
 
 SET
-    search_path TO motorizen;
+    search_path TO motorizen_schema;
 
 CREATE TABLE
     IF NOT EXISTS "tb_brand" (

@@ -1,10 +1,10 @@
-GRANT CREATE ON DATABASE motorizen TO motorizen;
-
 SET ROLE motorizen;
 
-CREATE SCHEMA IF NOT EXISTS motorizen;
+CREATE SCHEMA IF NOT EXISTS motorizen_schema;
 
-SET search_path TO motorizen;
+ALTER ROLE motorizen SET search_path TO motorizen_schema;
+
+SET search_path TO motorizen_schema;
 
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
