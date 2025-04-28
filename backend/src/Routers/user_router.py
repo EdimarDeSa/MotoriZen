@@ -1,14 +1,13 @@
-from fastapi import APIRouter, Request
-
 from Contents.user_contents import UserMeContent, UserUpdatedContent
 from db.Models import UserNewModel, UserUpdatesModel
 from db.Models.user_models.user_model import UserModel
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
+from fastapi import APIRouter, Request
 from Responses import Created, NoContent, Ok
-from Routers.auth_router import X_CSRF_TOKEN
 from Services.auth_service import AuthService
 from Services.user_service import UserService
+from Utils.constants import X_CSRF_TOKEN_HEADER
 from Utils.custom_types import CurrentActiveUser, XCsrfTokenHeader
 
 from .base_router import BaseRouter
@@ -86,7 +85,7 @@ class UserRouter(BaseRouter):
         self.logger.debug("Starting new_user")
 
         try:
-            session_token = request.session.pop(X_CSRF_TOKEN)
+            session_token = request.session.pop(X_CSRF_TOKEN_HEADER)
             self.logger.debug(f"Session token: {session_token}")
 
             self.auth_service.validate_csrf_token(header_csrf_token, session_token)

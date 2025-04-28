@@ -1,15 +1,15 @@
-from fastapi import APIRouter, Header, Request
-
+from Contents.csrf_token_content import CSRFTokenContent
 from db.Models import CsrfToken, RefreshTokenModel, TokenModel
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
+from fastapi import APIRouter, Request
 from Responses import NoContent
+from Responses.ok import Ok
 from Services.auth_service import AuthService
+from Utils.constants import X_CSRF_TOKEN_HEADER
 from Utils.custom_types import CurrentActiveUser, PasswordRequestForm, XCsrfTokenHeader
 
 from .base_router import BaseRouter
-
-X_CSRF_TOKEN = "X-CSRF-Token"
 
 
 class AuthRouter(BaseRouter):
@@ -26,7 +26,9 @@ class AuthRouter(BaseRouter):
         self.router.add_api_route("/token", self.login, response_model=TokenModel, methods=["POST"])
         self.router.add_api_route("/token/refresh", self.refresh_token, methods=["POST"])
         self.router.add_api_route("/token/logout", self.logout, methods=["GET"])
-        self.router.add_api_route("/get-csrf-token", self.get_csrf_token, methods=["GET"])
+        self.router.add_api_route(
+            "/get-csrf-token", self.get_csrf_token, response_model=CSRFTokenContent, methods=["GET"]
+        )
 
     def _is_swagger_request(self, request: Request) -> bool:
         origin = request.headers.get("origin", "")
@@ -59,7 +61,7 @@ class AuthRouter(BaseRouter):
             if self._is_swagger_request(request) and header_csrf_token is None:
                 self.logger.info("Request from Swagger UI")
             else:
-                session_token = request.session.pop(X_CSRF_TOKEN)
+                session_token = request.session.pop(X_CSRF_TOKEN_HEADER)
                 self.logger.debug(f"Session token: {session_token}")
 
                 self.auth_service.validate_csrf_token(header_csrf_token, session_token)
@@ -134,19 +136,21 @@ class AuthRouter(BaseRouter):
                 err=MotoriZenErrorEnum.LOGOUT_ERROR, detail=str(e), headers={"WWW-Authenticate": "Bearer"}
             ).as_http_response()
 
-    async def get_csrf_token(self, request: Request) -> CsrfToken:
+    async def get_csrf_token(self, request: Request) -> Ok:
         self.logger.info("Starting get_csrf_token")
         try:
             token = self.auth_service.generate_csrf_token()
 
             self.logger.debug(f"Generated token: {token}")
-            request.session[X_CSRF_TOKEN] = token
+            request.session[X_CSRF_TOKEN_HEADER] = token
             self.logger.debug(f"Request session: {request.session.__dict__}")
 
-            return CsrfToken(csrf_token=token)
+            data = CsrfToken(csrf_token=token)
+            content = CSRFTokenContent(data=data)
+            return Ok(content=content)
 
         except Exception as e:
             self.logger.error(e)
             raise MotoriZenError(
-                err=MotoriZenErrorEnum.UNKNOWN_ERROR, detail=str(e), headers={X_CSRF_TOKEN: ""}
+                err=MotoriZenErrorEnum.UNKNOWN_ERROR, detail=str(e), headers={X_CSRF_TOKEN_HEADER: ""}
             ).as_http_response()
