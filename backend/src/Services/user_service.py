@@ -1,12 +1,11 @@
 import os
 import uuid
 
-from keycloak import KeycloakAdmin, KeycloakError
-
 from db.Models import UserAuthModel, UserModel, UserNewModel, UserUpdatesModel
 from db.Schemas import UserSchema
 from Enums import MotoriZenErrorEnum, RedisDbsEnum
 from ErrorHandler import MotoriZenError
+from keycloak import KeycloakAdmin, KeycloakError
 from Repositories.user_repository import UserRepository
 from Services.base_service import BaseService
 from Utils.redis_handler import RedisHandler

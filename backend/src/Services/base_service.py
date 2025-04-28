@@ -5,14 +5,12 @@ import json
 import logging
 import os
 from abc import ABC
-from email.mime import base
-from typing import Any, Sequence, Union
-
-from sqlalchemy.orm import Session, scoped_session
+from typing import Any, Union
 
 from db.connection_handler import DBConnectionHandler
 from db.Schemas.base_schema import BaseSchema
 from Enums.redis_dbs_enum import RedisDbsEnum
+from sqlalchemy.orm import Session, scoped_session
 from Utils.redis_handler import RedisHandler
 
 

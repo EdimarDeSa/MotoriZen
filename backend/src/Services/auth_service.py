@@ -2,13 +2,12 @@ import os
 import secrets
 from typing import Any, Optional
 
-from jwcrypto.jwt import JWTExpired
-from keycloak import KeycloakOpenID
-
 from db.Models import TokenModel, UserAuthModel
 from Enums.motorizen_error_enum import MotoriZenErrorEnum
 from Enums.redis_dbs_enum import RedisDbsEnum
 from ErrorHandler.motorizen_error import MotoriZenError
+from jwcrypto.jwt import JWTExpired
+from keycloak import KeycloakOpenID
 from Services.base_service import BaseService
 from Services.user_service import UserService
 from Utils.oauth_service import AuthorizationToken

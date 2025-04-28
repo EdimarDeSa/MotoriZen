@@ -1,7 +1,5 @@
 from typing import Any
 
-from pydantic import InstanceOf
-
 from db.Models import (
     RegisterModel,
     RegisterNewModel,
@@ -16,6 +14,7 @@ from db.Schemas import RegisterSchema
 from Enums import MotoriZenErrorEnum
 from Enums.redis_dbs_enum import RedisDbsEnum
 from ErrorHandler import MotoriZenError
+from pydantic import InstanceOf
 from Repositories.register_repository import RegisterRepository
 from Repositories.vehicle_repository import VehicleRepository
 from Services.base_service import BaseService
