@@ -25,7 +25,8 @@ RUN apk update && apk upgrade \
     && rm -rf /var/cache/apk/*
 
 # Copy poetry files
-COPY pyproject.toml poetry.lock ./
+COPY ./backend/pyproject.toml ./
+COPY ./backend/poetry.lock ./
 
 # Install poetry and dependencies
 RUN pip install --no-cache-dir poetry==1.7.1 \
@@ -58,12 +59,12 @@ COPY --from=builder --chown=app:app /usr/local/lib/python3.13/site-packages /usr
 COPY --from=builder /usr/local/bin /usr/local/bin
 
 # Copy application code
-COPY --chown=app:app src/ src/
+COPY --chown=app:app backend/src/ src/
 
 # Switch to non-root user
 USER app
 
-# Expose port (adjust if needed)
+# Expose port
 EXPOSE 8000
 
 # Command to run the application
