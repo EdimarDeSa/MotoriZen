@@ -6,24 +6,13 @@
       "type": "debugpy",
       "request": "launch",
       "module": "fastapi",
-      "cwd": "${workspaceFolder}/src",
+      "cwd": "${workspaceFolder}/backend/src",
       "args": ["dev", "--host=localhost", "--port=8001"],
-      "preLaunchTask": "Launch Docker"
-      // "postDebugTask": "Stop Docker"
+      "autoStartBrowser": true,
+      "justMyCode": true,
+      "clientOS": "unix",
+      "preLaunchTask": "Docker Dev Up",
+      "postDebugTask": "Docker Down",
     },
-    {
-      "name": "Launch Chrome for Keycloak",
-      "type": "chrome",
-      "request": "launch",
-      "url": "http://localhost:8080",
-      "webRoot": "${workspaceFolder}"
-    },
-    {
-      "name": "Launch Chrome for MotoriZen",
-      "type": "chrome",
-      "request": "launch",
-      "url": "http://localhost:8000",
-      "webRoot": "${workspaceFolder}"
-    }
   ]
 }

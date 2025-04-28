@@ -4,22 +4,22 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Launch Docker",
+      "label": "Docker Dev Up",
       "type": "shell",
       "group": {
         "kind": "test",
         "isDefault": true
       },
-      "command": "docker-compose -f docker/compose.yaml up redis keycloak postgres -d"
+      "command": "${workspaceFolder}/docker/dev_up.sh"
     },
     {
-      "label": "Stop Docker",
+      "label": "Docker Down",
       "type": "shell",
       "group": {
         "kind": "test",
         "isDefault": true
       },
-      "command": "docker-compose -f docker/compose.yaml down"
+      "command": "${workspaceFolder}/docker/down.sh"
     }
   ]
 }
