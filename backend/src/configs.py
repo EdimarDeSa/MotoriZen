@@ -116,6 +116,7 @@ MIDDLEWARES: MiddlewareSequence = [
                     host=os.getenv("REDIS_HOST"),
                     port=int(os.getenv("REDIS_PORT", 6379)),
                     db=RedisDbsEnum.SESSIONS.value,
+                    username=os.getenv("REDIS_USER"),
                     password=os.getenv("REDIS_PASSWORD"),
                     health_check_interval=int(os.getenv("REDIS_HEALTH_CHECK_INTERVAL", 60)),
                 ),
