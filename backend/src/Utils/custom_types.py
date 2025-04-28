@@ -1,15 +1,14 @@
-from typing import Annotated, Any, Sequence
+from typing import Annotated, Any, Sequence, Union
 
+from db.Models import UserAuthModel
 from fastapi import Depends, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
+from Routers.base_router import BaseRouter
+from Services.auth_service import AuthService
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette_sessions.middleware import SessionMiddleware
 from typing_extensions import TypedDict
-
-from db.Models import UserAuthModel
-from Routers.base_router import BaseRouter
-from Services.auth_service import AuthService
 from Utils.custom_primitive_types import HealthStatusType
 
 PasswordRequestForm = Annotated[OAuth2PasswordRequestForm, Depends()]
@@ -28,6 +27,8 @@ class MiddlewareRegister(TypedDict):
 MiddlewareSequence = Sequence[MiddlewareRegister]
 
 RoutersSequence = Sequence[type[BaseRouter]]
+
+CacheDataType = Union[dict[str, Any], list[Any], None]
 
 
 class HealthStatus(TypedDict):
