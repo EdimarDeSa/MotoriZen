@@ -1,4 +1,4 @@
-from typing import Annotated, Any, Sequence, Union
+from typing import Annotated, Any, Sequence
 
 from db.Models import UserAuthModel
 from fastapi import Depends, Header
@@ -27,8 +27,6 @@ class MiddlewareRegister(TypedDict):
 MiddlewareSequence = Sequence[MiddlewareRegister]
 
 RoutersSequence = Sequence[type[BaseRouter]]
-
-CacheDataType = Union[dict[str, Any], list[Any], None]
 
 
 class HealthStatus(TypedDict):
