@@ -1,0 +1,42 @@
+{
+  "realm" : "{{KC_REALM}}",
+  "users" : [ {
+    "id" : "df7466fc-bb7c-4c59-b3d4-df5e81cf4e3a",
+    "username" : "service-account-{{KC_CLIENT_ID}}",
+    "emailVerified" : false,
+    "createdTimestamp" : 1745789061426,
+    "enabled" : true,
+    "totp" : false,
+    "serviceAccountClientId" : "{{KC_CLIENT_ID}}",
+    "credentials" : [ ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-{{KC_REALM}}" ],
+    "clientRoles" : {
+      "{{KC_CLIENT_ID}}" : [ "uma_protection" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "d08e6c05-56f6-4c21-bc9f-1b968b7f396f",
+    "username" : "{{KC_USER}}",
+    "email" : "{{KC_USER}}",
+    "emailVerified" : true,
+    "createdTimestamp" : 1745789079876,
+    "enabled" : true,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "1df41450-8a70-4359-8724-66b1a12efb0c",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1745789092987,
+      "secretData" : "{\"value\":\"{{KC_SECRET_DATA_VALUE}}=\",\"salt\":\"{{KC_SECRET_DATA_SALT}}==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-{{KC_REALM}}" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  } ]
+}

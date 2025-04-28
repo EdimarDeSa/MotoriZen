@@ -37,7 +37,7 @@ services:
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres"]
-      interval: 10s
+      interval: 5s
       timeout: 5s
       retries: 3
 
@@ -60,22 +60,22 @@ services:
 
   keycloak:
     container_name: motorizen_keycloak
-    build: keycloak/keycloak.dockerfile
-    image: motorizen:keycloak
+    image: quay.io/keycloak/keycloak:26.2.0
     env_file:
-      - keycloak/keycloak.env
-    command: ["start-dev"]
+      - ./keycloak/keycloak.env
     volumes:
       - motorizen_keycloak_volume:/opt/keycloak/data
       - motorizen_keycloak_conf_volume:/opt/keycloak/conf
+      - ./keycloak/json_reaml_templates:/opt/keycloak/data/json_reaml_templates
+      - ./keycloak/entrypoint.sh:/entrypoint.sh
     hostname: motorizen_keycloak
     networks:
       - motorizen_keycloak_network
       - motorizen_postgres_network
     ports:
       - "8080:8080"
-      - "8443:8443"
       - "9000:9000"
+    entrypoint: ["/entrypoint.sh"]
     shm_size: 256mb
     restart: unless-stopped
     depends_on:
@@ -85,7 +85,9 @@ services:
 
   motorizen_api:
     container_name: motorizen_api
-    build: api/api.dockerfile
+    build: 
+      context: api
+      dockerfile: api.dockerfile
     image: motorizen:api
     env_file:
       - api/api.env
