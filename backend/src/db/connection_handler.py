@@ -11,23 +11,23 @@ logger = logging.getLogger(__name__)
 
 
 def get_db_url() -> str:
-    db_dialect: str = os.getenv("DB_DIALECT", "postgresql")
-    db_user: str = os.getenv("DB_USER", "postgres")
-    db_password: str = os.getenv("DB_PASSWORD", "postgres")
-    db_ip: str = os.getenv("DB_IP", "localhost")
-    db_port: str = os.getenv("DB_PORT", "5432")
-    db_name: str = os.getenv("DB_MOTORIZEN", "postgres")
+    db_dialect: str = os.getenv("DB_DIALECT")
+    db_user: str = os.getenv("DB_USER")
+    db_password: str = os.getenv("DB_PASSWORD")
+    db_ip: str = os.getenv("DB_IP")
+    db_port: str = os.getenv("DB_PORT")
+    db_name: str = os.getenv("DB_MOTORIZEN")
 
     return f"{db_dialect}://{db_user}:{db_password}@{db_ip}:{db_port}/{db_name}"
 
 
-def get_db_url_backlog() -> str:
-    db_dialect: str = os.getenv("DB_DIALECT", "postgresql")
-    db_user: str = os.getenv("DB_USER", "postgres")
-    db_password: str = os.getenv("DB_PASSWORD", "postgres")
-    db_ip: str = os.getenv("DB_IP", "localhost")
-    db_port: str = os.getenv("DB_PORT", "5432")
-    db_name: str = os.getenv("DB_BACKLOG", "postgres")
+def get_db_url_read_only() -> str:
+    db_dialect: str = os.getenv("DB_DIALECT")
+    db_user: str = os.getenv("DB_USER")
+    db_password: str = os.getenv("DB_PASSWORD")
+    db_ip: str = os.getenv("DB_IP")
+    db_port: str = os.getenv("DB_PORT")
+    db_name: str = os.getenv("DB_MOTORIZEN")
 
     return f"{db_dialect}://{db_user}:{db_password}@{db_ip}:{db_port}/{db_name}"
 

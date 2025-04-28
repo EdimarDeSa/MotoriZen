@@ -2,14 +2,13 @@ import gc
 import os
 from datetime import datetime
 
-from fastapi import FastAPI
-from redis import Redis
-
 from configs import CONTACT, REGISTER_MIDDLEWARES, REGISTER_ROUTERS, SWAGGER_UI_PARAMETERS, TITLE, VERSION
 from Contents.health_content import HealthContent
 from db.connection_handler import DBConnectionHandler
 from db.Models.health_model import HealthModel
 from Enums.motorizen_error_enum import MotoriZenErrorEnum
+from fastapi import FastAPI
+from redis import Redis
 from Responses.ok import Ok
 from Utils.custom_primitive_types import HealthStatusType
 from Utils.custom_types import HealthStatus
