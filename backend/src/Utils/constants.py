@@ -25,3 +25,5 @@ RESULT = "result"
 INITIAL_DATE = "initial_date"
 
 FINAL_DATE = "final_date"
+
+X_CSRF_TOKEN_HEADER = "X-CSRF-Token"
