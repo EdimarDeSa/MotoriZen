@@ -42,18 +42,31 @@ class RedisHandler(CacheHandler):
         self._logger.info("Starting disconnect_client")
         try:
             self._logger.debug("Disconnecting client")
-            self._client.close()
+            result = self._client.quit()
 
+            if not result:
+                raise ConnectionError("Não foi possível desconectar do redis")
+
+            self._logger.debug("Client disconnected")
         except Exception as e:
             raise e
 
     def set_data(self, db: RedisDbsEnum, key: str, value: CacheDataType, ex: Optional[int] = None) -> Any:
         self._logger.info("Starting set_data")
 
-        _value = json.dumps(jsonable_encoder(value))
+        try:
+            self._connect_client(db)
 
-        self._logger.debug(f"Setting key: {key} on db: {db} with ttl: {ex}")
-        return self._execute_redis_command(db, self._client.set, name=key, value=_value, ex=ex)
+            client: Redis = self._client
+
+            _value = json.dumps(jsonable_encoder(value))
+
+            self._logger.debug(f"Setting key: {key} on db: {db} with ttl: {ex}")
+            return client.set(key, _value, ex)
+        except Exception as e:
+            raise e
+        finally:
+            self._disconnect_client()
 
     def set_data_for_user(
         self,
@@ -65,42 +78,77 @@ class RedisHandler(CacheHandler):
     ) -> Any:
         self._logger.info("Starting set_data")
 
-        _value = json.dumps(jsonable_encoder(value))
+        try:
+            self._connect_client(db)
 
-        self._logger.debug(f"Setting key: {hash_key} on db: {db} with ttl: {ex}")
-        self._execute_redis_command(db, self._client.hset, user_id, hash_key, value=_value)
-        self._logger.debug("Data set")
+            client: Redis = self._client
 
-        self._logger.debug("Setting TTL")
-        self._execute_redis_command(db, self._client.expire, user_id, ex)
-        self._logger.debug("TTL set")
+            _value = json.dumps(jsonable_encoder(value))
+
+            self._logger.debug(f"Setting key: {hash_key} on db: {db} with ttl: {ex}")
+            result = client.hset(user_id, hash_key, _value)
+            self._logger.debug("Data set")
+
+            self._logger.debug("Setting TTL")
+            client.expire(user_id, ex)
+            self._logger.debug("TTL set")
+
+            return result
+        except Exception as e:
+            raise e
+        finally:
+            self._disconnect_client()
 
     def get_data(self, db: RedisDbsEnum, key: str) -> CacheDataType:
         self._logger.info("Starting get_data")
 
-        self._logger.debug(f"Searching for key: {key} on db: {db}")
-        result = self._execute_redis_command(db, self._client.exists, key)
-        self._logger.debug(f"Data get {result}")
+        try:
+            self._connect_client(db)
 
-        return json.loads(str(result)) if result else None
+            client: Redis = self._client
+
+            self._logger.debug(f"Searching for key: {key} on db: {db}")
+            result: bytes | None = client.get(key)
+            self._logger.debug(f"Data get {result}")
+
+            return json.loads(result.decode()) if result else None
+        except Exception as e:
+            raise e
+        finally:
+            self._disconnect_client()
 
     def get_data_from_user(self, db: RedisDbsEnum, user_id: str, b64_key: str) -> CacheDataType:
         self._logger.info("Starting get_data")
 
-        self._logger.debug(f"Searching for key: {b64_key} on db: {db}")
+        try:
+            self._connect_client(db)
 
-        result = self._execute_redis_command(db, self._client.hget, user_id, b64_key)
-        self._logger.debug(f"Data get {result}")
+            client: Redis = self._client
 
-        return json.loads(str(result)) if result else None
+            self._logger.debug(f"Searching for key: {b64_key} on db: {db}")
+            result = client.hget(user_id, b64_key)
+            self._logger.debug(f"Data get {result}")
+
+            return json.loads(result.decode()) if result else None
+        except Exception as e:
+            raise e
+        finally:
+            self._disconnect_client()
 
     def delete_data(self, db: RedisDbsEnum, key: str) -> Any:
         self._logger.info("Starting delete_data")
 
-        self._logger.debug(f"Deleting key: {key} on db: {db}")
+        try:
+            self._connect_client(db)
 
-        result = self._execute_redis_command(db, self._client.delete, key)
+            client: Redis = self._client
 
-        self._logger.debug("Data deleted")
+            self._logger.debug(f"Deleting key: {key} on db: {db}")
+            result = client.delete(key)
+            self._logger.debug("Data deleted")
+            return result
 
-        return result
+        except Exception as e:
+            raise e
+        finally:
+            self._disconnect_client()
