@@ -6,7 +6,6 @@ class User(TypedDict):
     last_name: str
     email: str
     birthdate: str
-    password: str
 
 
 class Vehicle(TypedDict):
@@ -15,8 +14,11 @@ class Vehicle(TypedDict):
     model: str
     year: int
     color: str
+    fuel_capacity: int
+    cd_fuel_type: int
     license_plate: str
     odometer: float
+    is_active: bool
 
 
 class Data(TypedDict):

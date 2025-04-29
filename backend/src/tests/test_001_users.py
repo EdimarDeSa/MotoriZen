@@ -1,6 +1,6 @@
 from starlette.testclient import TestClient
 
-from .conftest import create_user, login_user, logout_user
+from .utils.aux_functions import create_and_athenticate_user, get_csrf_token, insert_user, login_user
 from .utils.constants import PASSWORD
 from .utils.models import TokenData, User
 
@@ -9,8 +9,14 @@ class TestUsersSuccess:
     def test_create_user(self, client: TestClient, users: list[User]) -> None:
         # Given
         for user in users:
+            csrf_token = get_csrf_token(client)
+
             # When
-            response = create_user(client, user)
+            response = client.post(
+                "/users/new-user",
+                headers={"X-CSRF-Token": csrf_token},
+                json={"password": PASSWORD, **user},
+            )
 
             # Then
             assert response.status_code in (201, 409)  # 409 se já existir, permite execuções paralelas
@@ -18,26 +24,32 @@ class TestUsersSuccess:
     def test_logon(self, client: TestClient, users: list[User]) -> None:
         # Given
         for user in users:
-            create_user(client, user)
+            insert_user(client, user)
+            csrf_token = get_csrf_token(client)
 
             # When
-            response = login_user(client, user)
+            response = client.post(
+                "/token",
+                headers={"X-CSRF-Token": csrf_token},
+                data={
+                    "username": user["email"],
+                    "password": PASSWORD,
+                    "grant_type": "password",
+                },
+            )
 
             # Then
             assert response.status_code == 200
 
-            # And
+            # And when
             token_data: TokenData = response.json()
-            assert "access_token" in token_data
 
-            logout_user(client, token_data["access_token"])
+            # Then
+            assert "access_token" in token_data
 
     def test_get_me(self, client: TestClient, users: list[User]) -> None:
         # Given
-        for user in users:
-            create_user(client, user)
-            response = login_user(client, user)
-            token_data: TokenData = response.json()
+        for token_data, user in create_and_athenticate_user(client, users):
 
             # When
             response = client.get(
@@ -49,14 +61,9 @@ class TestUsersSuccess:
             assert response.status_code == 200
             assert response.json()["data"]["first_name"] == user["first_name"]
 
-            logout_user(client, token_data["access_token"])
-
     def test_update_user(self, client: TestClient, users: list[User]) -> None:
         # Given
-        for user in users:
-            create_user(client, user)
-            response = login_user(client, user)
-            token_data: TokenData = response.json()
+        for token_data, _ in create_and_athenticate_user(client, users):
 
             # When
             response = client.put(
@@ -67,46 +74,44 @@ class TestUsersSuccess:
 
             # Then
             assert response.status_code == 200
+            assert response.json()["data"]["last_name"] == "Updated"
 
-            # And
+            # And when
             response = client.get(
                 "/users/me",
                 headers={"Authorization": f"Bearer {token_data['access_token']}"},
             )
+
+            # Then
             assert response.status_code == 200
             assert response.json()["data"]["last_name"] == "Updated"
 
-            logout_user(client, token_data["access_token"])
-
     def test_refresh_token(self, client: TestClient, users: list[User]) -> None:
         # Given
-        for user in users:
-            create_user(client, user)
-            response = login_user(client, user)
-            token_data: TokenData = response.json()
+        for token_data, _ in create_and_athenticate_user(client, users):
 
             # When
             response = client.post(
                 "/token/refresh",
                 json={"refresh_token": token_data["refresh_token"]},
             )
+            new_token = response.json()
 
             # Then
             assert response.status_code == 200
-            new_token = response.json()
             assert token_data["access_token"] != new_token["access_token"]
-
-            logout_user(client, new_token["access_token"])
 
     def test_logout_user(self, client: TestClient, users: list[User]) -> None:
         # Given
         for user in users:
-            create_user(client, user)
-            response = login_user(client, user)
-            token_data: TokenData = response.json()
+            insert_user(client, user)
+            token_data: TokenData = login_user(client, user)
 
             # When
-            response = logout_user(client, token_data["access_token"])
+            response = client.get(
+                "/token/logout",
+                headers={"Authorization": f"Bearer {token_data['access_token']}"},
+            )
 
             # Then
             assert response.status_code == 204
@@ -114,9 +119,8 @@ class TestUsersSuccess:
     def test_delete_user(self, client: TestClient, users: list[User]) -> None:
         # Given
         for user in users:
-            create_user(client, user)
-            response = login_user(client, user)
-            token_data: TokenData = response.json()
+            insert_user(client, user)
+            token_data: TokenData = login_user(client, user)
 
             # When
             response = client.delete(
