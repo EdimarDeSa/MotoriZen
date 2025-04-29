@@ -48,6 +48,7 @@ services:
       - redis/redis.env
     volumes:
       - motorizen_redis_volume:/data
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
       - ./redis/entrypoint.sh:/entrypoint.sh
     hostname: motorizen_redis
     networks:
