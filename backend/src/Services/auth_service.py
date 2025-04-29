@@ -139,10 +139,12 @@ class AuthService(BaseService):
         try:
             self.logger.debug(f"Getting user from cache for cd_auth: {cd_auth}")
             user_data = self.cache_handler.get_data(RedisDbsEnum.USERS, cd_auth)
+            self.logger.debug(f"User from cache service: {user_data}")
 
             if isinstance(user_data, dict):
                 return user_data
 
+            self.logger.debug("user_data is not a dict")
             return None
 
         except Exception as e:
