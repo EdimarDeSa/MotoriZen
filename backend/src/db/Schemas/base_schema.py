@@ -1,7 +1,7 @@
+import os
 from uuid import UUID
 
 from sqlalchemy.orm import DeclarativeBase, declarative_base
-
 from Utils.custom_primitive_types import TableDict
 
 Base: DeclarativeBase = declarative_base()
@@ -9,7 +9,7 @@ Base: DeclarativeBase = declarative_base()
 
 class BaseSchema(Base):  # type: ignore
     __abstract__ = True
-    __table_args__ = {"schema": "motorizen"}
+    __table_args__ = {"schema": os.getenv("DB_MOTORIZEN_SCHEMA")}
 
     def as_dict(self, *, exclude_none: bool = False, exclude: set[str] | None = None) -> TableDict:
         """
