@@ -1,0 +1,66 @@
+name: Deploy para VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      - name: Configura o SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_KEY }}
+
+      - name: Deploy via SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
+          cd ~/EFSCode
+            ./docker/down.sh
+            git pull
+          cd ~/EFSCode/docker  
+            echo REDIS_USER=${{ secrets.REDIS_USER }} > cache/redis.env
+            echo REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} >> cache/redis.env
+            echo REDIS_PORT=${{ secrets.REDIS_PORT }} >> cache/redis.env
+
+            echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} > db/postgres.env
+            echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> db/postgres.env
+            echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> db/postgres.env
+            echo PGUSER=${{ secrets.PGUSER }} >> db/postgres.env
+            echo PGPASSWORD=${{ secrets.PGPASSWORD }} >> db/postgres.env
+            echo EFSCODE_USER=${{ secrets.EFSCODE_USER }} >> db/postgres.env
+            echo EFSCODE_PASS=${{ secrets.EFSCODE_PASS }} >> db/postgres.env
+
+            echo SECRET_KEY=${{ secrets.SECRET_KEY }} > web/web.env
+            echo DEBUG=${{ vars.DEBUG }} >> web/web.env
+            echo ALLOWED_HOSTS=${{ vars.ALLOWED_HOSTS }} >> web/web.env
+            echo CSRF_COOKIE_SECURE=${{ secrets.CSRF_COOKIE_SECURE }} >> web/web.env
+            echo SESSION_COOKIE_SECURE=${{ secrets.SESSION_COOKIE_SECURE }} >> web/web.env
+
+            echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> web/web.env
+            echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> web/web.env
+            echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> web/web.env
+            echo POSTGRES_HOST=${{ vars.POSTGRES_HOST }} >> web/web.env
+            echo POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} >> web/web.env
+            echo EFSCODE_USER=${{ secrets.EFSCODE_USER }} >> web/web.env
+            echo EFSCODE_PASS=${{ secrets.EFSCODE_PASS }} >> web/web.env
+
+            echo AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} >> web/web.env
+            echo AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} >> web/web.env
+            echo AWS_STORAGE_BUCKET_NAME=${{ secrets.AWS_STORAGE_BUCKET_NAME }} >> web/web.env
+            echo AWS_S3_REGION_NAME=${{ secrets.AWS_S3_REGION_NAME }} >> web/web.env
+
+            echo REDIS_HOST=${{ vars.REDIS_HOST }} >> web/web.env
+            echo REDIS_PORT=${{ secrets.REDIS_PORT }} >> web/web.env
+            echo REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} >> web/web.env
+            echo REDIS_USER=${{ secrets.REDIS_USER }} >> web/web.env
+
+          cd ~/EFSCode
+            ./docker/up.sh
+          EOF

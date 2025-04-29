@@ -8,11 +8,8 @@
       "module": "fastapi",
       "cwd": "${workspaceFolder}/backend/src",
       "args": ["dev", "--host=localhost", "--port=8001"],
-      "autoStartBrowser": true,
-      "justMyCode": true,
-      "clientOS": "unix",
       "preLaunchTask": "Docker Dev Up",
-      "postDebugTask": "Docker Down",
+      // "postDebugTask": "Docker Down",
     },
   ]
 }
