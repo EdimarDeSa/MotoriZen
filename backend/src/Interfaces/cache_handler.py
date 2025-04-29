@@ -31,6 +31,17 @@ class CacheHandler(ABC):
     @abstractmethod
     def _disconnect_client(self) -> None: ...
 
+    def _execute_redis_command(self, db: IntEnum, operation, *args, **kwargs) -> Any | None:
+        """Executa um comando no cache com tratamento de conexão e exceção."""
+        try:
+            self._connect_client(db)
+            return operation(*args, **kwargs)
+        except Exception as e:
+            self._logger.error(f"Erro ao executar comando Redis: {e}")
+            raise
+        finally:
+            self._disconnect_client()
+
     @abstractmethod
     def set_data(self, db: IntEnum, key: str, value: CacheDataType, ex: Optional[int] = None) -> Any: ...
 
