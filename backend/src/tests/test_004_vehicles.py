@@ -68,3 +68,30 @@ class TestVehiclesSuccess:
                 assert response.status_code == 200
                 assert body["rc"] == 0
                 assert body["data"] == vehicle
+
+    def test_update_vehicle(self, client: TestClient, users: list[User], vehicles: list[Vehicle]) -> None:
+        # When
+        for user_vehicles, token_data, _ in create_vehicles(client, users, vehicles, self.qtd_vehicles_per_user):
+            for vehicle in user_vehicles:
+                id_vehicle = vehicle["id_vehicle"]
+                new_model = ""
+
+                # When
+                response = client.put(
+                    f"/vehicles/update-vehicle",
+                    headers={"Authorization": f"Bearer {token_data['access_token']}"},
+                    json={"id_vehicle": id_vehicle, "updates": {"model": new_model}},
+                )
+                body = response.json()
+                updated_model = body["data"]["model"]
+
+                # Then
+                assert response.status_code == 200
+                assert body["rc"] == 0
+                assert updated_model == new_model
+
+
+# TODO: test delete vehicle
+# TODO: Make tests for Registers
+# TODO: Make tests for Reports
+# TODO: Make tests for Errors and Exceptions
