@@ -200,4 +200,4 @@ pyvenv.cfg
 pip-selfcheck.json
 
 # Personalizado
-backend/src/tests/data.json
+backend/**/data.json
