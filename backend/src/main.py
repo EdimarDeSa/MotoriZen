@@ -1,4 +1,3 @@
-import gc
 import os
 from datetime import datetime
 
@@ -91,8 +90,6 @@ def health() -> Ok:
     except Exception as e:
         auth_provider_status = {"status": "Error", "message": str(e)}
         status = "Error"
-
-    gc.collect()
 
     content = HealthContent(
         rc=0 if status == "Ok" else -999,
