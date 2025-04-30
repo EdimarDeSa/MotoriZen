@@ -103,9 +103,7 @@ class TestUsersSuccess:
 
     def test_logout_user(self, client: TestClient, users: list[User]) -> None:
         # Given
-        for user in users:
-            insert_user(client, user)
-            token_data: TokenData = login_user(client, user)
+        for token_data, _ in create_and_athenticate_user(client, users):
 
             # When
             response = client.get(
@@ -118,9 +116,7 @@ class TestUsersSuccess:
 
     def test_delete_user(self, client: TestClient, users: list[User]) -> None:
         # Given
-        for user in users:
-            insert_user(client, user)
-            token_data: TokenData = login_user(client, user)
+        for token_data, _ in create_and_athenticate_user(client, users):
 
             # When
             response = client.delete(

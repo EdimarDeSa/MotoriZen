@@ -2,6 +2,7 @@ from typing import TypedDict
 
 
 class User(TypedDict):
+    id_user: str | None
     first_name: str
     last_name: str
     email: str
