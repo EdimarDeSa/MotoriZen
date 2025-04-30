@@ -11,7 +11,6 @@
 *.tax2010
 *.vcf
 *.xml
-data.json
 
 ### Database ###
 *.accdb
@@ -199,3 +198,6 @@ pyrightconfig.json
 [Ss]cripts
 pyvenv.cfg
 pip-selfcheck.json
+
+# Personalizado
+backend/src/tests/data.json

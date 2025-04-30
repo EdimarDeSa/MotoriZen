@@ -90,8 +90,22 @@ class TestVehiclesSuccess:
                 assert body["rc"] == 0
                 assert updated_model == new_model
 
+    def test_delete_vehicle(self, client: TestClient, users: list[User], vehicles: list[Vehicle]) -> None:
+        # Given
+        for user_vehicles, token_data, _ in create_vehicles(client, users, vehicles, self.qtd_vehicles_per_user):
+            for vehicle in user_vehicles:
+                id_vehicle = vehicle["id_vehicle"]
 
-# TODO: test delete vehicle
+                # When
+                response = client.delete(
+                    f"/vehicles/delete-vehicle/{id_vehicle}",
+                    headers={"Authorization": f"Bearer {token_data['access_token']}"},
+                )
+
+                # Then
+                assert response.status_code == 204
+
+
 # TODO: Make tests for Registers
 # TODO: Make tests for Reports
 # TODO: Make tests for Errors and Exceptions
