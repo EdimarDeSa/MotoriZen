@@ -1,4 +1,5 @@
-from typing import TypedDict
+from datetime import date, time
+from typing import Optional, TypedDict
 
 
 class User(TypedDict):
@@ -22,9 +23,21 @@ class Vehicle(TypedDict):
     is_active: bool
 
 
+class Register(TypedDict):
+    cd_vehicle: str
+    number_of_trips: int
+    distance: Optional[float]
+    odometer: Optional[float]
+    working_time: time
+    mean_consuption: float
+    total_value: float
+    register_date: date
+
+
 class Data(TypedDict):
     users: list[User]
     vehicles: list[Vehicle]
+    registers: list[Register]
 
 
 class TokenData(TypedDict):

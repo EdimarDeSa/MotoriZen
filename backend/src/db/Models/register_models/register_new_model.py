@@ -2,15 +2,13 @@ import uuid
 from datetime import date, time
 from typing import Optional, Self
 
-from pydantic import BaseModel, Field, model_validator
-
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
+from pydantic import BaseModel, Field, model_validator
 from Utils.Internacionalization import ModelsDescriptionTexts
 
 
 class RegisterNewModel(BaseModel):
-
     cd_vehicle: uuid.UUID = Field(description=ModelsDescriptionTexts.VEHICLE_CD)
     number_of_trips: int = Field(description=ModelsDescriptionTexts.NUMBER_OF_TRIPS)
     distance: Optional[float] = Field(

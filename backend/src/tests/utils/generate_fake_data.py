@@ -37,14 +37,35 @@ vehicles = [
         "color": faker.color_name(),
         "license_plate": faker.license_plate(),
         "cd_fuel_type": faker.random_int(min=1, max=4),
-        "fuel_capacity": faker.random_int(min=40, max=100),
-        "odometer": faker.random_int(min=0, max=100000),
+        "fuel_capacity": float(faker.random_int(min=40, max=100)),
+        "odometer": float(faker.random_int(min=0, max=100000)),
         "is_active": faker.boolean(),
     }
     for _ in range(qtd_vehicles)
 ]
 
+# Gerenate registers list
+registers = [
+    {
+        "number_of_trips": faker.random_int(min=1, max=40),
+        "distance": float(faker.random_int(min=5, max=400)),
+        "working_time": faker.time("%H:%M:%S"),
+        "mean_consuption": float(faker.random_int(min=1, max=50)),
+        "total_value": float(faker.random_int(min=1, max=10000)),
+        "register_date": faker.date("%Y-%m-%d"),
+    }
+    for _ in range(qtd_registers)
+]
 # Save data
 with open(base_file, "w") as file:
     file.seek(0)
-    json.dump({"users": users, "vehicles": vehicles}, file, indent=2)
+    json.dump(
+        {
+            "users": users,
+            "vehicles": vehicles,
+            "registers": registers,
+        },
+        file,
+        indent=2,
+        ensure_ascii=False,
+    )

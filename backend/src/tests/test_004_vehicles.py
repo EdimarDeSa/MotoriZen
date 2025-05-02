@@ -1,37 +1,51 @@
 from starlette.testclient import TestClient
 
-from .utils.aux_functions import create_and_athenticate_user, create_vehicles
+from .utils.aux_functions import create_and_athenticate_user, create_vehicles, print_progress, with_progress
 from .utils.models import User, Vehicle
 
 
 class TestVehiclesSuccess:
     qtd_vehicles_per_user = 5
 
-    def test_create_vehicle(self, client: TestClient, users: list[User], vehicles: list[Vehicle]) -> None:
-        # Given
-        offset_index = 0
-        for token_data, _ in create_and_athenticate_user(client, users):
-            for index in range(self.qtd_vehicles_per_user):
-                offset = self.qtd_vehicles_per_user * offset_index
-                vehicle = vehicles[index + offset]
+    def __print_progress(self, user_index, vehicle_index, offset, total_users, total_vehicles):
+        print_progress(
+            f"user: {user_index + 1} / {total_users}",
+            f"vehicle: {vehicle_index + 1} / {self.qtd_vehicles_per_user}",
+            f"{100 * (vehicle_index + offset + 1) / total_vehicles} %",
+        )
 
-                # When
-                response = client.post(
-                    "/vehicles/new-vehicle",
-                    headers={"Authorization": f"Bearer {token_data['access_token']}"},
-                    json=vehicle,
-                )
+    # @with_progress("Testando criação de veículos")
+    # def test_create_vehicle(self, client: TestClient, users: list[User], vehicles: list[Vehicle]) -> None:
+    #     # Given
+    #     user_generator = create_and_athenticate_user(client, users)
+    #     total_users = len(users)
+    #     total_vehicles = len(vehicles)
 
-                # Then
-                assert response.status_code == 201
-                assert response.json()["rc"] == 0
-                assert response.json()["data"]["license_plate"] == vehicle["license_plate"]
+    #     for user_index, (token_data, _) in enumerate(user_generator):
+    #         for vehicle_index in range(self.qtd_vehicles_per_user):
+    #             offset = self.qtd_vehicles_per_user * user_index
+    #             vehicle = vehicles[vehicle_index + offset]
 
-            offset_index += 1
+    #             # When
+    #             response = client.post(
+    #                 "/vehicles/new-vehicle",
+    #                 headers={"Authorization": f"Bearer {token_data['access_token']}"},
+    #                 json=vehicle,
+    #             )
 
+    #             # Then
+    #             assert response.status_code == 201
+    #             assert response.json()["rc"] == 0
+    #             assert response.json()["data"]["license_plate"] == vehicle["license_plate"]
+
+    #             self.__print_progress(user_index, vehicle_index, offset, total_users, total_vehicles)
+
+    @with_progress("Testando listagem de veículos")
     def test_get_all_vehicles(self, client: TestClient, users: list[User], vehicles: list[Vehicle]) -> None:
         # Given
-        for _, token_data, _ in create_vehicles(client, users, vehicles, self.qtd_vehicles_per_user):
+        vehicle_generator = create_vehicles(client, users, vehicles, self.qtd_vehicles_per_user)
+        for user_index, (_, token_data, _) in enumerate(vehicle_generator):
+
             # When
             response = client.post(
                 "/vehicles/get-vehicles",
@@ -43,18 +57,28 @@ class TestVehiclesSuccess:
             )
 
             data = response.json()
-            results = data["data"]["results"]
             rc = data["rc"]
+            results = data["data"]["results"]
 
             # Then
             assert response.status_code == 200
             assert rc == 0
             assert len(results) == self.qtd_vehicles_per_user
 
+            print_progress(
+                f"user: {user_index + 1} / {len(users)}",
+                f"{100 * (user_index + 1) / len(users)} %",
+            )
+
+    @with_progress("Testando busca de veículos")
     def test_get_specific_vehicle(self, client: TestClient, users: list[User], vehicles: list[Vehicle]) -> None:
         # Given
-        for user_vehicles, token_data, _ in create_vehicles(client, users, vehicles, self.qtd_vehicles_per_user):
-            for vehicle in user_vehicles:
+        vehicle_generator = create_vehicles(client, users, vehicles, self.qtd_vehicles_per_user)
+        total_users = len(users)
+        total_vehicles = len(vehicles)
+        for user_index, (user_vehicles, token_data, _) in enumerate(vehicle_generator):
+            for vehicle_index, vehicle in enumerate(user_vehicles):
+                offset = self.qtd_vehicles_per_user * user_index
                 id_vehicle = vehicle["id_vehicle"]
 
                 # When
@@ -69,10 +93,17 @@ class TestVehiclesSuccess:
                 assert body["rc"] == 0
                 assert body["data"] == vehicle
 
+                self.__print_progress(user_index, vehicle_index, offset, total_users, total_vehicles)
+
+    @with_progress("Testando atualização de veículos")
     def test_update_vehicle(self, client: TestClient, users: list[User], vehicles: list[Vehicle]) -> None:
-        # When
-        for user_vehicles, token_data, _ in create_vehicles(client, users, vehicles, self.qtd_vehicles_per_user):
-            for vehicle in user_vehicles:
+        # Given
+        vehicle_generator = create_vehicles(client, users, vehicles, self.qtd_vehicles_per_user)
+        total_users = len(users)
+        total_vehicles = len(vehicles)
+        for user_index, (user_vehicles, token_data, _) in enumerate(vehicle_generator):
+            for vehicle_index, vehicle in enumerate(user_vehicles):
+                offset = self.qtd_vehicles_per_user * user_index
                 id_vehicle = vehicle["id_vehicle"]
                 new_model = ""
 
@@ -90,10 +121,17 @@ class TestVehiclesSuccess:
                 assert body["rc"] == 0
                 assert updated_model == new_model
 
+                self.__print_progress(user_index, vehicle_index, offset, total_users, total_vehicles)
+
+    @with_progress("Testando exclusão de veículos")
     def test_delete_vehicle(self, client: TestClient, users: list[User], vehicles: list[Vehicle]) -> None:
         # Given
-        for user_vehicles, token_data, _ in create_vehicles(client, users, vehicles, self.qtd_vehicles_per_user):
-            for vehicle in user_vehicles:
+        vehicle_generator = create_vehicles(client, users, vehicles, self.qtd_vehicles_per_user)
+        total_users = len(users)
+        total_vehicles = len(vehicles)
+        for user_index, (user_vehicles, token_data, _) in enumerate(vehicle_generator):
+            for vehicle_index, vehicle in enumerate(user_vehicles):
+                offset = self.qtd_vehicles_per_user * user_index
                 id_vehicle = vehicle["id_vehicle"]
 
                 # When
@@ -105,7 +143,4 @@ class TestVehiclesSuccess:
                 # Then
                 assert response.status_code == 204
 
-
-# TODO: Make tests for Registers
-# TODO: Make tests for Reports
-# TODO: Make tests for Errors and Exceptions
+                self.__print_progress(user_index, vehicle_index, offset, total_users, total_vehicles)

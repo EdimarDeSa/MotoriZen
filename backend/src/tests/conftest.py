@@ -5,7 +5,7 @@ from typing import cast
 from pytest import fixture
 from starlette.testclient import TestClient
 
-from .utils.models import Data, User, Vehicle
+from .utils.models import Data, Register, User, Vehicle
 
 
 @fixture(scope="class")
@@ -34,3 +34,8 @@ def users(_data: Data) -> list[User]:
 @fixture(scope="module")
 def vehicles(_data: Data) -> list[Vehicle]:
     return _data["vehicles"]
+
+
+@fixture(scope="module")
+def registers(_data: Data) -> list[Register]:
+    return _data["registers"]

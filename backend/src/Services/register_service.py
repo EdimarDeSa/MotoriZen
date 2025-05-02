@@ -163,8 +163,10 @@ class RegisterService(BaseService):
             VEHICLE_MODEL = VehicleModel.model_validate(vehicle_schema, from_attributes=True)
 
             response_data = {
-                "register_data": register_model,
-                "vehicle_data": VEHICLE_MODEL,
+                "data": {
+                    "register_data": register_model,
+                    "vehicle_data": VEHICLE_MODEL,
+                }
             }
 
             return response_data

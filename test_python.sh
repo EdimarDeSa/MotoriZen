@@ -6,6 +6,7 @@ SRC_DIR="${BASE_DIR}/backend/src"
 TEST_MODULE="tests"
 GENERATE_SCRIPT="utils/generate_fake_data.py"
 CLEANER_MODULE="tests.utils.cleaner"
+REPORT_FILE="report.log"
 
 # Nome do arquivo a ser testado (pode ser um regex)
 # Exemplo: "test_001_users.py" ou "test_001*.py"
@@ -61,7 +62,7 @@ echo "🔧 Gerando dados fake..."
 python "${TEST_MODULE}/${GENERATE_SCRIPT}"
 
 echo "🧪 Executando testes..."
-pytest -vvvs --disable-warnings -p no:warnings --durations=0 ${FULL_TEST_PATH}
+pytest -vvsx -p no:warnings --durations=0 ${FULL_TEST_PATH}
 
 echo "🧹 Limpando dados..."
 python -m "${CLEANER_MODULE}" > /dev/null
