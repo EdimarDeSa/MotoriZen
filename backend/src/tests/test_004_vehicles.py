@@ -14,31 +14,31 @@ class TestVehiclesSuccess:
             f"{100 * (vehicle_index + offset + 1) / total_vehicles} %",
         )
 
-    # @with_progress("Testando criação de veículos")
-    # def test_create_vehicle(self, client: TestClient, users: list[User], vehicles: list[Vehicle]) -> None:
-    #     # Given
-    #     user_generator = create_and_athenticate_user(client, users)
-    #     total_users = len(users)
-    #     total_vehicles = len(vehicles)
+    @with_progress("Testando criação de veículos")
+    def test_create_vehicle(self, client: TestClient, users: list[User], vehicles: list[Vehicle]) -> None:
+        # Given
+        user_generator = create_and_athenticate_user(client, users)
+        total_users = len(users)
+        total_vehicles = len(vehicles)
 
-    #     for user_index, (token_data, _) in enumerate(user_generator):
-    #         for vehicle_index in range(self.qtd_vehicles_per_user):
-    #             offset = self.qtd_vehicles_per_user * user_index
-    #             vehicle = vehicles[vehicle_index + offset]
+        for user_index, (token_data, _) in enumerate(user_generator):
+            for vehicle_index in range(self.qtd_vehicles_per_user):
+                offset = self.qtd_vehicles_per_user * user_index
+                vehicle = vehicles[vehicle_index + offset]
 
-    #             # When
-    #             response = client.post(
-    #                 "/vehicles/new-vehicle",
-    #                 headers={"Authorization": f"Bearer {token_data['access_token']}"},
-    #                 json=vehicle,
-    #             )
+                # When
+                response = client.post(
+                    "/vehicles/new-vehicle",
+                    headers={"Authorization": f"Bearer {token_data['access_token']}"},
+                    json=vehicle,
+                )
 
-    #             # Then
-    #             assert response.status_code == 201
-    #             assert response.json()["rc"] == 0
-    #             assert response.json()["data"]["license_plate"] == vehicle["license_plate"]
+                # Then
+                assert response.status_code == 201
+                assert response.json()["rc"] == 0
+                assert response.json()["data"]["license_plate"] == vehicle["license_plate"]
 
-    #             self.__print_progress(user_index, vehicle_index, offset, total_users, total_vehicles)
+                self.__print_progress(user_index, vehicle_index, offset, total_users, total_vehicles)
 
     @with_progress("Testando listagem de veículos")
     def test_get_all_vehicles(self, client: TestClient, users: list[User], vehicles: list[Vehicle]) -> None:

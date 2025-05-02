@@ -10,7 +10,7 @@ REPORT_FILE="report.log"
 
 # Nome do arquivo a ser testado (pode ser um regex)
 # Exemplo: "test_001_users.py" ou "test_001*.py"
-FILE_TO_TEST="test_004*.py"
+FILE_TO_TEST="test_00*.py"
 
 # Outras configurações
 FULL_TEST_PATH="${TEST_MODULE}/${FILE_TO_TEST}"

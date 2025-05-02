@@ -152,7 +152,7 @@ class TestUsersSuccess:
     def test_delete_user(self, client: TestClient, users: list[User]) -> None:
         # Given
         total_users = len(users)
-        user_generator = create_and_athenticate_user(client, users, False)
+        user_generator = create_and_athenticate_user(client, users)
         for user_index, (token_data, _) in enumerate(user_generator):
 
             # When

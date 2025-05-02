@@ -93,9 +93,7 @@ def delete_user(client: TestClient, access_token: str) -> None:
     )
 
 
-def create_and_athenticate_user(
-    client: TestClient, users: list[User], delete_after: bool = True
-) -> Generator[tuple[TokenData, User], None, None]:
+def create_and_athenticate_user(client: TestClient, users: list[User]) -> Generator[tuple[TokenData, User], None, None]:
     for user in users:
         insert_user(client, user)
 
@@ -103,11 +101,6 @@ def create_and_athenticate_user(
         token_data = login_user(client, user["email"])
 
         yield token_data, user
-
-        if not delete_after:
-            continue
-
-        delete_user(client, token_data["access_token"])
 
 
 def create_vehicles(
@@ -127,19 +120,22 @@ def create_vehicles(
     ).all()
     user_cache = {email: id_user for email, id_user in user_ids}
 
-    # Prepare vehicles to insert
-    vehicle_gen = [
-        {
-            "cd_user": user_cache[user["email"]],
-            **vehicle,
-        }
-        for user_index, user in enumerate(users)
-        for vehicle in vehicles[(user_index * qtd_vehicles_per_user) : ((user_index + 1) * qtd_vehicles_per_user)]
-    ]
+    # Check if user already have vehicles
+    if db_session.execute(text("SELECT COUNT(*) FROM tb_vehicle")).scalar() == 0:
 
-    # Insert vehicles
-    db_session.execute(insert(VehicleSchema).values(vehicle_gen))
-    db_session.commit()
+        # Prepare vehicles to insert
+        vehicle_gen = [
+            {
+                "cd_user": user_cache[user["email"]],
+                **vehicle,
+            }
+            for user_index, user in enumerate(users)
+            for vehicle in vehicles[(user_index * qtd_vehicles_per_user) : ((user_index + 1) * qtd_vehicles_per_user)]
+        ]
+
+        # Insert vehicles
+        db_session.execute(insert(VehicleSchema).values(vehicle_gen))
+        db_session.commit()
 
     for user in users:
         token_data = login_user(client, user["email"])
@@ -148,7 +144,5 @@ def create_vehicles(
         stored_vehicles = [v.as_dict() for v in result]
 
         yield stored_vehicles, token_data, user
-
-        delete_user(client, token_data["access_token"])
 
     db_session.close()
