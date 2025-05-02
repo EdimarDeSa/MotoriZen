@@ -1,40 +1,39 @@
-import json
-from pathlib import Path
-
 from main import app
 from starlette.testclient import TestClient
 
-from .aux_functions import create_and_athenticate_user, get_csrf_token
+from .aux_functions import get_csrf_token
 from .constants import PASSWORD
-from .models import Data
+from .data_base_aux import DBConnectionHandler, UserSchema
 
 
 def clean_database() -> None:
     print("Cleaning database...")
 
-    data_file: Path = Path(__file__).resolve().parent.parent / "data.json"
-    with open(data_file, "r") as json_file:
-        raw_data: Data = json.load(json_file)
-        if raw_data is None:
-            raise ValueError("Invalid data file")
+    db_session = DBConnectionHandler.create_session(write=True)
 
-    users = raw_data["users"]
+    user_emails = [
+        email[0]
+        for email in db_session.query(UserSchema.email).filter(UserSchema.email != "motorizen@efscode.com.br").all()
+    ]
+
+    db_session.close()
+
+    if not user_emails:
+        print("Database already clean.")
+        return
 
     client = TestClient(app)
-    for user in users:
+    for email in user_emails:
         csrf_token = get_csrf_token(client)
         response = client.post(
             "/token",
             headers={"X-CSRF-Token": csrf_token},
             data={
-                "username": user["email"],
+                "username": email,
                 "password": PASSWORD,
                 "grant_type": "password",
             },
         )
-
-        if response.status_code != 200:
-            continue
 
         token_data = response.json()
 
