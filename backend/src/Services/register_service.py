@@ -109,6 +109,8 @@ class RegisterService(BaseService):
     def create_register(self, id_user: str, new_register: RegisterNewModel) -> dict[str, InstanceOf[BaseModelDb]]:
         self.logger.debug("Starting create_register")
         db_session = self.create_session(write=True)
+        # FUTURE: implmentar soft delete
+        # REVIEW: Verificar se é checado constraint entre vehicle, user e register
 
         try:
             self.logger.debug(f"Creating register for <user: {id_user}>")
