@@ -116,13 +116,20 @@ class UserService(BaseService):
             db_session.close()
 
     def remove_user(self, email: str, cd_auth: str) -> None:
-        from Services.auth_service import AuthService
+        # TODO: Com a configuração atual, caso o user não exista em um dos bancos, ele irá falhar
+        # e o user não será deletado em nunhum dos dois.
+        # REVIEW: Revisar condições de exclusão e tratamento de erros
+        # Talves deva ser feita a verificação de existência antes do delete em cada um dos bancos \
+        # A exclusão deve ser idependentemente feita em todos os bancos
+
+        # from Services.auth_service import AuthService
+        # TODO: Aduicionar remoção dos caches relacionados ao user após as exclusões
 
         self.logger.debug("Starting delete_user")
         db_session = self.create_session(write=True)
 
         try:
-            AuthService().logout_user(email, str(cd_auth))
+            # AuthService().logout_user(email, str(cd_auth))
 
             self._delete_user_auth(cd_auth)
             self._user_repository.delete_user(db_session, email)
@@ -134,7 +141,7 @@ class UserService(BaseService):
             self.logger.exception(e)
 
             if not isinstance(e, MotoriZenError):
-                e = MotoriZenError(err=MotoriZenErrorEnum.UNKNOWN_ERROR, detail=repr(e), headers=None)
+                raise MotoriZenError(err=MotoriZenErrorEnum.UNKNOWN_ERROR, detail=repr(e), headers=None)
 
             raise e
 
