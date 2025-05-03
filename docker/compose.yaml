@@ -102,6 +102,7 @@ services:
     depends_on:
       keycloak:
         condition: service_started
+        required: true
       postgres:
         condition: service_healthy
         required: true
