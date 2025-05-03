@@ -30,8 +30,8 @@ sed -e "s/{{KC_CLIENT_ID}}/${KC_CLIENT_ID}/g" \
 sed -e "s/{{KC_USER}}/${KC_USER}/g" \
     -e "s/{{KC_CLIENT_ID}}/${KC_CLIENT_ID}/g" \
     -e "s/{{KC_REALM}}/${KC_REALM}/g" \
-    -e "s/{{KC_SECRET_DATA_VALUE}}/${KC_REALM}/g" \
-    -e "s/{{KC_SECRET_DATA_SALT}}/${KC_REALM}/g" \
+    -e "s/{{KC_SECRET_DATA_VALUE}}/${KC_SECRET_DATA_VALUE}/g" \
+    -e "s/{{KC_SECRET_DATA_SALT}}/${KC_SECRET_DATA_SALT}/g" \
     /opt/keycloak/data/json_reaml_templates/motorizen-users-0.json > /opt/keycloak/data/import/motorizen-users-0.json
 
 
