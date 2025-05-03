@@ -38,7 +38,7 @@ VALUES
         'System',
         'motorizen@efscode.com.br',
         CURRENT_DATE - INTERVAL '20 years',
-        gen_random_uuid ()
+        'd08e6c05-56f6-4c21-bc9f-1b968b7f396f'
     );
 
 COMMENT ON TABLE "tb_user" IS 'Tabela de usuários do sistema Motorizen';
