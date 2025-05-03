@@ -1,25 +1,10 @@
 {
   "realm" : "{{KC_REALM}}",
   "users" : [ {
-    "id" : "df7466fc-bb7c-4c59-b3d4-df5e81cf4e3a",
-    "username" : "service-account-{{KC_CLIENT_ID}}",
-    "emailVerified" : false,
-    "createdTimestamp" : 1745789061426,
-    "enabled" : true,
-    "totp" : false,
-    "serviceAccountClientId" : "{{KC_CLIENT_ID}}",
-    "credentials" : [ ],
-    "disableableCredentialTypes" : [ ],
-    "requiredActions" : [ ],
-    "realmRoles" : [ "default-roles-{{KC_REALM}}" ],
-    "clientRoles" : {
-      "{{KC_CLIENT_ID}}" : [ "uma_protection" ]
-    },
-    "notBefore" : 0,
-    "groups" : [ ]
-  }, {
     "id" : "d08e6c05-56f6-4c21-bc9f-1b968b7f396f",
     "username" : "{{KC_USER}}",
+    "firstName" : "Motorizen",
+    "lastName" : "Support",
     "email" : "{{KC_USER}}",
     "emailVerified" : true,
     "createdTimestamp" : 1745789079876,
@@ -36,6 +21,9 @@
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
     "realmRoles" : [ "default-roles-{{KC_REALM}}" ],
+    "clientRoles" : {
+      "realm-management" : [ "manage-users", "view-users", "query-users" ]
+    },
     "notBefore" : 0,
     "groups" : [ ]
   } ]
