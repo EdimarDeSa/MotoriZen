@@ -8,7 +8,7 @@ CREATE TABLE
     IF NOT EXISTS "tb_register" (
         "id_register" UUID PRIMARY KEY DEFAULT gen_random_uuid (),
         "cd_user" UUID NOT NULL REFERENCES "tb_user" ("id_user") ON DELETE CASCADE,
-        "cd_vehicle" UUID NOT NULL REFERENCES "tb_vehicle" ("id_vehicle") ON DELETE SET NULL,
+        "cd_vehicle" UUID NOT NULL REFERENCES "tb_vehicle" ("id_vehicle") ON DELETE CASCADE,
         "distance" FLOAT NOT NULL DEFAULT 0.0,
         "working_time" TIME NOT NULL DEFAULT '00:00:00',
         "mean_consuption" FLOAT DEFAULT 0.0,
