@@ -148,10 +148,10 @@ class VehicleService(BaseService):
         # FUTURE: implmentar soft delete
         # FUTURE: implmentar campo para caso o usuário queira que os registros vinculados ao carro sejam deletados
         # BUG: Verificar melhor forma de manter os registros em caso de exclusão de veículos
-        # Teremos problemas em atualizações de registros sem veículos vinculados
-        # Atualmente o banco está como >>> "ON DELETE SET NULL" <<< Verificar se isso causa problemas
+        # Atualmente o banco está como >>> "ON DELETE CASCADE" <<<
         # Pensei em criar um carro default de sistema para ser usado em caso de exclusão de veículos
         # Isso pode ser um problema pois o carro deveria ser uma REFERENCIA de carro do user
+        # Tavez criar um carro default para cada user...
 
         try:
             self.logger.debug(f"Deleting vehicle <VEHICLE_ID: {vehicle_id}> of <user: {id_user}>")
