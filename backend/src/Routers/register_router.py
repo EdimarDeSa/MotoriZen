@@ -1,5 +1,3 @@
-from fastapi import APIRouter, Request
-
 from Contents.register_content import RegisterContent, RegisterNewContent, RegistersContent
 from db.Models import (
     RegisterModel,
@@ -10,6 +8,7 @@ from db.Models import (
 )
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
+from fastapi import APIRouter, Request
 from Responses import Created, NoContent, Ok
 from Services.register_service import RegisterService
 from Utils.custom_types import CurrentActiveUser

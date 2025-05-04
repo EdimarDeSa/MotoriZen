@@ -1,8 +1,7 @@
 import uuid
 
-from pydantic import BaseModel, Field
-
 from db.Models import RegisterUpdateDataModel
+from pydantic import BaseModel, Field
 from Utils.Internacionalization import ModelsDescriptionTexts
 
 
