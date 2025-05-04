@@ -36,7 +36,7 @@ class RegisterRouter(BaseRouter):
             "/new-register", self.new_register, response_model=RegisterNewContent, methods=["POST"]
         )
         self.router.add_api_route("/update-register", self.update_register, methods=["PUT"])
-        self.router.add_api_route("/delete-register", self.delete_register, methods=["DELETE"])
+        self.router.add_api_route("/delete-register/{id_register}", self.delete_register, methods=["DELETE"])
 
     def get_registers(self, request: Request, user_data: CurrentActiveUser, query_data: RegistersQueryModel) -> Ok:
         self.logger.debug("Starting get_registers")
