@@ -10,17 +10,16 @@ from Utils.Internacionalization import ModelsDescriptionTexts
 
 
 class RegisterUpdateDataModel(NewBaseModelDb):
-    cd_vehicle: Optional[uuid.UUID] = Field(description=ModelsDescriptionTexts.VEHICLE_CD)
-    distance: Optional[float] = Field(description=ModelsDescriptionTexts.DISTANCE)
-    working_time: Optional[time] = Field(description=ModelsDescriptionTexts.WORKING_TIME)
-    mean_consuption: Optional[float] = Field(description=ModelsDescriptionTexts.MEAN_CONSUMPTION)
-    number_of_trips: Optional[int] = Field(description=ModelsDescriptionTexts.NUMBER_OF_TRIPS)
-    total_value: Optional[float] = Field(description=ModelsDescriptionTexts.TOTAL_VALUE)
-    register_date: Optional[date] = Field(description=ModelsDescriptionTexts.REGISTER_DATE)
+    cd_vehicle: Optional[uuid.UUID] = Field(default=None, description=ModelsDescriptionTexts.VEHICLE_CD)
+    distance: Optional[float] = Field(default=None, description=ModelsDescriptionTexts.DISTANCE)
+    working_time: Optional[time] = Field(default=None, description=ModelsDescriptionTexts.WORKING_TIME)
+    mean_consuption: Optional[float] = Field(default=None, description=ModelsDescriptionTexts.MEAN_CONSUMPTION)
+    number_of_trips: Optional[int] = Field(default=None, description=ModelsDescriptionTexts.NUMBER_OF_TRIPS)
+    total_value: Optional[float] = Field(default=None, description=ModelsDescriptionTexts.TOTAL_VALUE)
+    register_date: Optional[date] = Field(default=None, description=ModelsDescriptionTexts.REGISTER_DATE)
 
     @model_validator(mode="after")
     def validate_updates_value(self) -> Self:
-        self.model_fields_set
         if all([getattr(self, field) is None for field in self.model_fields_set]):
             raise MotoriZenError(
                 err=MotoriZenErrorEnum.INVALID_UPDATES_DATA,

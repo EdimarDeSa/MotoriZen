@@ -1,13 +1,12 @@
 from typing import Any
 
-from sqlalchemy import Insert
-from sqlalchemy.orm import Session, scoped_session
-
 from db.Models import RegisterQueryFiltersModel, RegisterQueryOptionsModel
 from db.Querys import UserQueryManager
 from db.Schemas import RegisterSchema
 from Enums import MotoriZenErrorEnum
 from ErrorHandler import MotoriZenError
+from sqlalchemy import Insert
+from sqlalchemy.orm import Session, scoped_session
 
 from .base_repository import BaseRepository
 
