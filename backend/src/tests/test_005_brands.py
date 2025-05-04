@@ -1,5 +1,3 @@
-from urllib import response
-
 from starlette.testclient import TestClient
 
 from .utils.aux_functions import create_and_athenticate_user, print_progress, with_progress

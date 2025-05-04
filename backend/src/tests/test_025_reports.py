@@ -1,7 +1,6 @@
 from starlette.testclient import TestClient
 
 from .utils.aux_functions import (
-    create_and_athenticate_user,
     create_registers,
     create_vehicles,
     print_progress,
@@ -10,7 +9,7 @@ from .utils.aux_functions import (
 from .utils.models import Register, User, Vehicle
 
 
-class TestRegistersSuccess:
+class TestReportsSuccess:
     qtd_vehicles_per_user = 5
     qtd_registers_per_vehicle = 50
 
