@@ -1,7 +1,4 @@
-from atexit import register
 from collections.abc import Generator
-from datetime import datetime
-from functools import wraps
 from uuid import UUID
 
 from fastapi.responses import Response
@@ -12,44 +9,6 @@ from sqlalchemy.orm import Session, scoped_session
 from .constants import PASSWORD
 from .data_base_aux import DBConnectionHandler, RegisterSchema, UserSchema, VehicleSchema
 from .models import Register, TokenData, User, Vehicle
-
-
-def print_progress(*args) -> None:
-    formatted_args = [str(arg).center(25) for arg in args]
-
-    print(
-        "Progress:".ljust(12),
-        *formatted_args,
-        sep=" │ ",
-        end="\r",
-    )
-
-
-def with_progress(description: str = ""):
-    def decorator(test_func):
-        @wraps(test_func)
-        def wrapper(*args, **kwargs):
-            initial_time = datetime.now()
-            # Imprime uma linha vazia antes do teste
-            print()
-
-            # Se houver descrição, imprime
-            if description:
-                print(f"🚀 {description}")
-
-            try:
-                result = test_func(*args, **kwargs)
-            finally:
-                final_time = datetime.now()
-                total_time = (final_time - initial_time).total_seconds()
-                print()
-                print(f"Time: {total_time:.2f}s")
-
-            return result
-
-        return wrapper
-
-    return decorator
 
 
 def get_csrf_token(client: TestClient) -> str:
@@ -80,22 +39,7 @@ def login_user(client: TestClient, email: str) -> TokenData:
     return response.json()
 
 
-def get_user_data(client: TestClient, access_token: str) -> User:
-    response = client.get(
-        "/users/me",
-        headers={"Authorization": f"Bearer {access_token}"},
-    )
-    return response.json()["data"]
-
-
-def delete_user(client: TestClient, access_token: str) -> None:
-    client.delete(
-        "/users/delete-user",
-        headers={"Authorization": f"Bearer {access_token}"},
-    )
-
-
-def create_and_athenticate_user(client: TestClient, users: list[User]) -> Generator[tuple[TokenData, User], None, None]:
+def user_and_auth_generator(client: TestClient, users: list[User]) -> Generator[tuple[TokenData, User], None, None]:
     for user in users:
         insert_user(client, user)
 
@@ -152,7 +96,7 @@ def retrieve_registers_by_user(db_session: scoped_session[Session], user_id: UUI
     return result
 
 
-def create_vehicles(
+def vehicles_generator(
     client: TestClient, users: list[User], vehicles: list[Vehicle], qtd_vehicles_per_user: int
 ) -> Generator[tuple[list[Vehicle], TokenData, User], None, None]:
     # Insert users
@@ -184,7 +128,27 @@ def registers_already_exists(db_session: scoped_session[Session]) -> bool:
     return db_session.execute(text("SELECT COUNT(*) FROM tb_register")).scalar() > 0
 
 
-def create_registers(
+def insert_registers(
+    db_session: scoped_session[Session],
+    stored_vehicles: list[Vehicle],
+    qtd_registers_per_vehicle: int,
+    registers: list[Register],
+) -> None:
+    register_gen = [
+        {
+            "cd_user": vehicle.cd_user,
+            "cd_vehicle": vehicle.id_vehicle,
+            **register,
+        }
+        for vehicle_index, vehicle in enumerate(stored_vehicles)
+        for register in registers[
+            (vehicle_index * qtd_registers_per_vehicle) : ((vehicle_index + 1) * qtd_registers_per_vehicle)
+        ]
+    ]
+    db_session.execute(insert(RegisterSchema).values(register_gen))
+
+
+def regsiter_generator(
     client: TestClient,
     users: list[User],
     vehicles: list[Vehicle],
@@ -206,21 +170,10 @@ def create_registers(
     if not vehicles_already_exists(db_session):
         insert_vehicles(db_session, users, vehicles, user_cache, qtd_vehicles_per_user)
 
-        stored_vehicles = db_session.query(VehicleSchema).all()
+    stored_vehicles = db_session.query(VehicleSchema).all()
 
     if not registers_already_exists(db_session):
-        register_gen = [
-            {
-                "cd_user": vehicle.cd_user,
-                "cd_vehicle": vehicle.id_vehicle,
-                **register,
-            }
-            for vehicle_index, vehicle in enumerate(stored_vehicles)
-            for register in registers[
-                (vehicle_index * qtd_registers_per_vehicle) : ((vehicle_index + 1) * qtd_registers_per_vehicle)
-            ]
-        ]
-        db_session.execute(insert(RegisterSchema).values(register_gen))
+        insert_registers(db_session, stored_vehicles, qtd_registers_per_vehicle, registers)
 
     db_session.commit()
 

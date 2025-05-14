@@ -1,12 +1,8 @@
 from starlette.testclient import TestClient
 
-from .utils.aux_functions import (
-    create_registers,
-    create_vehicles,
-    print_progress,
-    with_progress,
-)
+from .utils.aux_functions import regsiter_generator, vehicles_generator
 from .utils.models import Register, User, Vehicle
+from .utils.print_aux import print_progress, with_progress
 
 
 class TestRegistersSuccess:
@@ -25,7 +21,7 @@ class TestRegistersSuccess:
     ) -> None:
         # Given
 
-        vehicle_generator = create_vehicles(client, users, vehicles, self.qtd_vehicles_per_user)
+        vehicle_generator = vehicles_generator(client, users, vehicles, self.qtd_vehicles_per_user)
         total_registers = self.qtd_vehicles_per_user * self.qtd_registers_per_vehicle * len(users)
 
         for user_index, (user_vehicles, token_data, _) in enumerate(vehicle_generator):
@@ -72,7 +68,7 @@ class TestRegistersSuccess:
         self, client: TestClient, users: list[User], vehicles: list[Vehicle], registers: list[Register]
     ) -> None:
         # Given
-        register_generator = create_registers(
+        register_generator = regsiter_generator(
             client, users, vehicles, registers, self.qtd_vehicles_per_user, self.qtd_registers_per_vehicle
         )
         total_users = len(users)
@@ -105,7 +101,7 @@ class TestRegistersSuccess:
         self, client: TestClient, users: list[User], vehicles: list[Vehicle], registers: list[Register]
     ) -> None:
         # Given
-        register_generator = create_registers(
+        register_generator = regsiter_generator(
             client, users, vehicles, registers, self.qtd_vehicles_per_user, self.qtd_registers_per_vehicle
         )
         total_users = len(users)
@@ -139,7 +135,7 @@ class TestRegistersSuccess:
         self, client: TestClient, users: list[User], vehicles: list[Vehicle], registers: list[Register]
     ) -> None:
         # Given
-        register_generator = create_registers(
+        register_generator = regsiter_generator(
             client, users, vehicles, registers, self.qtd_vehicles_per_user, self.qtd_registers_per_vehicle
         )
         total_users = len(users)
@@ -189,7 +185,7 @@ class TestRegistersSuccess:
         self, client: TestClient, users: list[User], vehicles: list[Vehicle], registers: list[Register]
     ) -> None:
         # Given
-        register_generator = create_registers(
+        register_generator = regsiter_generator(
             client, users, vehicles, registers, self.qtd_vehicles_per_user, self.qtd_registers_per_vehicle
         )
         total_users = len(users)

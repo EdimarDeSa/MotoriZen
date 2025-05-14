@@ -1,8 +1,9 @@
 from starlette.testclient import TestClient
 
-from .utils.aux_functions import create_and_athenticate_user, get_csrf_token, insert_user, print_progress, with_progress
+from .utils.aux_functions import get_csrf_token, insert_user, user_and_auth_generator
 from .utils.constants import PASSWORD
 from .utils.models import TokenData, User
+from .utils.print_aux import print_progress, with_progress
 
 
 class TestUsersSuccess:
@@ -65,7 +66,7 @@ class TestUsersSuccess:
     def test_get_me(self, client: TestClient, users: list[User]) -> None:
         # Given
         total_users = len(users)
-        user_generator = create_and_athenticate_user(client, users)
+        user_generator = user_and_auth_generator(client, users)
         for user_index, (token_data, user) in enumerate(user_generator):
 
             # When
@@ -84,7 +85,7 @@ class TestUsersSuccess:
     def test_update_user(self, client: TestClient, users: list[User]) -> None:
         # Given
         total_users = len(users)
-        user_generator = create_and_athenticate_user(client, users)
+        user_generator = user_and_auth_generator(client, users)
         for user_index, (token_data, _) in enumerate(user_generator):
 
             # When
@@ -114,7 +115,7 @@ class TestUsersSuccess:
     def test_refresh_token(self, client: TestClient, users: list[User]) -> None:
         # Given
         total_users = len(users)
-        user_generator = create_and_athenticate_user(client, users)
+        user_generator = user_and_auth_generator(client, users)
         for user_index, (token_data, _) in enumerate(user_generator):
 
             # When
@@ -134,7 +135,7 @@ class TestUsersSuccess:
     def test_logout_user(self, client: TestClient, users: list[User]) -> None:
         # Given
         total_users = len(users)
-        user_generator = create_and_athenticate_user(client, users)
+        user_generator = user_and_auth_generator(client, users)
         for user_index, (token_data, _) in enumerate(user_generator):
 
             # When
@@ -152,7 +153,7 @@ class TestUsersSuccess:
     def test_delete_user(self, client: TestClient, users: list[User]) -> None:
         # Given
         total_users = len(users)
-        user_generator = create_and_athenticate_user(client, users)
+        user_generator = user_and_auth_generator(client, users)
         for user_index, (token_data, _) in enumerate(user_generator):
 
             # When

@@ -1,20 +1,20 @@
 import calendar
 import json
 import uuid
+from collections import defaultdict
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from enum import StrEnum
 from typing import Any, Sequence
-
-from fastapi.encoders import jsonable_encoder
-from sqlalchemy import Label, Null, RowMapping, null
-from sqlalchemy.orm import Session, scoped_session
 
 from db.Models.range_model import RangeModel
 from db.Querys import RegisterQueryManager
 from db.Querys.user_query_manager import UserQueryManager
 from Enums import AggregationIntervalEnum
 from Enums.report_enum import ReportsEnum
+from fastapi.encoders import jsonable_encoder
+from sqlalchemy import Label, Null, RowMapping, null
+from sqlalchemy.orm import Session, scoped_session
 from Utils.constants import *
 from Utils.custom_primitive_types import DataFrameType
 
@@ -128,13 +128,13 @@ class ReportsRepository(BaseRepository):
         db_session: scoped_session[Session],
         id_user: str,
         date_: RangeModel[date],
-        VEHICLE_IDs: Sequence[uuid.UUID],
+        vehicle_ids: Sequence[uuid.UUID],
         report_list: list[Label[Any]],
     ) -> DataFrameType:
         self.logger.debug("Starting select_reports")
 
         try:
-            query = self._user_querys.select_reports(id_user, VEHICLE_IDs, date_, report_list)
+            query = self._user_querys.select_reports(id_user, vehicle_ids, date_, report_list)
 
             self.logger.debug(f"Query: {query}")
 
@@ -143,8 +143,8 @@ class ReportsRepository(BaseRepository):
             self.logger.debug(f"Results: {json.dumps(jsonable_encoder(results))}")
 
             return {
-                result[id_vehicle]: {
-                    report: self.__format_value(result[report]) for report in result.keys() if report != id_vehicle
+                result["id_vehicle"]: {
+                    report: self.__format_value(result[report]) for report in result.keys() if report != "id_vehicle"
                 }
                 for result in results
             }
@@ -157,7 +157,7 @@ class ReportsRepository(BaseRepository):
         db_session: scoped_session[Session],
         id_user: str,
         date_: RangeModel[date],
-        VEHICLE_IDs: Sequence[uuid.UUID],
+        vehicle_ids: Sequence[uuid.UUID],
         aggregation_interval: AggregationIntervalEnum,
         report_list: list[Label[Any]],
     ) -> DataFrameType:
@@ -165,7 +165,7 @@ class ReportsRepository(BaseRepository):
 
         try:
             query = self._user_querys.select_periodicaly_report(
-                id_user, VEHICLE_IDs, date_, aggregation_interval, report_list
+                id_user, vehicle_ids, date_, aggregation_interval, report_list
             )
 
             self.logger.debug(f"Query: {query}")
@@ -184,18 +184,18 @@ class ReportsRepository(BaseRepository):
     ) -> DataFrameType:
         data_frame: DataFrameType = {}
         for result in results:
-            if result[id_vehicle] not in data_frame.keys():
-                data_frame[result[id_vehicle]] = {}
+            if result["id_vehicle"] not in data_frame.keys():
+                data_frame[result["id_vehicle"]] = {}
 
             for report in result.keys():
-                if report in [id_vehicle, PERIODE_START_DATE]:
+                if report in ["id_vehicle", PERIODE_START_DATE]:
                     continue
 
-                if report not in data_frame[result[id_vehicle]].keys():
-                    data_frame[result[id_vehicle]][report] = {}
+                if report not in data_frame[result["id_vehicle"]].keys():
+                    data_frame[result["id_vehicle"]][report] = {}
 
                 _key = self.__create_periode_key(result[PERIODE_START_DATE], aggregation_interval)
-                data_frame[result[id_vehicle]][report][_key] = self.__format_value(result[report])
+                data_frame[result["id_vehicle"]][report][_key] = self.__format_value(result[report])
         return data_frame
 
     def __create_periode_key(self, date_: date, aggregation_interval: AggregationIntervalEnum) -> str:

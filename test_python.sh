@@ -10,7 +10,7 @@ REPORT_FILE="report.log"
 
 # Nome do arquivo a ser testado (pode ser um regex)
 # Exemplo: "test_001_users.py" ou "test_001*.py"
-FILE_TO_TEST="test_00*.py"
+FILE_TO_TEST="test_100*.py"
 
 # Outras configurações
 FULL_TEST_PATH="${TEST_MODULE}/${FILE_TO_TEST}"
@@ -59,7 +59,7 @@ echo ""
 pushd "${SRC_DIR}" > /dev/null
 
 echo "🔧 Gerando dados fake..."
-python "${TEST_MODULE}/${GENERATE_SCRIPT}"
+python "${TEST_MODULE}/${GENERATE_SCRIPT}" > /dev/null
 
 echo "🧪 Executando testes..."
 pytest -vvsx -p no:warnings --durations=0 ${FULL_TEST_PATH}

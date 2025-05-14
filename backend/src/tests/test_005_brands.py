@@ -1,14 +1,15 @@
 from starlette.testclient import TestClient
 
-from .utils.aux_functions import create_and_athenticate_user, print_progress, with_progress
+from .utils.aux_functions import user_and_auth_generator
 from .utils.models import User
+from .utils.print_aux import print_progress, with_progress
 
 
 class TestBrandsSuccess:
     @with_progress("Testando busca de marcas")
     def test_get_all_brands(self, client: TestClient, users: list[User]) -> None:
         # Given
-        user_generator = create_and_athenticate_user(client, users)
+        user_generator = user_and_auth_generator(client, users)
         for user_index, (token_data, _) in enumerate(user_generator):
 
             # When
@@ -33,7 +34,7 @@ class TestBrandsSuccess:
     @with_progress("Testando busca de marca")
     def test_get_specific_brand(self, client: TestClient, users: list[User]) -> None:
         # Given
-        user_generator = create_and_athenticate_user(client, users)
+        user_generator = user_and_auth_generator(client, users)
         for user_index, (token_data, _) in enumerate(user_generator):
 
             # When

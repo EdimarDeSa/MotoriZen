@@ -1,7 +1,8 @@
 from starlette.testclient import TestClient
 
-from .utils.aux_functions import create_and_athenticate_user, create_vehicles, print_progress, with_progress
+from .utils.aux_functions import user_and_auth_generator, vehicles_generator
 from .utils.models import User, Vehicle
+from .utils.print_aux import print_progress, with_progress
 
 
 class TestVehiclesSuccess:
@@ -17,7 +18,7 @@ class TestVehiclesSuccess:
     @with_progress("Testando criação de veículos")
     def test_create_vehicle(self, client: TestClient, users: list[User], vehicles: list[Vehicle]) -> None:
         # Given
-        user_generator = create_and_athenticate_user(client, users)
+        user_generator = user_and_auth_generator(client, users)
         total_users = len(users)
         total_vehicles = len(vehicles)
 
@@ -43,7 +44,7 @@ class TestVehiclesSuccess:
     @with_progress("Testando listagem de veículos")
     def test_get_all_vehicles(self, client: TestClient, users: list[User], vehicles: list[Vehicle]) -> None:
         # Given
-        vehicle_generator = create_vehicles(client, users, vehicles, self.qtd_vehicles_per_user)
+        vehicle_generator = vehicles_generator(client, users, vehicles, self.qtd_vehicles_per_user)
         for user_index, (_, token_data, _) in enumerate(vehicle_generator):
 
             # When
@@ -73,7 +74,7 @@ class TestVehiclesSuccess:
     @with_progress("Testando busca de veículos")
     def test_get_specific_vehicle(self, client: TestClient, users: list[User], vehicles: list[Vehicle]) -> None:
         # Given
-        vehicle_generator = create_vehicles(client, users, vehicles, self.qtd_vehicles_per_user)
+        vehicle_generator = vehicles_generator(client, users, vehicles, self.qtd_vehicles_per_user)
         total_users = len(users)
         total_vehicles = len(vehicles)
         for user_index, (user_vehicles, token_data, _) in enumerate(vehicle_generator):
@@ -98,7 +99,7 @@ class TestVehiclesSuccess:
     @with_progress("Testando atualização de veículos")
     def test_update_vehicle(self, client: TestClient, users: list[User], vehicles: list[Vehicle]) -> None:
         # Given
-        vehicle_generator = create_vehicles(client, users, vehicles, self.qtd_vehicles_per_user)
+        vehicle_generator = vehicles_generator(client, users, vehicles, self.qtd_vehicles_per_user)
         total_users = len(users)
         total_vehicles = len(vehicles)
         for user_index, (user_vehicles, token_data, _) in enumerate(vehicle_generator):
@@ -126,7 +127,7 @@ class TestVehiclesSuccess:
     @with_progress("Testando exclusão de veículos")
     def test_delete_vehicle(self, client: TestClient, users: list[User], vehicles: list[Vehicle]) -> None:
         # Given
-        vehicle_generator = create_vehicles(client, users, vehicles, self.qtd_vehicles_per_user)
+        vehicle_generator = vehicles_generator(client, users, vehicles, self.qtd_vehicles_per_user)
         total_users = len(users)
         total_vehicles = len(vehicles)
         for user_index, (user_vehicles, token_data, _) in enumerate(vehicle_generator):
